@@ -1,0 +1,94 @@
+<div class="centerCombat">
+
+    <div class="elem1">
+        <button (click)="startCombat()" [disabled]="enemyForm.controls.enemySelected.value === null || intervalID !== null">START</button>
+        <button (click)="stopATB()" [disabled]="intervalID === null">PAUSE</button>
+    </div>
+
+    <p class="elem2 storyText" #story>An enemy appeared!</p>
+    <!-- <div class="elem2"><p class="storyText" #story>An enemy appeared!</p></div> -->
+    
+    <div class="elem3">
+        <button class="health">{{combatService.player.health}}</button>
+        <button class="mana">{{combatService.player.mana}}</button> 
+    </div>
+
+    <div class="elem4">
+        <div id="playerMainOptions" *ngIf="viewingMainOptions">
+            <p *ngFor="let option of combatService.mainMenuOptions; let i = index" (click)="optionSelected(i+1)" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >{{(i+1) + '. ' + option['name']}}</p>
+            <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{combatService.mainMenuOptions.length + 1 + '. Pause'}}</p>
+            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null}">{{combatService.mainMenuOptions.length + 1 + '. Resume'}}</p>
+            <!-- <p (click)="playerAttack();" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >ATTACK</p> -->
+            <!-- <p (click)="magick()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">2. Magick</p>
+            <p (click)="inventory()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">3. Inventory</p> -->
+        </div>
+
+        <div id="playerMagicOptions" *ngIf="viewingMagicOptions">
+            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">1. Back</p>
+        </div>
+
+        <div id="playerInventoryOptions" *ngIf="viewingInventoryOptions">
+            <p *ngFor="let item of player.inventory; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
+            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">{{player.inventory.length + 1 + '.'}} Back</p>
+        </div>        
+    </div>
+    
+    <div class="elem5">
+        <form [formGroup]="enemyForm">
+            <div *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
+                    <label for="enemySelected">{{enemy.name}}</label>
+                    <br>
+                    {{enemy.health}}
+                    <br>
+                    <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
+                    <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
+                </div>
+            </form>
+            
+            <div>
+                <mat-progress-bar class="playerATB" mode="determinate" [value]="combatService.player.ATB" color="accent"></mat-progress-bar>
+                <!-- <mat-progress-bar class="playerATB" mode="determinate" [value]="playerATB" color="accent" dir="rtl"></mat-progress-bar> -->
+            </div>
+        </div>
+
+        
+    <!-- <div class="sidebar">
+        test
+    </div>
+
+    <div class="gameWindow">
+
+        <p class="storyText" #story>
+           An enemy appeared!
+        </p>
+
+        <div class="centerArea">
+            <form [formGroup]="enemyForm">
+            <div *ngFor="let enemy of enemies; let i = index" (click)="selectEnemy(i, $event.target)">
+                    <label for="enemySelected">Enemy {{i}}</label>
+                    <br>
+                    {{enemy.health}}
+                    <br>
+                    <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
+                </div>
+            </form>
+        </div>
+
+        <mat-progress-bar *ngFor="let enemy of enemies" mode="determinate" [value]="enemyATB" color="accent"></mat-progress-bar>
+        
+        <mat-progress-bar mode="determinate" [value]="playerATB" color="primary"></mat-progress-bar>
+        <div class="menuOptions">
+             <button class="health">{{enemy.health}}</button>
+                <button class="mana">{{enemy.mana}}</button>
+            
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+    </div> -->
+
+</div>

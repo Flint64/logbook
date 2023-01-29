@@ -1,0 +1,20 @@
+p{
+    font-size: 72px;
+    margin-bottom: 30px;
+}
+
+.split{
+    display: flex;
+    div{
+        display: flex;
+        flex-direction: column;
+        button{
+            margin: 10px;
+            font-size: 1em;
+        }
+    }
+}
+
+#back{
+    margin-top: 15px;
+}

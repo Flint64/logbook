@@ -1,0 +1,17 @@
+.gameWindow{
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menuOptions{
+    display: flex;
+    flex-direction: row;
+    div{
+        border: 1px solid black;
+        width: 4em;
+        height: 4em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

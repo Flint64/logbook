@@ -1,0 +1,199 @@
+.centerCombat{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 12% 50% 12%;
+    grid-template-rows: 18% 59% 18%;
+    justify-content: center;
+    align-content: center;
+    gap: 5px;
+    background-color: black;
+    color: white;
+
+    >div{
+        border: 1px solid white;
+        padding: 10px;
+        // border-radius: 10px;
+    }
+    
+    >p{
+        border: 1px solid white;
+        padding: 10px;
+        // border-radius: 10px;
+    }
+
+    .elem1 { 
+        // background-color: yellow;
+        grid-row: 1 / -1;
+    }
+    // .elem2 { 
+        // background-color: blue;
+    // }
+    .elem3 { 
+        // background-color: purple;
+        grid-row: 1 / -1;
+    }
+    .elem4 { 
+        // background-color: green;
+        grid-column: 2 / -2;
+        grid-row-start: 3;
+    }
+    .elem5 { 
+        // background-color: red;
+        margin: 0;
+        padding: 0;
+        grid-column: 2 / 3;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 90% 10%;
+
+        >div{
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+    }
+
+    form{
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        width: 100%;
+        justify-content: space-evenly;
+        div{
+            border: 1px solid white;
+            height: 7em;
+            width: 7em;
+            padding: 5px;
+            margin: 10px;
+            &:hover{
+                color: black;
+                background-color: white;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+button{
+    &:disabled{
+        background-color: gainsboro;
+        &:hover{
+            color: #9f9f9f;
+        }
+    }
+}
+
+.menuOptions{
+    font-size: 1.2em;
+    height: 10em;
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid white;
+    // button{
+    //     border-right: 0;
+    //     border-bottom: 0;
+    //     &:first-child{
+    //         border-left: 0;
+    //     }
+    // }
+}
+
+.health{
+    background-color: crimson;
+    color: white;
+}
+
+.mana{
+    background-color: purple;
+    color: white;
+}
+
+.storyText{
+    font-size: 1.2em;
+    // overflow-y: scroll;
+    overflow-y: hidden;
+    margin: 0;
+}
+
+.enemySelected{
+    border: 5px solid white !important;
+}
+
+mat-progress-bar{
+    width: 15em;
+    height: 1.5em;
+    border-radius: 0px 120px 20px 0px;
+
+    // Reverses the angle of the bar
+    // &:last-of-type{
+    //     border-radius: 0px 20px 120px 0px;
+    // }
+
+    &.playerATB:last-of-type{
+        border-radius: 0px 120px 0px 0px;
+    }
+    
+    &.enemyATB{
+        width: 100%;
+        height: 1em;
+        border-radius: 0;
+        // display: none;
+    }
+}
+
+// .sidebar{
+//     border: 1px solid white;
+//     height: 85vh;
+//     width: 10em;
+//     margin-top: -20px;
+//     background-color: white;
+//     margin-right: -1px;
+//     &:last-of-type{
+//         margin-left: -1px;
+//     }
+// }
+
+.hidden{
+    display: none;
+}
+
+.elem4 p{
+    margin: 0;
+    padding: 0;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    width: max-content;
+    
+    &:hover{
+        color: black;
+        background-color: white;
+        cursor: pointer;
+    }
+}
+
+#playerMainOptions{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.actionDisabled{
+    color: #9f9f9f;
+    &:hover{
+        color: #9f9f9f;
+        background-color: black;
+        cursor: default;
+    }
+}
+
+.inventoryList{
+    display: flex;
+    p:first-child::after{
+        content: (' -');
+    }
+    p:last-child::before{
+        content: ('- ');
+    }
+}

@@ -1,0 +1,28 @@
+<div class="center">
+    <p> The Logbook </p>
+    <button *ngIf="!pathsVisible; else pathDiv" (click)="togglePathsVisible()">Start</button>
+  
+    <ng-template #pathDiv>
+      <div class="split">
+        <div>
+          <button>Path of the Divine</button>
+          <button>Path of the Scavenger</button>
+          <button [routerLink]="['/sacrifice']">Path of the Sacrifice</button>
+          <button>Path of the Artificer</button>
+          <button>Path of the Mind</button>
+        </div>
+        
+        <div>
+          <button>Path of the Craftsman</button>
+          <button>Path of the Conjurer</button>
+          <button>Path of the Blade</button>
+          <button>Path of the Princess</button>
+          <button [routerLink]="['/combat-test']">Combat Test</button>
+          <!-- <button>Path of the Chronicler</button> -->
+        </div>
+      </div>
+  
+      <button id="back" (click)="togglePathsVisible()">Back</button>
+    </ng-template>  
+    
+  </div>
