@@ -8,7 +8,7 @@ export class Player {
     defense: number = 30;
     speed: number = 25; //Lower = faster
     mana: number = 33;
-    accuracy: number = 85;
+    accuracy: number = 90;
     luck: number = 5;
     ATB: number = 0;
 

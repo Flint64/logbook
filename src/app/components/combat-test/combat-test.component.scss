@@ -70,6 +70,9 @@
                 color: black;
                 background-color: white;
                 cursor: pointer;
+                img{
+                    filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
+                }
             }
         }
     }
@@ -118,6 +121,12 @@ button{
 
 .enemySelected{
     border: 5px solid white !important;
+}
+
+.skull{
+    //Red filter for bosses?
+    // filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%);
+    filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
 }
 
 mat-progress-bar{
@@ -196,4 +205,27 @@ mat-progress-bar{
     p:last-child::before{
         content: ('- ');
     }
+}
+
+.enemyBox{    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    p{
+        padding-top: 5px;;
+        margin: 0;
+    }
+    img{
+        max-width: 2em;
+        padding: 5px;
+    }
+}
+
+.enemyHitSVG{
+    filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%);
+}
+
+.enemyHit{
+    color: crimson;
 }

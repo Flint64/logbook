@@ -17,8 +17,8 @@
         <div id="playerMainOptions" *ngIf="viewingMainOptions">
             <p *ngFor="let option of combatService.mainMenuOptions; let i = index" (click)="optionSelected(i+1)" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >{{(i+1) + '. ' + option['name']}}</p>
             <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{combatService.mainMenuOptions.length + 1 + '. Pause'}}</p>
-            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null}">{{combatService.mainMenuOptions.length + 1 + '. Resume'}}</p>
-            <!-- <p (click)="playerAttack();" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >ATTACK</p> -->
+            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{combatService.mainMenuOptions.length + 1 + '. Resume'}}</p>
+            <p (click)="playerAttack();" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >ATTACK</p>
             <!-- <p (click)="magick()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">2. Magick</p>
             <p (click)="inventory()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">3. Inventory</p> -->
         </div>
@@ -35,11 +35,10 @@
     
     <div class="elem5">
         <form [formGroup]="enemyForm">
-            <div *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
-                    <label for="enemySelected">{{enemy.name}}</label>
-                    <br>
-                    {{enemy.health}}
-                    <br>
+            <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
+                    <label>{{enemy.name}}</label>
+                    <p>{{enemy.health}}</p>
+                    <img #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
                     <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
                     <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
                 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Enemy } from 'src/app/models/enemy.model';
 import { Player } from 'src/app/models/player.model';
@@ -13,9 +13,11 @@ import { CombatService } from 'src/app/services/combat.service';
 })
 
 
-export class CombatTestComponent implements OnInit, OnDestroy {
+export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   @ViewChild('story', {static: false}) story: ElementRef;
+  @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>
+  @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>
   keyListener = null;
 
   // @HostListener('document:keypress', ['$event'])
@@ -150,6 +152,14 @@ export class CombatTestComponent implements OnInit, OnDestroy {
     // console.log(this.combatService.player.inventory[0][0] + ' - ' + this.combatService.player.inventory[0][1]);
     // console.log(this.combatService.player.inventory[1][0] + ' - ' + this.combatService.player.inventory[1][1]);
     
+    this.enemyForm.controls.enemySelected.setValue(0);
+    this.startCombat();
+    
+  }
+
+  ngAfterViewInit(): void {
+    // Allows selection of the first enemy to allow auto-start of combat
+    this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
   }
 
   ngOnDestroy(): void {
@@ -163,6 +173,10 @@ export class CombatTestComponent implements OnInit, OnDestroy {
   }
 
   startCombat(){
+
+    if (this.enemyForm.controls.enemySelected.value === null){
+      return;
+    }
 
     // When starting combat, create a value to bind to each invididual enemy ATB guage
     if (this.combatService.enemyATBValues.length === 0){
@@ -240,9 +254,33 @@ export class CombatTestComponent implements OnInit, OnDestroy {
     // Returns a random integer from 1-100:
     if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
       let dam = Math.floor(Math.random() * this.combatService.player.attack + 1);
-      this.selectedEnemy.health -= dam;
-      if (this.combatService.player.health !== 0){ this.appendText('PLAYER hit for ' + dam + ' damage!', true); }
-      if (this.combatService.player.health === 0){ this.appendText('PLAYER at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true) }
+
+      //If the player has more than 0 hp allow the hit
+      if (this.combatService.player.health !== 0){
+        this.appendText('PLAYER hit for ' + dam + ' damage!', true);
+        this.selectedEnemy.health -= dam;
+        this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
+        this.previousTarget.classList.add('enemyHit');
+        
+        setTimeout(() => {
+          if (this.selectedEnemy.health > 0){
+            this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove('enemyHitSVG');
+            this.previousTarget.classList.remove('enemyHit');
+          }
+        }, 100);
+        
+        //If the enemy is dead, make it's text red to display that
+        if (this.selectedEnemy.health < 0){
+          this.previousTarget.classList.add('enemyHit');
+          this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
+        }
+      }
+      
+      //Enemy gets one last attack before dying if it ends up at 0 hp
+      if (this.combatService.player.health === 0){ 
+        this.appendText('PLAYER at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true);
+    }
+    
     } else {
       if (this.combatService.player.health !== 0){this.appendText('PLAYER miss!', true); }
       if (this.combatService.player.health === 0){ this.appendText('PLAYER at near death attempts one final attack before perishing and misses!', true) }
@@ -301,7 +339,14 @@ export class CombatTestComponent implements OnInit, OnDestroy {
       let dam = Math.floor(Math.random() * enemy.attack + 1);
       this.combatService.player.health -= dam;
       if (enemy.health !== 0){ this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true); }
-      if (enemy.health === 0){ this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
+
+      /*Kill the enemy once the final attack has happened*/
+      if (enemy.health === 0){
+        this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true); 
+        enemy.health -= 1; 
+        this.previousTarget.classList.add('enemyHit');
+      }
+      
     } else {
       if (enemy.health !== 0){this.appendText(enemy.name + ' miss!', true); }
       if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
@@ -324,6 +369,12 @@ export class CombatTestComponent implements OnInit, OnDestroy {
   //Allows you to select which enemy to attack. Clicking anywhere
   //on the enemy box selects them
   selectEnemy(index, target){
+    
+    //Do nothing if we're selecting the label and not the actual div
+    if (target.innerHTML.charAt(0) !== '<'){
+      return;
+    }
+
     if (this.previousTarget !== null){ this.previousTarget.classList.remove('enemySelected'); }
     this.selectedEnemy = this.combatService.enemyList[index];
     this.enemyForm.controls.enemySelected.setValue(index);

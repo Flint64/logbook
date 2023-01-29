@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     MatProgressBarModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
