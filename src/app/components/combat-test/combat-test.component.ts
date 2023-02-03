@@ -20,55 +20,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>
   keyListener = null;
 
-  // @HostListener('document:keypress', ['$event'])
-  // handleKeyboardEvent(event: KeyboardEvent) {
-    // if (this.viewingMainOptions){
-
-      // if (parseInt(event.key) >= 0 || parseInt(event.key) >= 9){
-        // console.log(this.combatService.)
-      // }
-      
-      // switch(event.key){
-      //   case "1": 
-      //     this.combatService.playerAttack();
-      //   break;
-  
-      //   case "2": 
-      //     this.magick();
-      //   break;
-  
-      //   case "3": 
-      //     this.inventory();
-      //   break;
-  
-      //   case "4": 
-      //     if (this.intervalID !== null){
-      //       this.stopATB();
-      //     } else {
-      //       this.startCombat();
-      //     }
-      //   break;
-      // } 
-    // }
-
-    // if (this.viewingMagicOptions){
-      // switch(event.key){
-      //   case "1":
-      //     this.menuBack('main');
-      //   break;
-      //   } 
-    // }
-
-    // if (this.viewingInventoryOptions){
-    //   switch(event.key){
-    //     case "1":
-    //       this.menuBack('main');
-    //     break;
-    //     } 
-    // }
-    
-  // }
-
   selectedEnemy: Enemy = null;
   key = null;
 
@@ -90,43 +41,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           
           let numSelected = parseInt(e.key);
           this.optionSelected(numSelected);
-          
-          //When we're one past the number of menu options pause/resume combat
-          // let num = parseInt(e.key);
-          // this.processPause(num);
         }
-
-        //0 is reserved for something else unknown as of yet
-        // if (parseInt(e.key) === 0){
-        //   // set 0 equal to 9 here
-        // }
 
       });
    }
   }
-
-  // processPause(num){
-    // if (this.viewingMainOptions && num === this.mainMenuOptions.length + 1){
-    //   console.log('yes');
-    //     if (this.intervalID !== null){
-    //       this.stopATB();
-    //     } else {
-    //       this.startCombat();
-    //     }
-    // } 
-  //   else if (this.viewingInventoryOptions && num === this.combatService.player.inventory.length + 1){
-  //       // Go back to main menu
-  //       this.menuBack('main');
-  //   } else if (this.viewingMagicOptions){
-  //     // if (num === this.combatService.player.length + 1){
-  //       // if (this.intervalID !== null){
-  //       //   this.stopATB();
-  //       // } else {
-  //       //   this.startCombat();
-  //       // }
-  //     // }
-  //   }
-  // }
   
   optionSelected(numSelected: number){
     try {
