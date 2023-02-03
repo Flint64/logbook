@@ -19,8 +19,6 @@
             <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{mainMenuOptions.length + 1 + '. Pause'}}</p>
             <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{mainMenuOptions.length + 1 + '. Resume'}}</p>
             <p (click)="playerAttack();" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >ATTACK</p>
-            <!-- <p (click)="magick()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">2. Magick</p>
-            <p (click)="inventory()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">3. Inventory</p> -->
         </div>
 
         <div id="playerMagicOptions" *ngIf="viewingMagicOptions">
@@ -50,45 +48,4 @@
                 <!-- <mat-progress-bar class="playerATB" mode="determinate" [value]="playerATB" color="accent" dir="rtl"></mat-progress-bar> -->
             </div>
         </div>
-
-        
-    <!-- <div class="sidebar">
-        test
-    </div>
-
-    <div class="gameWindow">
-
-        <p class="storyText" #story>
-           An enemy appeared!
-        </p>
-
-        <div class="centerArea">
-            <form [formGroup]="enemyForm">
-            <div *ngFor="let enemy of enemies; let i = index" (click)="selectEnemy(i, $event.target)">
-                    <label for="enemySelected">Enemy {{i}}</label>
-                    <br>
-                    {{enemy.health}}
-                    <br>
-                    <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                </div>
-            </form>
-        </div>
-
-        <mat-progress-bar *ngFor="let enemy of enemies" mode="determinate" [value]="enemyATB" color="accent"></mat-progress-bar>
-        
-        <mat-progress-bar mode="determinate" [value]="playerATB" color="primary"></mat-progress-bar>
-        <div class="menuOptions">
-             <button class="health">{{enemy.health}}</button>
-                <button class="mana">{{enemy.mana}}</button>
-            
-        </div>
-
-    </div>
-
-    <div class="sidebar">
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-    </div> -->
-
 </div>
