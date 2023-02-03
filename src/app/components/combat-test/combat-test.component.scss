@@ -152,6 +152,31 @@ mat-progress-bar{
     }
 }
 
+meter, progress{
+    width: 15em;
+}
+
+meter{
+    height: 2em;
+}
+
+progress, progress::-webkit-progress-value {
+    background: rgb(89,159,201);
+    border: .5px solid grey;
+    border-radius: 20px;
+}
+
+progress::-webkit-progress-bar {
+    border: 0;
+    // height: var(--progHeight);
+    border-radius: 20px;
+    background: white;
+}
+
+meter::-webkit-meter-optimum-value { background: rgb(153, 0, 0); border-radius: 20px; }
+/* Firefox Pseudo Class */
+  meter::-moz-meter-bar { background: rgb(186, 15, 49);; }
+
 // .sidebar{
 //     border: 1px solid white;
 //     height: 85vh;

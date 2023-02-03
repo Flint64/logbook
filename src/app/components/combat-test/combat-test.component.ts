@@ -160,7 +160,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //Handles initially starting combat & resuming from pausing
     if (!this.intervalID){
       console.log("starting combat");
-      this.intervalID = setInterval( () => this.incrementATB(), 100 );
+      this.intervalID = setInterval( () => this.incrementATB(), 25 );
     }
   }
 

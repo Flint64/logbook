@@ -6,7 +6,7 @@ export class Player {
     health: number = 99;
     attack: number = 10;
     defense: number = 30;
-    speed: number = 22; //Lower = faster
+    speed: number = 72; //Lower = faster
     mana: number = 33;
     accuracy: number = 90;
     luck: number = 5;
