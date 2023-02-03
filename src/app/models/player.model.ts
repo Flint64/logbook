@@ -23,5 +23,6 @@ export class Player {
     // inventory = new Map<string, number>([['Healing Potion', 1], ['Mana Potion', 1]]);
     // inventory = [['Healing Potion', 1], ['Mana Potion', 1]];
     inventory: Item[] = [];
+    magic: any[] = [];
 
 }

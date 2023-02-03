@@ -72,14 +72,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedEnemy: Enemy = null;
   key = null;
 
-  // test: Enemy = {health: 20, attack: 5, defense: 5, speed: 30, mana: 10, accuracy: 60, luck: 2}
-
   enemyForm: FormGroup;
   previousTarget = null;
 
   intervalID = null;
 
-  menuOptions = [];
+  mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
 
   viewingMainOptions: boolean = true;
   viewingMagicOptions: boolean = false;
@@ -94,13 +92,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           this.optionSelected(numSelected);
           
           //When we're one past the number of menu options pause/resume combat
-          if (parseInt(e.key) === combatService.mainMenuOptions.length + 1){
-            if (this.intervalID !== null){
-              this.stopATB();
-            } else {
-              this.startCombat();
-            }
-          }
+          // let num = parseInt(e.key);
+          // this.processPause(num);
         }
 
         //0 is reserved for something else unknown as of yet
@@ -112,23 +105,79 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    }
   }
 
+  // processPause(num){
+    // if (this.viewingMainOptions && num === this.mainMenuOptions.length + 1){
+    //   console.log('yes');
+    //     if (this.intervalID !== null){
+    //       this.stopATB();
+    //     } else {
+    //       this.startCombat();
+    //     }
+    // } 
+  //   else if (this.viewingInventoryOptions && num === this.combatService.player.inventory.length + 1){
+  //       // Go back to main menu
+  //       this.menuBack('main');
+  //   } else if (this.viewingMagicOptions){
+  //     // if (num === this.combatService.player.length + 1){
+  //       // if (this.intervalID !== null){
+  //       //   this.stopATB();
+  //       // } else {
+  //       //   this.startCombat();
+  //       // }
+  //     // }
+  //   }
+  // }
+  
   optionSelected(numSelected: number){
     try {
-      switch(this.combatService.mainMenuOptions[numSelected - 1]['name']){
+      if (this.viewingMainOptions){
+        if (this.viewingMainOptions && numSelected === this.mainMenuOptions.length + 1){
+            if (this.intervalID !== null){
+              this.stopATB();
+            } else {
+              this.startCombat();
+            }
+            return;
+        }
+      switch(this.mainMenuOptions[numSelected - 1]){
 
           case 'Attack':
-            this.combatService.mainMenuOptions[numSelected - 1]['func'](this.selectedEnemy);
+            this.playerAttack();
           break;
 
-          case 'Magic':
+          case 'Magick':
+            this.magick();
+          break;
+
           case 'Inventory':
-            this.combatService.mainMenuOptions[numSelected - 1]['func']();
-            break;
-            
-            case 'Test':
-              this.combatService.mainMenuOptions[numSelected - 1]['func']('GAAAAAAAAH!!');
+            this.inventory();
           break;
         }
+      } else if (this.viewingMagicOptions){
+        if (this.viewingMagicOptions && numSelected === this.combatService.player.magic.length + 1){
+          // Go back to main menu
+          this.menuBack('main');
+      }
+        
+
+      }else if (this.viewingInventoryOptions){
+        if (this.viewingInventoryOptions && numSelected === this.combatService.player.inventory.length + 1){
+          // Go back to main menu
+          this.menuBack('main');
+      }
+
+        switch(this.combatService.player.inventory[numSelected - 1].name){
+          case 'Healing Potion':
+            console.log("POTION HP");
+          break;
+
+          case 'Mana Potion':
+            console.log("POTION MP");
+          break;
+        }
+        
+      }
+
 
       } catch (error) {
         //Do nothing if func is undefined
@@ -138,8 +187,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
 
-    this.menuOptions = this.combatService.mainMenuOptions;
-
     this.enemyForm = new FormGroup({
       'enemySelected': new FormControl(null)
     });
@@ -148,10 +195,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let p = new Item('Mana Potion', 1);
     this.combatService.player.inventory.push(t);
     this.combatService.player.inventory.push(p);
-
-    // console.log(this.combatService.player.inventory[0][0] + ' - ' + this.combatService.player.inventory[0][1]);
-    // console.log(this.combatService.player.inventory[1][0] + ' - ' + this.combatService.player.inventory[1][1]);
+    let m = 'Fireball';
+    this.combatService.player.magic.push(m);
     
+    //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
     this.startCombat();
     
@@ -262,6 +309,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
         this.previousTarget.classList.add('enemyHit');
         
+        //If enemy is not dead, flash red to show damage was taken
         setTimeout(() => {
           if (this.selectedEnemy.health > 0){
             this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove('enemyHitSVG');
@@ -269,7 +317,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }, 100);
         
-        //If the enemy is dead, make it's text red to display that
+        //If the enemy is dead, make it's text & icon red
         if (this.selectedEnemy.health < 0){
           this.previousTarget.classList.add('enemyHit');
           this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
@@ -304,7 +352,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
     }
-    this.viewingMainOptions = false;
+    this.viewingMainOptions = false; //TODO: Fix the discrepancies between clicking & keyboard inputs
     this.viewingMagicOptions = true;
     this.viewingInventoryOptions = false;
   }

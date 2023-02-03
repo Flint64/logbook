@@ -15,21 +15,22 @@
 
     <div class="elem4">
         <div id="playerMainOptions" *ngIf="viewingMainOptions">
-            <p *ngFor="let option of combatService.mainMenuOptions; let i = index" (click)="optionSelected(i+1)" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >{{(i+1) + '. ' + option['name']}}</p>
-            <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{combatService.mainMenuOptions.length + 1 + '. Pause'}}</p>
-            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{combatService.mainMenuOptions.length + 1 + '. Resume'}}</p>
+            <p *ngFor="let option of mainMenuOptions; let i = index" (click)="optionSelected(i+1)" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >{{(i+1) + '. ' + option}}</p>
+            <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{mainMenuOptions.length + 1 + '. Pause'}}</p>
+            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{mainMenuOptions.length + 1 + '. Resume'}}</p>
             <p (click)="playerAttack();" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}" >ATTACK</p>
             <!-- <p (click)="magick()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">2. Magick</p>
             <p (click)="inventory()" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">3. Inventory</p> -->
         </div>
 
         <div id="playerMagicOptions" *ngIf="viewingMagicOptions">
-            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">1. Back</p>
+            <p *ngFor="let magic of combatService.player.magic; let i = index">{{(i+1) + '. ' + magic}}</p>
+            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">{{combatService.player.magic.length + 1 + '.'}} Back</p>
         </div>
 
         <div id="playerInventoryOptions" *ngIf="viewingInventoryOptions">
-            <p *ngFor="let item of player.inventory; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
-            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">{{player.inventory.length + 1 + '.'}} Back</p>
+            <p *ngFor="let item of combatService.player.inventory; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
+            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': playerATB < 100 || intervalID === null}">{{combatService.player.inventory.length + 1 + '.'}} Back</p>
         </div>        
     </div>
     
@@ -37,10 +38,10 @@
         <form [formGroup]="enemyForm">
             <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
                     <label>{{enemy.name}}</label>
-                    <p>{{enemy.health}}</p>
+                    <p class="hidden">{{enemy.health}}</p>
                     <img #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
                     <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                    <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
+                    <mat-progress-bar class="enemyATB hidden" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
                 </div>
             </form>
             
