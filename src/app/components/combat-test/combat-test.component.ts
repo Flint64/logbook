@@ -16,8 +16,9 @@ import { CombatService } from 'src/app/services/combat.service';
 export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   @ViewChild('story', {static: false}) story: ElementRef;
-  @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>
-  @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>
+  @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>;
+  @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>;
+  @ViewChildren('gameBox') gameBox: QueryList<ElementRef>;
   keyListener = null;
 
   selectedEnemy: Enemy = null;
@@ -175,10 +176,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopATB();
     }
     
-    //When ATB guage is full, allow player attack
-    if (this.combatService.player.ATB >= 100){
-      // this.combatService.playerAttack();
-    }
+    //When ATB guage is full, auto player attack if rage or something
+    // if (this.combatService.player.ATB >= 100){
+    // }
 
     //When ATB guage is full, enemy attack
     for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
@@ -305,11 +305,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
       let dam = Math.floor(Math.random() * enemy.attack + 1);
       this.combatService.player.health -= dam;
-      if (enemy.health !== 0){ this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true); }
+      if (enemy.health !== 0){ 
+        this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true);         
+        this.playerHit();      
+      }
 
       /*Kill the enemy once the final attack has happened*/
       if (enemy.health === 0){
         this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true); 
+        this.playerHit();
         enemy.health -= 1; 
         this.previousTarget.classList.add('enemyHit');
       }
@@ -331,6 +335,21 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //filled due to interval counter
     //never stopping
     this.combatService.enemyATBValues[index] = -10;
+  }
+
+  playerHit(){
+    this.gameBox.forEach((e) => {
+      e.nativeElement.classList.add('playerHit');
+    });
+    
+    //If you are not dead, flash red to show damage was taken
+    if (this.combatService.player.health > 0){
+    setTimeout(() => {
+        this.gameBox.forEach((e) => {
+          e.nativeElement.classList.remove('playerHit');
+        });
+      }, 100);
+    }
   }
 
   //Allows you to select which enemy to attack. Clicking anywhere
