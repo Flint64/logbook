@@ -1,8 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Enemy } from 'src/app/models/enemy.model';
-import { Player } from 'src/app/models/player.model';
-import { HostListener } from '@angular/core';
 import { Item } from 'src/app/models/item.model';
 import { CombatService } from 'src/app/services/combat.service';
 
@@ -22,11 +20,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   keyListener = null;
 
   selectedEnemy: Enemy = null;
-  key = null;
-
   enemyForm: FormGroup;
   previousTarget = null;
-
   intervalID = null;
 
   mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
@@ -48,6 +43,33 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    }
   }
   
+  ngOnInit(): void {
+
+    this.enemyForm = new FormGroup({
+      'enemySelected': new FormControl(null)
+    });
+
+    let t = new Item('Healing Potion', 1);
+    let p = new Item('Mana Potion', 1);
+    this.combatService.player.inventory.push(t);
+    this.combatService.player.inventory.push(p);
+    let m = 'Fireball';
+    this.combatService.player.magic.push(m);
+    
+    //Auto-start combat
+    this.enemyForm.controls.enemySelected.setValue(0);
+    this.startCombat();
+  }
+
+  ngAfterViewInit(): void {
+    // Allows selection of the first enemy to allow auto-start of combat
+    this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.keyListener();
+  }
+
   optionSelected(numSelected: number){
     try {
       if (this.viewingMainOptions){
@@ -104,43 +126,20 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       }
   }
 
-
-  ngOnInit(): void {
-
-    this.enemyForm = new FormGroup({
-      'enemySelected': new FormControl(null)
-    });
-
-    let t = new Item('Healing Potion', 1);
-    let p = new Item('Mana Potion', 1);
-    this.combatService.player.inventory.push(t);
-    this.combatService.player.inventory.push(p);
-    let m = 'Fireball';
-    this.combatService.player.magic.push(m);
-    
-    //Auto-start combat
-    this.enemyForm.controls.enemySelected.setValue(0);
-    this.startCombat();
-    
-  }
-
-  ngAfterViewInit(): void {
-    // Allows selection of the first enemy to allow auto-start of combat
-    this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
-  }
-
-  ngOnDestroy(): void {
-    this.keyListener();
-  }
-
+  /****************************************************************************************
+   * Append Text - Appends text to the story box whenever an attack is made, etc
+   ****************************************************************************************/
   appendText(text, newline: boolean = false){
     if (newline){this.story.nativeElement.innerHTML +='<br>'}
     this.story.nativeElement.innerHTML += text;
     this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
   }
 
+  /****************************************************************************************
+   * Start Combat - Starts combat and handles starting enemy ATB gauges at different
+   * values to shake up combat a bit
+   ****************************************************************************************/
   startCombat(){
-
     if (this.enemyForm.controls.enemySelected.value === null){
       return;
     }
@@ -158,17 +157,22 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     
+    //Handles initially starting combat & resuming from pausing
     if (!this.intervalID){
       console.log("starting combat");
       this.intervalID = setInterval( () => this.incrementATB(), 100 );
     }
   }
 
+  /****************************************************************************************
+   * Increment ATB - The main 'game' loop that handles incrememting the ATB gauges
+   ****************************************************************************************/
   incrementATB(){
 
+    const enemyHealth = [];
     const isBelowThreshold = (currentValue) => currentValue < 0;
 
-    const enemyHealth = [];
+    //Fill the local array enemyHealth with the health values from combatService //FIXME: Why not handle this all through the combatService?
     this.combatService.enemyList.forEach((e) => {enemyHealth.push(e.health)});
     
     //If all enemy health is less than 0 or player health is less than 0, end the battle
@@ -200,18 +204,22 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
   }
 
-  //Stops combat when player/enemy is below 0 HP
-  //Resets interval & ATB guages
-  //Also used to pause combat, so we don't clear the ATB guages
+  /****************************************************************************************
+   * Stop ATB - Stops combat when player/enemy is below 0 HP
+   * Resets interval & ATB gauges
+   * Also used to pause combat so we don't clear ATB gauges
+   ****************************************************************************************/
   stopATB(){
     console.log("stopping combat");
     clearInterval(this.intervalID);
     this.intervalID = null;
   }
 
-  //Attack is based on hit chance with their accuracy.
-  //Damage is based on attack power
-  //TODO: Defense stat
+  /****************************************************************************************
+   * Player Attack - Handles basic player attacks. //FIXME: Outsource this so that magic and items can be used without duplicating most of this?
+   * Damage is based on attack power. //TODO: Minimum damage values
+   * //TODO: Defense stat
+   ****************************************************************************************/
   playerAttack(){
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
@@ -247,7 +255,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.combatService.player.health === 0){ 
         this.appendText('PLAYER at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true);
     }
-    
+
+    //If we miss
     } else {
       if (this.combatService.player.health !== 0){this.appendText('PLAYER miss!', true); }
       if (this.combatService.player.health === 0){ this.appendText('PLAYER at near death attempts one final attack before perishing and misses!', true) }
@@ -260,22 +269,27 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopATB();
     }
 
-    //Reset ATB guage to -10 to display
-    //empty guage instead of partially
-    //filled due to interval counter
-    //never stopping
+    //Reset ATB guage to -10 to display empty guage instead of partially
+    //filled due to interval counter never stopping
     this.combatService.player.ATB = -10;
   }
 
+  /****************************************************************************************
+   * Magick - Handles selecting the magic option during combat. Displays spell list
+   ****************************************************************************************/
   magick(){
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
     }
-    this.viewingMainOptions = false; //TODO: Fix the discrepancies between clicking & keyboard inputs
+    this.viewingMainOptions = false;
     this.viewingMagicOptions = true;
     this.viewingInventoryOptions = false;
   }
 
+  /****************************************************************************************
+   * Inventory - Handles selecting the inventory option during combat. Displays consumable 
+   * items.
+   ****************************************************************************************/
   inventory(){
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
@@ -285,6 +299,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.viewingInventoryOptions = true;
   }
 
+  /****************************************************************************************
+   * Menu Back - Handles going back from any nested menu or back to the main options
+   ****************************************************************************************/
   menuBack(ref){
     switch(ref){
       case "main":
@@ -295,9 +312,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  //Attack is based on hit chance with their accuracy.
-  //Damage is based on attack power
-  //TODO: Defense stat
+  /****************************************************************************************
+   * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
+   * //TODO: Defense stat
+   ****************************************************************************************/
   enemyAttack(index){
 
     let enemy = this.combatService.enemyList[index];
@@ -325,18 +343,20 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //If the player or the enemy is at 0 hit points, they get one
     //last attack before dying. (Only attack, not action)
-    //FIXME: With current setup, if hit again before the last attack, combat ends
+    //If hit again before the last attack, combat ends
     if (enemy.health === 0){
       this.stopATB(); 
     }
 
-    //Reset ATB guage to -10 to display
-    //empty guage instead of partially
-    //filled due to interval counter
-    //never stopping
+    //Reset ATB guage to -10 to display empty guage instead of partially
+    //filled due to interval counter never stopping
     this.combatService.enemyATBValues[index] = -10;
   }
 
+  /****************************************************************************************
+   * Player Hit - Makes the game window flash red if the player is hit. Stays red
+   * if player is dead
+   ****************************************************************************************/
   playerHit(){
     this.gameBox.forEach((e) => {
       e.nativeElement.classList.add('playerHit');
@@ -352,8 +372,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  //Allows you to select which enemy to attack. Clicking anywhere
-  //on the enemy box selects them
+  /****************************************************************************************
+   * Select Enemy - Allows you to select which enemy to attack. Clicking anywhere
+   * on the enemy box selects them. Selecting the icon or name will NOT select the enemy
+   ****************************************************************************************/
   selectEnemy(index, target){
     
     //Do nothing if we're selecting the label and not the actual div
