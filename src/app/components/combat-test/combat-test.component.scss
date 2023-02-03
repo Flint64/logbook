@@ -49,8 +49,9 @@
         >div{
             width: 100%;
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
         }
     }
 
@@ -131,17 +132,17 @@ button{
 
 mat-progress-bar{
     width: 15em;
-    height: 1.5em;
-    border-radius: 0px 120px 20px 0px;
+    height: 10px;
+    // border-radius: 0px 120px 20px 0px;
 
     // Reverses the angle of the bar
     // &:last-of-type{
     //     border-radius: 0px 20px 120px 0px;
     // }
 
-    &.playerATB:last-of-type{
-        border-radius: 0px 120px 0px 0px;
-    }
+    // &.playerATB:last-of-type{
+    //     border-radius: 0px 120px 0px 0px;
+    // }
     
     &.enemyATB{
         width: 100%;

@@ -41,7 +41,8 @@
                 </div>
             </form>
             
-            <div>
+            <div class="playerBars">
+                <mat-progress-bar class="combatService.player.ATB" mode="determinate" [value]="100 * combatService.player.health / combatService.player.maxHealth" color="warning"></mat-progress-bar>
                 <mat-progress-bar class="combatService.player.ATB" mode="determinate" [value]="combatService.player.ATB" color="accent"></mat-progress-bar>
                 <!-- <mat-progress-bar class="combatService.player.ATB" mode="determinate" [value]="combatService.player.ATB" color="accent" dir="rtl"></mat-progress-bar> -->
             </div>
