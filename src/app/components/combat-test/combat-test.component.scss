@@ -158,6 +158,11 @@ meter, progress{
 
 meter{
     height: 2em;
+    margin-bottom: -8px;
+}
+
+progress{
+    height: 8px;
 }
 
 progress, progress::-webkit-progress-value {
@@ -168,7 +173,6 @@ progress, progress::-webkit-progress-value {
 
 progress::-webkit-progress-bar {
     border: 0;
-    // height: var(--progHeight);
     border-radius: 20px;
     background: white;
 }
