@@ -37,7 +37,7 @@
                     <p class="hidden">{{enemy.health}}</p>
                     <img #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
                     <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                    <mat-progress-bar class="enemyATB hidden" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
+                    <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
                 </div>
             </form>
             

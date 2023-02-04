@@ -15,7 +15,7 @@ export class Player {
     maxHealth: number = 99;
     maxAttack: number = 10;
     maxDefense: number = 30;
-    maxSpeed: number = 22; //Lower = faster
+    maxSpeed: number = 72; //Lower = faster
     maxMana: number = 33;
     maxAccuracy: number = 85;
     maxLuck: number = 5;
