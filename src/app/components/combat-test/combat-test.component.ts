@@ -1,8 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Enemy } from 'src/app/models/enemy.model';
-import { Item } from 'src/app/models/item.model';
+import { ConsumableItem } from 'src/app/models/consumableItem.model';
 import { CombatService } from 'src/app/services/combat.service';
+import { Effect } from 'src/app/models/effect.model';
 
 @Component({
   selector: 'app-combat-test',
@@ -49,10 +50,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new Item('Healing Potion', 1);
-    let p = new Item('Mana Potion', 1);
-    this.combatService.player.inventory.push(t);
-    this.combatService.player.inventory.push(p);
+    let t = new ConsumableItem('Healing Potion', 1, new Effect(20, null, null, null, null, null, null));
+    let p = new ConsumableItem('Mana Potion', 1, new Effect(null, null, null, null, -20, null, null));
+    this.combatService.player.consumables.push(t);
+    this.combatService.player.consumables.push(p);
+
     let m = 'Fireball';
     this.combatService.player.magic.push(m);
     
@@ -102,22 +104,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       }
         
 
-      }else if (this.viewingInventoryOptions){
-        if (this.viewingInventoryOptions && numSelected === this.combatService.player.inventory.length + 1){
+      } else if (this.viewingInventoryOptions){
+        if (this.viewingInventoryOptions && numSelected === this.combatService.player.consumables.length + 1){
           // Go back to main menu
           this.menuBack('main');
-      }
-
-        switch(this.combatService.player.inventory[numSelected - 1].name){
-          case 'Healing Potion':
-            console.log("POTION HP");
-          break;
-
-          case 'Mana Potion':
-            console.log("POTION MP");
-          break;
+        } else {
+          this.useConsumable(numSelected); 
         }
-        
       }
 
 
@@ -169,14 +162,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    ****************************************************************************************/
   incrementATB(){
 
-    const enemyHealth = [];
+    this.combatService.enemyHealthValues = [];
     const isBelowThreshold = (currentValue) => currentValue < 0;
 
-    //Fill the local array enemyHealth with the health values from combatService //FIXME: Why not handle this all through the combatService?
-    this.combatService.enemyList.forEach((e) => {enemyHealth.push(e.health)});
+    //Fill an array that only holds enemy health values to check each one to know if we should end combat or not
+    this.combatService.enemyList.forEach((e) => {this.combatService.enemyHealthValues.push(e.health)});
     
     //If all enemy health is less than 0 or player health is less than 0, end the battle
-    if (enemyHealth.every(isBelowThreshold) || (this.combatService.player.health < 0)){
+    if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
       this.stopATB();
     }
     
@@ -269,9 +262,39 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopATB();
     }
 
-    //Reset ATB guage to -10 to display empty guage instead of partially
-    //filled due to interval counter never stopping
+    //Reset ATB guage to empty
     this.combatService.player.ATB = -10;
+  }
+
+  /****************************************************************************************
+   * Use Consumable - Allows usage of a consumable item from the inventory menu
+   ****************************************************************************************/
+  useConsumable(numSelected){
+    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+      return;
+    }
+
+    for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
+
+
+      
+      //If the value of the selected propert(ies) isn't null and we have at least one of the item
+      if (value !== null &&  this.combatService.player.consumables[numSelected - 1].amount > 0){
+
+        //If addig the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
+        if ((this.combatService.player[`${key}`] += value) > this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
+          this.combatService.player[`${key}`] = this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)];
+        } else if ((this.combatService.player[`${key}`] += value) < 0) {
+          this.combatService.player[`${key}`] = 0;
+        } else { //Otherwise add/subtract the value like normal
+          this.combatService.player[`${key}`] += value;
+          this.combatService.player.consumables[numSelected - 1].amount -= 1;
+        }
+
+        this.combatService.player.ATB = 0;
+        this.menuBack('main');
+      }
+    }    
   }
 
   /****************************************************************************************

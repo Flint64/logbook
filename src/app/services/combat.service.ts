@@ -24,6 +24,7 @@ export class CombatService {
   ];
   
   enemyATBValues: number[] = [];
+  enemyHealthValues: number[] = [];
   
   constructor() { }
 

@@ -25,8 +25,8 @@
         </div>
 
         <div id="playerInventoryOptions" *ngIf="viewingInventoryOptions">
-            <p *ngFor="let item of combatService.player.inventory; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
-            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': combatService.player.ATB < 100 || intervalID === null}">{{combatService.player.inventory.length + 1 + '.'}} Back</p>
+            <p *ngFor="let item of combatService.player.consumables; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
+            <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': combatService.player.ATB < 100 || intervalID === null}">{{combatService.player.consumables.length + 1 + '.'}} Back</p>
         </div>        
     </div>
     
@@ -34,7 +34,7 @@
         <form [formGroup]="enemyForm">
             <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
                     <label>{{enemy.name}}</label>
-                    <p class="hidden">{{enemy.health}}</p>
+                    <p>{{enemy.health}}</p>
                     <img #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
                     <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
                     <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>

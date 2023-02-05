@@ -9,14 +9,15 @@ export class Enemy {
         public accuracy: number,
         public luck: number){
 
-            this.name = name;
-            this.health = health;
-            this.attack = attack;
-            this.defense = defense;
-            this.speed = speed; //Lower = faster
-            this.mana = mana;
-            this.accuracy = accuracy;
-            this.luck = luck;
+        this.name = name;
+        this.health = health;
+        this.attack = attack;
+        this.defense = defense;
+        this.speed = speed; //Lower = faster
+        this.mana = mana;
+        this.accuracy = accuracy;
+        this.luck = luck;
+        
         }
         
         

@@ -1,4 +1,5 @@
-import { Item } from "./item.model";
+import { ConsumableItem } from "./consumableItem.model";
+import { EquippableItem } from "./equippableItem.model";
 
 export class Player {
     constructor(){}
@@ -20,7 +21,8 @@ export class Player {
     maxAccuracy: number = 85;
     maxLuck: number = 5;
 
-    inventory: Item[] = [];
+    consumables: ConsumableItem[] = [];
+    inventory: EquippableItem[] = [];
     magic: any[] = [];
 
 }
