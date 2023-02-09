@@ -8,6 +8,7 @@ export class Effect {
         public mana: number,
         public accuracy: number,
         public luck: number,
+        public poison: number,
         ){
             this.health = health;
             this.attack = attack;
@@ -16,5 +17,6 @@ export class Effect {
             this.mana = mana;
             this.accuracy = accuracy;
             this.luck = luck;
+            this.poison = poison;
         }
     }

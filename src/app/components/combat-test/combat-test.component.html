@@ -8,7 +8,7 @@
     <p class="elem2 storyText" #gameBox #story>An enemy appeared!</p>
     
     <div class="elem3" #gameBox>
-        <button class="health">{{combatService.player.health}}</button>
+        <button class="health">{{combatService.player.health | number: '3.0-0'}}</button>
         <button class="mana">{{combatService.player.mana}}</button> 
     </div>
 

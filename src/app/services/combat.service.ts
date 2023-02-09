@@ -37,12 +37,17 @@ export class CombatService {
     this.player.turnCount++;
 
     this.player.effects.forEach((e, index) => {
+
+      //If the player has a poison effect, deal damage before decrementing the counter
+      //Poison is equal to the modifier % of the your max hp
+      if (e.name === 'poison'){
+        this.player.health -= (e.modifier / 100) * this.player.maxHealth;
+      }
+      
+      //Reset the affected stat back to the max value
       if (e.duration - 1 === 0){
         this.player.effects.splice(index, 1);
-
-        //Reset the affected stat back to the max value
         this.player[`${e.name}`] = this.player['max' + e.name.charAt(0).toUpperCase() + e.name.slice(1)];
-        
       } else {
         e.duration--;
       }
