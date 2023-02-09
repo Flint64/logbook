@@ -52,8 +52,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let t = new ConsumableItem('Healing Potion', 1, new Effect(20, null, null, null, null, null, null));
     let p = new ConsumableItem('Mana Potion', 1, new Effect(null, null, null, null, -20, null, null));
+    let s = new ConsumableItem('Speed Potion', 1, new Effect(null, null, null, -7, null, null, null));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
+    this.combatService.player.consumables.push(s);
 
     let m = 'Fireball';
     this.combatService.player.magic.push(m);
@@ -273,28 +275,39 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
     }
+    
+    //Only reset the menu if the item was actually consumed
+    if ((this.combatService.player.consumables[numSelected - 1].amount - 1) < 0){
+      return;
+    } else {
+      this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
+      this.menuBack('main');
+    }
 
-    for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
+    
+    
 
-
+    
+    // for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
       
-      //If the value of the selected propert(ies) isn't null and we have at least one of the item
-      if (value !== null &&  this.combatService.player.consumables[numSelected - 1].amount > 0){
+    //   //If the value of the selected propert(ies) isn't null and we have at least one of the item
+    //   if (value !== null &&  this.combatService.player.consumables[numSelected - 1].amount > 0){
 
-        //If addig the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
-        if ((this.combatService.player[`${key}`] += value) > this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
-          this.combatService.player[`${key}`] = this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)];
-        } else if ((this.combatService.player[`${key}`] += value) < 0) {
-          this.combatService.player[`${key}`] = 0;
-        } else { //Otherwise add/subtract the value like normal
-          this.combatService.player[`${key}`] += value;
-          this.combatService.player.consumables[numSelected - 1].amount -= 1;
-        }
-
-        this.combatService.player.ATB = 0;
-        this.menuBack('main');
-      }
-    }    
+    //     //If addig the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
+    //     if ((this.combatService.player[`${key}`] += value) > this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
+    //       this.combatService.player[`${key}`] = this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)];
+    //     } else if ((this.combatService.player[`${key}`] += value) < 0) {
+    //       this.combatService.player[`${key}`] = 0;
+    //     } else { //Otherwise add/subtract the value like normal
+    //       this.combatService.player[`${key}`] += value;
+    //     }
+        
+    //     this.combatService.player.consumables[numSelected - 1].amount -= 1;
+    //     this.combatService.player.ATB = 0;
+    //     this.menuBack('main');
+    //   }
+    // }
+    
   }
 
   /****************************************************************************************

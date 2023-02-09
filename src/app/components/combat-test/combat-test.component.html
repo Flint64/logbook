@@ -25,7 +25,7 @@
         </div>
 
         <div id="playerInventoryOptions" *ngIf="viewingInventoryOptions">
-            <p *ngFor="let item of combatService.player.consumables; let i = index">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
+            <p *ngFor="let item of combatService.player.consumables; let i = index" (click)="optionSelected(i+1)">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
             <p (click)="menuBack('main')" [ngClass]="{'actionDisabled': combatService.player.ATB < 100 || intervalID === null}">{{combatService.player.consumables.length + 1 + '.'}} Back</p>
         </div>        
     </div>

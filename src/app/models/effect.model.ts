@@ -17,4 +17,4 @@ export class Effect {
             this.accuracy = accuracy;
             this.luck = luck;
         }
-}
+    }
