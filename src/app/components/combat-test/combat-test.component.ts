@@ -50,9 +50,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1, new Effect(20, null, null, null, null, null, null));
-    let p = new ConsumableItem('Mana Potion', 1, new Effect(null, null, null, null, -20, null, null));
-    let s = new ConsumableItem('Speed Potion', 1, new Effect(null, null, null, -7, null, null, null));
+    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, null, null, null));
+    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null));
+    let s = new ConsumableItem('Speed Potion', 2, 4, new Effect(null, null, null, 200, null, null, null));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);
@@ -63,6 +63,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
     this.startCombat();
+    this.stopATB();    
   }
 
   ngAfterViewInit(): void {
@@ -187,13 +188,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     //Fill the bar based on percent rather than straight value
-    //based on the speed. Lower = faster
-    this.combatService.player.ATB += (1*100/this.combatService.player.speed);
+    //based on the speed.
+    this.combatService.player.ATB += (this.combatService.player.speed/100);
 
     //Increment each individual enemy's ATB guage if they have health remaining
     for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
       if (this.combatService.enemyList[i].health >= 0){
-        this.combatService.enemyATBValues[i] += (1*100/this.combatService.enemyList[i].speed);
+        this.combatService.enemyATBValues[i] += (this.combatService.enemyList[i].speed/100);
       }
     }
     
@@ -264,9 +265,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopATB();
     }
 
-    //Reset ATB guage to empty
-    this.combatService.player.ATB = -10;
-    this.combatService.player.turnCount++;
+    this.combatService.endTurn();
+
   }
 
   /****************************************************************************************
@@ -283,31 +283,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
       this.menuBack('main');
+      this.combatService.endTurn();
     }
-
-    
-    
-
-    
-    // for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
-      
-    //   //If the value of the selected propert(ies) isn't null and we have at least one of the item
-    //   if (value !== null &&  this.combatService.player.consumables[numSelected - 1].amount > 0){
-
-    //     //If addig the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
-    //     if ((this.combatService.player[`${key}`] += value) > this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
-    //       this.combatService.player[`${key}`] = this.combatService.player['max' + key.charAt(0).toUpperCase() + key.slice(1)];
-    //     } else if ((this.combatService.player[`${key}`] += value) < 0) {
-    //       this.combatService.player[`${key}`] = 0;
-    //     } else { //Otherwise add/subtract the value like normal
-    //       this.combatService.player[`${key}`] += value;
-    //     }
-        
-    //     this.combatService.player.consumables[numSelected - 1].amount -= 1;
-    //     this.combatService.player.ATB = 0;
-    //     this.menuBack('main');
-    //   }
-    // }
     
   }
 

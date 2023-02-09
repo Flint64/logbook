@@ -28,6 +28,28 @@ export class CombatService {
   
   constructor() { }
 
+  /****************************************************************************************
+   * End Turn - Ends the player turn in combat. Resets the player's ATB gauge and
+   * decrements any active effects on the player
+   ****************************************************************************************/
+  endTurn(){
+    this.player.ATB = 0;
+    this.player.turnCount++;
+
+    this.player.effects.forEach((e, index) => {
+      if (e.duration - 1 === 0){
+        this.player.effects.splice(index, 1);
+
+        //Reset the affected stat back to the max value
+        this.player[`${e.name}`] = this.player['max' + e.name.charAt(0).toUpperCase() + e.name.slice(1)];
+        
+      } else {
+        e.duration--;
+      }
+    });
+    console.log(this.player.effects);
+  }
+
   //Only put 8 elements in the array as the last 9th will either be pause or a back button
   // mainMenuOptions = [this.attack, this.magic, this.inventory];
   
