@@ -266,6 +266,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //Reset ATB guage to empty
     this.combatService.player.ATB = -10;
+    this.combatService.player.turnCount++;
   }
 
   /****************************************************************************************

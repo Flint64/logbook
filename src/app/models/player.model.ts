@@ -21,6 +21,8 @@ export class Player {
     maxAccuracy: number = 85;
     maxLuck: number = 5;
 
+    turnCount: number = 0;
+
     consumables: ConsumableItem[] = [];
     inventory: EquippableItem[] = [];
     magic: any[] = [];
