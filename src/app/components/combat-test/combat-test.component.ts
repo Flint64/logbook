@@ -53,7 +53,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, null, null, null, null));
     let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null));
     let s = new ConsumableItem('Speed Potion', 2, 4, new Effect(null, null, null, 200, null, null, null, null));
-    let sp = new ConsumableItem('Poison Yourself 1', 1, 5, new Effect(null, null, null, null, null, null, null, 5));
+    let sp = new ConsumableItem('Poison Yourself', 1, 3, new Effect(null, null, null, null, null, null, null, 5));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);
