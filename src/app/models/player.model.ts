@@ -6,6 +6,7 @@ export class Player {
 
     health: number = 100;
     attack: number = 10;
+    minAttack: number = 3;
     defense: number = 30;
     speed: number = 200;
     mana: number = 33;
@@ -28,19 +29,17 @@ export class Player {
     magic: any[] = [];
     effects: any[] = [];
 
-    //Resets the player back to max values after combat
+    //Resets any modified player values to the max value after combat excluding health and mana
     //TODO: Make sure this accounts for any equipment
     reset(){
         this.ATB = 100;
         this.turnCount = 0;
 
-        this.maxHealth = 100;
-        this.maxAttack = 10;
-        this.maxDefense = 30;
-        this.maxSpeed = 200;
-        this.maxMana = 33;
-        this.maxAccuracy = 90;
-        this.maxLuck = 5;
+        this.attack = this.maxAttack;
+        this.defense = this.maxDefense;
+        this.speed = this.maxSpeed;
+        this.accuracy = this.maxAccuracy;
+        this.luck = this.maxLuck;
         this.effects = [];
     }
     

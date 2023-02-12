@@ -175,7 +175,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     //If all enemy health is less than 0 or player health is less than 0, end the battle
     if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
-      this.stopATB();
+      this.stopATB(true);
     }
     
     //When ATB guage is full, auto player attack if rage or something
@@ -207,15 +207,20 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Resets interval & ATB gauges
    * Also used to pause combat so we don't clear ATB gauges
    ****************************************************************************************/
-  stopATB(){
+  stopATB(endCombat: boolean = false){
+
+    if (endCombat){
+      this.combatService.player.reset();
+    }
+    
     console.log("stopping combat");
     clearInterval(this.intervalID);
     this.intervalID = null;
   }
 
   /****************************************************************************************
-   * Player Attack - Handles basic player attacks. //FIXME: Outsource this so that magic and items can be used without duplicating most of this?
-   * Damage is based on attack power. //TODO: Minimum damage values
+   * Player Attack - Handles basic player attacks.
+   * Damage is based on attack power.
    * //TODO: Defense stat
    ****************************************************************************************/
   playerAttack(){
@@ -225,7 +230,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Returns a random integer from 1-100:
     if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
-      let dam = Math.floor(Math.random() * this.combatService.player.attack + 1);
+      //Damage is a random number between player min attack and attack
+      let dam = Math.floor(Math.random() * (this.combatService.player.attack - this.combatService.player.minAttack + 1) + this.combatService.player.minAttack);
 
       //If the player has more than 0 hp allow the hit
       if (this.combatService.player.health !== 0){

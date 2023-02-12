@@ -52,7 +52,7 @@ export class CombatService {
         e.duration--;
       }
     });
-    console.log(this.player.effects);
+    // console.log(this.player.effects);
   }
 
   //Only put 8 elements in the array as the last 9th will either be pause or a back button
