@@ -1,8 +1,6 @@
 .centerCombat{
     height: 100%;
     display: grid;
-    grid-template-columns: 12% 50% 12%;
-    grid-template-rows: 18% 59% 18%;
     justify-content: center;
     align-content: center;
     gap: 5px;
@@ -12,59 +10,49 @@
     >div{
         border: 1px solid white;
         padding: 10px;
-        // border-radius: 10px;
     }
     
     >p{
         border: 1px solid white;
         padding: 10px;
-        // border-radius: 10px;
     }
 
-    .elem1 { 
-        // background-color: yellow;
-        grid-row: 1 / -1;
-    }
-    // .elem2 { 
-        // background-color: blue;
-    // }
-    .elem3 { 
-        // background-color: purple;
-        grid-row: 1 / -1;
-    }
     .elem4 { 
-        // background-color: green;
-        grid-column: 2 / -2;
-        grid-row-start: 3;
-    }
-    .elem5 { 
-        // background-color: red;
-        margin: 0;
-        padding: 0;
-        grid-column: 2 / 3;
-        display: grid;
-        grid-template-columns: 100%;
-        grid-template-rows: 90% 10%;
-
-        >div{
+        height: 290px;
+        padding-bottom: 25px;
+        .playerBars{
             width: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: space-around;
             align-items: center;
-            justify-content: flex-end;
+            height: 50px;
+            div:first-of-type{
+                width: 100%;
+            }
+            div:last-of-type{
+                progress{ 
+                    width: 40%;
+                }
+            }
         }
+    }
+    .elem5 { 
+        margin: 0;
+        padding: 0;
+        min-height: 122px;
     }
 
     form{
         display: flex;
         flex-wrap: wrap;
         height: 100%;
-        width: 100%;
+        // width: 100%;
         justify-content: space-evenly;
         div{
             border: 1px solid white;
-            height: 7em;
-            width: 7em;
+            height: 5em;
+            width: 5em;
             padding: 5px;
             margin: 10px;
             &:hover{
@@ -118,6 +106,9 @@ button{
     // overflow-y: scroll;
     overflow-y: hidden;
     margin: 0;
+    height: 5em;
+    width: 324px;
+    
 }
 
 .enemySelected{
@@ -131,67 +122,64 @@ button{
 }
 
 mat-progress-bar{
-    width: 15em;
-    height: 10px;
-    // border-radius: 0px 120px 20px 0px;
-
-    // Reverses the angle of the bar
-    // &:last-of-type{
-    //     border-radius: 0px 20px 120px 0px;
-    // }
-
-    // &.playerATB:last-of-type{
-    //     border-radius: 0px 120px 0px 0px;
-    // }
-    
     &.enemyATB{
         width: 100%;
         height: 1em;
         border-radius: 0;
-        // display: none;
+        display: none;
     }
 }
 
 meter, progress{
-    width: 15em;
+    min-width: 10em;
 }
 
 meter{
+    max-width: 15em;
     height: 2em;
     margin-bottom: -8px;
+    margin-top: -8px;
 }
 
 progress{
-    height: 8px;
+    height: 10px;
+    width: 100%;
+    max-width: 20em;
+    text-align: center;
+}
+
+#manaBar:after {
+    counter-reset: variable var(--manaValue);
+    content: counter(variable);
+}
+
+#playerHealthBar:after {
+    counter-reset: variable var(--healthValue);
+    content: counter(variable);
 }
 
 progress, progress::-webkit-progress-value {
     background: rgb(89,159,201);
-    border: .5px solid grey;
-    border-radius: 20px;
+    border: 1px solid rgba(69, 69, 69, 0.764);
 }
 
-progress::-webkit-progress-bar {
-    border: 0;
-    border-radius: 20px;
-    background: white;
+#manaBar::-webkit-progress-value{
+    background: purple;
+    display: block;
+    float: right;
 }
 
-meter::-webkit-meter-optimum-value { background: rgb(153, 0, 0); border-radius: 20px; }
-/* Firefox Pseudo Class */
-  meter::-moz-meter-bar { background: rgb(186, 15, 49);; }
+#playerHealthBar::-webkit-progress-value{
+    background: crimson;
+}
 
-// .sidebar{
-//     border: 1px solid white;
-//     height: 85vh;
-//     width: 10em;
-//     margin-top: -20px;
-//     background-color: white;
-//     margin-right: -1px;
-//     &:last-of-type{
-//         margin-left: -1px;
-//     }
-// }
+#manaBar{
+    margin-left: 3px;
+}
+
+#playerHealthBar{
+    margin-left: -3px;
+}
 
 .hidden{
     display: none;
@@ -202,7 +190,7 @@ meter::-webkit-meter-optimum-value { background: rgb(153, 0, 0); border-radius: 
     padding: 0;
     font-size: 1.2rem;
     margin-bottom: 10px;
-    width: max-content;
+    // width: max-content;
     
     &:hover{
         color: black;
@@ -211,11 +199,8 @@ meter::-webkit-meter-optimum-value { background: rgb(153, 0, 0); border-radius: 
     }
 }
 
-#playerMainOptions{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+#playerMainOptions, #playerMagicOptions, #playerInventoryOptions{
+    height: 90%;
 }
 
 .actionDisabled{
@@ -243,7 +228,7 @@ meter::-webkit-meter-optimum-value { background: rgb(153, 0, 0); border-radius: 
     align-items: center;
     flex-direction: column;
     p{
-        padding-top: 5px;;
+        padding-top: 5px;
         margin: 0;
     }
     img{
