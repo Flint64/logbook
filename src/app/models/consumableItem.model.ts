@@ -16,24 +16,39 @@ export class ConsumableItem {
 
     useItem(player, numSelected){
         for (const [key, value] of Object.entries(player.consumables[numSelected - 1].effect)) {
+            // console.log(key + ': ' + value);
             
             //If the value of the selected propert(ies) isn't null and we have at least one of the item
             if (value !== null && player.consumables[numSelected - 1].amount > 0){
                 
                 //If there's already a value in the array that matches the key, add to its duration instead of adding a seperate effect
-                if (player.consumables[numSelected - 1].duration !== null){
-
-                    if (player.effects.length === 0){
-                        player.effects.push({name: key, modifier: value, duration: player.consumables[numSelected - 1].duration});
-                    } else {
-                        player.effects.forEach((e) => {
-                            if (e.name === key) {
-                                e.duration += player.consumables[numSelected - 1].duration;
-                            }
-                        })
+                if (player.effects.length){
+                    for (let i = 0; i < player.effects.length; i++){
+                        if (player.effects[i].name === key){
+                            player.effects[i].duration += player.consumables[numSelected - 1].duration;
+                        }
                     }
-                    
                 }
+                
+                //Otherwise just add the new effects
+                if (player.consumables[numSelected - 1].duration !== null){
+                    player.effects.push({name: key, modifier: value, duration: player.consumables[numSelected - 1].duration});
+                }
+
+                //Remove duplicate effects (removing the one with the lower duration)
+                //Compare each item to every other
+                for (let i = 0; i < player.effects.length; i++) {
+                    for (let j = i + 1; j < player.effects.length; j++) {
+                        //If the names match (two duplicate effects), remove the one with the lower duration
+                        if (player.effects[i].name === player.effects[j].name){
+                        //   console.log(`Comparing ${player.effects[i].duration} > ${player.effects[j].duration}`);
+                          if (player.effects[i].duration > player.effects[j].duration){
+                                player.effects.splice(j, 1);
+                            }
+                        }
+                    }
+                }
+
 
                 //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
                 if ((player[`${key}`] + value) >= player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){

@@ -36,22 +36,40 @@ export class CombatService {
     this.player.ATB = 0;
     this.player.turnCount++;
 
-    this.player.effects.forEach((e, index) => {
-
+      //Loop in reverse from the player effects length to prevent the splice from changing the index and only removing one item per loop
+      let i = this.player.effects.length;
+      while (i--){
+      
       //If the player has a poison effect, deal damage before decrementing the counter
       //Poison is equal to the modifier % of the your max hp
-      if (e.name === 'poison'){
-        this.player.health -= (e.modifier / 100) * this.player.maxHealth;
+      switch(this.player.effects[i].name){
+        case 'poison':
+          this.player.health -= (this.player.effects[i].modifier / 100) * this.player.maxHealth;
+        break;
+
+        //These need to be here to prevent them from being removed before their duration is up
+        case 'speed':
+        break;
+          
+        default:
+          this.player.effects.splice(i, 1);
       }
-      
+    };
+
+    //Have this loop separately from the above loop or else effects with multiple effects have their
+    //duration decremented for each one when it should only happen once because erroneous effects
+    //should be removed in the defualt case above
+    i = this.player.effects.length;
+    while (i--){
       //Reset the affected stat back to the max value
-      if (e.duration - 1 === 0){
-        this.player.effects.splice(index, 1);
-        this.player[`${e.name}`] = this.player['max' + e.name.charAt(0).toUpperCase() + e.name.slice(1)];
+      if (this.player.effects[i].duration - 1 === 0){
+        this.player.effects.splice(i, 1);
+        this.player[`${this.player.effects[i].name}`] = this.player['max' + this.player.effects[i].name.charAt(0).toUpperCase() + this.player.effects[i].name.slice(1)];
       } else {
-        e.duration--;
+        this.player.effects[i].duration--;
       }
-    });
+    };
+    
     // console.log(this.player.effects);
   }
 
