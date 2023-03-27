@@ -50,13 +50,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, null, null, null, null));
-    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -10, null, null, null));
+    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, -5, null, null, null));
+    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null));
     let s = new ConsumableItem('Speed Potion', 2, 10, new Effect(null, null, null, 400, null, null, null, null));
     let sp = new ConsumableItem('Poison Yourself', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
     let sp2 = new ConsumableItem('Poison Yourself 2', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
-    let sp3 = new ConsumableItem('Poison Yourself 3', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
-    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(-20, 1, null, null, -12, null, null, 5)); //FIXME: Health/mana numbers aren't accurate when removing more than ~20 at a time
+    let sp3 = new ConsumableItem('Poison Yourself 3', 1, 10, new Effect(null, null, null, null, -10, null, null, 5));
+    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(-20, 1, null, null, -5, null, null, 5));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);

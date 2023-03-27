@@ -64,13 +64,17 @@ export class ConsumableItem {
                     break;
                 }
                 
+                //Original value set here or else after modifying in the first if block here it gets set to the wrong value
+                //due to the value being compared changing before the next comparison
+                const originalPlayerValue = player[`${key}`];
+
                 //If adding the value is less than or equal to the max, add the value
-                if ((player[`${key}`] + value) < player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
+                if ((originalPlayerValue + value) < player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
                     player[`${key}`] += value;
                 }
                 
                 //If subtracting the value is less than 0, set it to 0
-                if ((player[`${key}`] + value) < 0) {
+                if ((originalPlayerValue + value) < 0) {
                     player[`${key}`] = 0;
                 } 
 
