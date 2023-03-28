@@ -8,7 +8,7 @@ export class Player {
     attack: number = 10;
     minAttack: number = 3;
     defense: number = 30;
-    speed: number = 100;
+    speed: number = 200;
     mana: number = 33;
     accuracy: number = 90;
     luck: number = 5;
@@ -16,7 +16,7 @@ export class Player {
     maxHealth: number = 100;
     maxAttack: number = 10;
     maxDefense: number = 30;
-    maxSpeed: number = 100;
+    maxSpeed: number = 200;
     maxMana: number = 33;
     maxAccuracy: number = 90;
     maxLuck: number = 5;

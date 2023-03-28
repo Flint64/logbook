@@ -56,7 +56,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let sp = new ConsumableItem('Poison Yourself', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
     let sp2 = new ConsumableItem('Poison Yourself 2', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
     let sp3 = new ConsumableItem('Poison Yourself 3', 1, 10, new Effect(null, null, null, null, -10, null, null, 5));
-    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(-20, 1, null, null, -5, null, null, 5));
+    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, 5, null, null, 5));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);
@@ -296,6 +296,33 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     } else {
       this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
+      
+      for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
+        if (value !== null){
+          if (value > 0) {
+            switch (key){
+              case 'health':
+              case 'mana':
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to restore ${value} ${key}`, true);
+              break;
+                
+              case 'speed':
+              case 'attack':
+              case 'defense':
+              case 'accuracy':
+              case 'luck':
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to gain a ${key} boost for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+              break;
+                
+              case 'poison':
+                this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+              break;
+            }
+          }
+        }
+        // console.log(`${key}: ${value}`);
+      }
+
       this.menuBack('main');
       this.combatService.endTurn();
     }
