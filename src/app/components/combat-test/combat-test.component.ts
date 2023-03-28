@@ -403,13 +403,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /****************************************************************************************
    * Select Enemy - Allows you to select which enemy to attack. Clicking anywhere
-   * on the enemy box selects them. Selecting the icon or name will NOT select the enemy
+   * on the enemy box selects them.
    ****************************************************************************************/
   selectEnemy(index, target){
+
     
-    //Do nothing if we're selecting the label and not the actual div
+    //If we select the label, hp value, or image in the enemy box,
+    //set the target to the parent to actually select the enemy
     if (target.innerHTML.charAt(0) !== '<'){
-      return;
+      target = target.parentNode;
     }
 
     if (this.previousTarget !== null){ this.previousTarget.classList.remove('enemySelected'); }

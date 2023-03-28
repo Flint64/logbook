@@ -1,16 +1,11 @@
 <div class="centerCombat">
 
-    <!-- <div class="elem1" #gameBox> -->
-        <!-- <button (click)="startCombat()" [disabled]="enemyForm.controls.enemySelected.value === null || intervalID !== null">START</button> -->
-        <!-- <button (click)="stopATB()" [disabled]="intervalID === null">PAUSE</button> -->
-    <!-- </div> -->
-
     <div class="elem5" #gameBox>
         <form [formGroup]="enemyForm">
             <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
-                <label>{{enemy.name}}</label>
-                <p>{{enemy.health}}</p>
-                <img #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
+                <label (click)="selectEnemy(i, $event.target)">{{enemy.name}}</label>
+                <p (click)="selectEnemy(i, $event.target)">{{enemy.health}}</p>
+                <img (click)="selectEnemy(i, $event.target)" #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
                 <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
                 <mat-progress-bar class="enemyATB" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
             </div>
