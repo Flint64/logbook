@@ -297,13 +297,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
       
+      // Display what was used and the effect it has based on the type
       for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
         if (value !== null){
-          if (value > 0) {
             switch (key){
               case 'health':
               case 'mana':
-                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to restore ${value} ${key}`, true);
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? 'restore' : 'remove'} ${value} ${key}`, true);
               break;
                 
               case 'speed':
@@ -311,14 +311,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
               case 'defense':
               case 'accuracy':
               case 'luck':
-                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to gain a ${key} boost for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? 'gain a ${key} boost' : 'lower ${key}'} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
               break;
                 
               case 'poison':
                 this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
               break;
             }
-          }
         }
         // console.log(`${key}: ${value}`);
       }
