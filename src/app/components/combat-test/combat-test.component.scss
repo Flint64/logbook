@@ -110,6 +110,30 @@ button{
     width: 324px;
 }
 
+.showOverflow{
+    overflow-y: scroll;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
 .enemySelected{
     border: 5px solid white !important;
 }
@@ -179,6 +203,7 @@ progress, progress::-webkit-progress-value {
 #playerHealthBar{
     margin-left: -3px;
 }
+
 
 .hidden{
     display: none;

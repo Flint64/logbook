@@ -12,7 +12,7 @@
         </form>
     </div>
 
-    <div class="elem2 storyText" #gameBox #story>
+    <div class="elem2 storyText" #gameBox #story [ngClass]="{'showOverflow': intervalID === null}">
         <span>An enemy appeared!</span>
     </div>
 
