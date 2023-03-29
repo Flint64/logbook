@@ -309,8 +309,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (value !== null){
             switch (key){
               case 'health':
+                this.colorGameBox();
               case 'mana':
                 this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? 'restore' : 'remove'} ${Math.abs(value)} ${key}`, true);
+                this.colorGameBox(false, true, 'purpleBorder');
               break;
                 
               case 'speed':
@@ -319,10 +321,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
               case 'accuracy':
               case 'luck':
                 this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? `gain a ${key} boost` : `lower ${key}`} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
-              break;
+                this.colorGameBox(false, true, 'yellowBorder');
+                break;
                 
-              case 'poison':
-                this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
+                case 'poison':
+                  this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
+                  this.colorGameBox(false, true, 'greenBorder');
               break;
             }
         }
@@ -387,13 +391,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.combatService.player.health -= dam;
       if (enemy.health !== 0){ 
         this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true, 'enemyTextGrey');         
-        this.playerTakesDamage();      
+        this.colorGameBox();
       }
 
       /*Kill the enemy once the final attack has happened*/
       if (enemy.health === 0){
         this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true, 'enemyTextRed'); 
-        this.playerTakesDamage();
+        this.colorGameBox();
         enemy.health -= 1; 
         this.previousTarget.classList.add('enemyHit');
       }
@@ -419,18 +423,34 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Player Takes Damage - Makes the game window flash red if the player is hit. Stays red
    * if player is dead
    ****************************************************************************************/
-  playerTakesDamage(){
-    this.gameBox.forEach((e) => {
-      e.nativeElement.classList.add('playerHit');
-    });
-    
-    //If you are not dead, flash red to show damage was taken
-    if (this.combatService.player.health > 0){
-    setTimeout(() => {
-        this.gameBox.forEach((e) => {
-          e.nativeElement.classList.remove('playerHit');
-        });
-      }, 100);
+  colorGameBox(playerTakesDamage: boolean = true, useItem: boolean = false, className: string = null){
+
+    if (playerTakesDamage){
+      this.gameBox.forEach((e) => {
+        e.nativeElement.classList.add('playerHit');
+      });
+      
+      //If you are not dead, flash red to show damage was taken
+      if (this.combatService.player.health > 0){
+      setTimeout(() => {
+          this.gameBox.forEach((e) => {
+            e.nativeElement.classList.remove('playerHit');
+          });
+        }, 175);
+      }
+    }
+
+    if (useItem){
+      this.gameBox.forEach((e) => {
+        e.nativeElement.classList.add(className);
+      });
+      
+      //If you are not dead, flash red to show damage was taken
+      setTimeout(() => {
+          this.gameBox.forEach((e) => {
+            e.nativeElement.classList.remove(className);
+          });
+        }, 175);
     }
   }
 

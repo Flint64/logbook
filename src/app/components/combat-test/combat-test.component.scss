@@ -263,26 +263,20 @@ progress, progress::-webkit-progress-value {
 
 /* Toggle styles for different events */
 
-.enemyHitSVG{
-    filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%);
-}
+.enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%); }
 
-.enemyHit{
-    color: crimson;
-}
+.enemyHit{ color: crimson; }
 
-.playerHit{
-    border: 1px solid crimson !important;
-}
+.playerHit{ border: 1px solid crimson !important; }
 
-.greenText{
-    color: green !important;
-}
+.purpleBorder{ border: 1px solid rebeccapurple !important; }
 
-.enemyTextRed{
-    color: darkred !important;
-}
+.yellowBorder{ border: 1px solid gold !important; }
 
-.enemyTextGrey{
-    color: #9f9f9f !important;
-}
+.greenBorder{ border: 1px solid green !important; }
+
+.greenText{ color: green !important; }
+
+.enemyTextRed{ color: darkred !important; }
+
+.enemyTextGrey{ color: #9f9f9f !important; }

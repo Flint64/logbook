@@ -1,0 +1,330 @@
+.centerCombat {
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  gap: 5px;
+  background-color: black;
+  color: white;
+}
+
+.centerCombat > div {
+  border: 1px solid white;
+  padding: 10px;
+}
+
+.centerCombat > p {
+  border: 1px solid white;
+  padding: 10px;
+}
+
+.centerCombat .elem4 {
+  height: 290px;
+  padding-bottom: 25px;
+}
+
+.centerCombat .elem4 .playerBars {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 50px;
+}
+
+.centerCombat .elem4 .playerBars div:first-of-type {
+  width: 100%;
+}
+
+.centerCombat .elem4 .playerBars div:last-of-type progress {
+  width: 40%;
+}
+
+.centerCombat .elem5 {
+  margin: 0;
+  padding: 0;
+  min-height: 122px;
+}
+
+.centerCombat form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 100%;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
+.centerCombat form div {
+  border: 1px solid white;
+  height: 5em;
+  width: 5em;
+  padding: 5px;
+  margin: 10px;
+}
+
+.centerCombat form div:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+
+.centerCombat form div:hover img {
+  -webkit-filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
+          filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
+}
+
+button:disabled {
+  background-color: gainsboro;
+}
+
+button:disabled:hover {
+  color: #9f9f9f;
+}
+
+.menuOptions {
+  font-size: 1.2em;
+  height: 10em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  border-top: 1px solid white;
+}
+
+.health {
+  background-color: crimson;
+  color: white;
+}
+
+.mana {
+  background-color: purple;
+  color: white;
+}
+
+.storyText {
+  font-size: 1.2em;
+  overflow-y: hidden;
+  margin: 0;
+  height: 5em;
+  width: 324px;
+}
+
+.showOverflow {
+  overflow-y: scroll;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.enemySelected {
+  border: 5px solid white !important;
+}
+
+.skull {
+  -webkit-filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
+          filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
+}
+
+mat-progress-bar.enemyATB {
+  width: 100%;
+  height: 1em;
+  border-radius: 0;
+  display: none;
+}
+
+meter, progress {
+  min-width: 10em;
+}
+
+meter {
+  max-width: 15em;
+  height: 2em;
+  margin-bottom: -8px;
+  margin-top: -8px;
+}
+
+progress {
+  height: 10px;
+  width: 100%;
+  max-width: 20em;
+  text-align: center;
+}
+
+#manaBar:after {
+  counter-reset: variable var(--manaValue);
+  content: counter(variable);
+}
+
+#playerHealthBar:after {
+  counter-reset: variable var(--healthValue);
+  content: counter(variable);
+}
+
+progress, progress::-webkit-progress-value {
+  background: #599fc9;
+  border: 1px solid rgba(69, 69, 69, 0.764);
+}
+
+#manaBar::-webkit-progress-value {
+  background: purple;
+  display: block;
+  float: right;
+}
+
+#playerHealthBar::-webkit-progress-value {
+  background: crimson;
+}
+
+#manaBar {
+  margin-left: 3px;
+}
+
+#playerHealthBar {
+  margin-left: -3px;
+}
+
+.hidden {
+  display: none;
+}
+
+.elem4 p {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.elem4 p:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+
+#playerMainOptions, #playerMagicOptions, #playerInventoryOptions {
+  height: 90%;
+}
+
+.actionDisabled {
+  color: #9f9f9f;
+}
+
+.actionDisabled:hover {
+  color: #9f9f9f;
+  background-color: black;
+  cursor: default;
+}
+
+.inventoryList {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.inventoryList p:first-child::after {
+  content: " -";
+}
+
+.inventoryList p:last-child::before {
+  content: "- ";
+}
+
+.enemyBox {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.enemyBox p {
+  padding-top: 5px;
+  margin: 0;
+}
+
+.enemyBox img {
+  max-width: 2em;
+  padding: 5px;
+}
+
+/* Toggle styles for different events */
+.enemyHitSVG {
+  -webkit-filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%);
+          filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%);
+}
+
+.enemyHit {
+  color: crimson;
+}
+
+.playerHit {
+  border: 1px solid crimson !important;
+}
+
+.purpleBorder {
+  border: 1px solid rebeccapurple !important;
+}
+
+.yellowBorder {
+  border: 1px solid gold !important;
+}
+
+.greenBorder {
+  border: 1px solid green !important;
+}
+
+.greenText {
+  color: green !important;
+}
+
+.enemyTextRed {
+  color: darkred !important;
+}
+
+.enemyTextGrey {
+  color: #9f9f9f !important;
+}
+/*# sourceMappingURL=combat-test.component.css.map */
