@@ -31,7 +31,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   viewingMagicOptions: boolean = false;
   viewingInventoryOptions: boolean = false;
   
-  constructor(public combatService: CombatService, renderer: Renderer2) {
+  constructor(public combatService: CombatService, private renderer: Renderer2) {
     if (!this.keyListener){
       this.keyListener = renderer.listen('document', 'keypress', (e) => {
         if (parseInt(e.key) >= 0 || parseInt(e.key) >= 9 ){
@@ -133,9 +133,16 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   /****************************************************************************************
    * Append Text - Appends text to the story box whenever an attack is made, etc
    ****************************************************************************************/
-  appendText(text, newline: boolean = false){
-    if (newline){this.story.nativeElement.innerHTML +='<br>'}
-    this.story.nativeElement.innerHTML += text;
+  appendText(text: string, newline: boolean = false, className: string = null){
+
+    //Use renderer instead of docuoment.createElement so that the view encapsulation works to apply styles correctly
+    let child = this.renderer.createElement('span');
+    let lineBreak = document.createElement('br');
+    if (className){child.classList.add(className);}
+    child.innerText = text;
+    
+    if (newline){this.story.nativeElement.appendChild(lineBreak)};
+    this.story.nativeElement.appendChild(child)
     this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
   }
 
@@ -315,7 +322,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
               break;
                 
               case 'poison':
-                this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+                this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
               break;
             }
         }

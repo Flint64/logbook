@@ -108,7 +108,6 @@ button{
     margin: 0;
     height: 5em;
     width: 324px;
-    
 }
 
 .enemySelected{
@@ -247,4 +246,8 @@ progress, progress::-webkit-progress-value {
 
 .playerHit{
     border: 1px solid crimson !important;
+}
+
+.greenText{
+    color: green !important;
 }

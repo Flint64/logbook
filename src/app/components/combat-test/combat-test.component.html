@@ -12,12 +12,9 @@
         </form>
     </div>
 
-    <p class="elem2 storyText" #gameBox #story>An enemy appeared!</p>
-    
-    <!-- <div class="elem3" #gameBox>
-        <button class="health">{{combatService.player.health | number: '3.0-0'}}</button>
-        <button class="mana">{{combatService.player.mana}}</button> 
-    </div> -->
+    <div class="elem2 storyText" #gameBox #story>
+        <span>An enemy appeared!</span>
+    </div>
 
     <div class="elem4" #gameBox>
         <div id="playerMainOptions" *ngIf="viewingMainOptions">
