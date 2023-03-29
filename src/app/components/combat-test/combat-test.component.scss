@@ -261,6 +261,8 @@ progress, progress::-webkit-progress-value {
     }
 }
 
+/* Toggle styles for different events */
+
 .enemyHitSVG{
     filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%);
 }
@@ -275,4 +277,12 @@ progress, progress::-webkit-progress-value {
 
 .greenText{
     color: green !important;
+}
+
+.enemyTextRed{
+    color: darkred !important;
+}
+
+.enemyTextGrey{
+    color: #9f9f9f !important;
 }

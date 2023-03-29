@@ -318,7 +318,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
               case 'defense':
               case 'accuracy':
               case 'luck':
-                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? 'gain a ${key} boost' : 'lower ${key}'} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? `gain a ${key} boost` : `lower ${key}`} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
               break;
                 
               case 'poison':
@@ -386,21 +386,21 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       dam = 0; //TODO: REMOVE THIS
       this.combatService.player.health -= dam;
       if (enemy.health !== 0){ 
-        this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true);         
+        this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true, 'enemyTextGrey');         
         this.playerHit();      
       }
 
       /*Kill the enemy once the final attack has happened*/
       if (enemy.health === 0){
-        this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true); 
+        this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true, 'enemyTextRed'); 
         this.playerHit();
         enemy.health -= 1; 
         this.previousTarget.classList.add('enemyHit');
       }
       
     } else {
-      if (enemy.health !== 0){this.appendText(enemy.name + ' miss!', true); }
-      if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
+      if (enemy.health !== 0){this.appendText(enemy.name + ' miss!', true, 'enemyTextGrey'); }
+      if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true, 'enemyTextGrey'); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
     }
 
     //If the player or the enemy is at 0 hit points, they get one
