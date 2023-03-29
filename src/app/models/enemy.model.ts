@@ -3,6 +3,7 @@ export class Enemy {
         public name: string,
         public health: number,
         public attack: number,
+        public minAttack: number,
         public defense: number,
         public speed: number,
         public mana: number,
@@ -12,12 +13,12 @@ export class Enemy {
         this.name = name;
         this.health = health;
         this.attack = attack;
+        this.minAttack = minAttack;
         this.defense = defense;
         this.speed = speed; //Lower = faster
         this.mana = mana;
         this.accuracy = accuracy;
         this.luck = luck;
-        
         }
         
         

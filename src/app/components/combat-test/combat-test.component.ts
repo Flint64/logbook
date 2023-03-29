@@ -4,6 +4,7 @@ import { Enemy } from 'src/app/models/enemy.model';
 import { ConsumableItem } from 'src/app/models/consumableItem.model';
 import { CombatService } from 'src/app/services/combat.service';
 import { Effect } from 'src/app/models/effect.model';
+import * as Rand from '../../../../node_modules/lodash';
 
 @Component({
   selector: 'app-combat-test',
@@ -41,7 +42,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
       });
-   }
+   }   
   }
   
   ngOnInit(): void {
@@ -243,9 +244,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Returns a random integer from 1-100:
     if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
+      
       //Damage is a random number between player min attack and attack
-      let dam = Math.floor(Math.random() * (this.combatService.player.attack - this.combatService.player.minAttack + 1) + this.combatService.player.minAttack);
-
+      let dam = Rand.random(this.combatService.player.minAttack, this.combatService.player.attack);
+      
       //If the player has more than 0 hp allow the hit
       if (this.combatService.player.health !== 0){
         this.appendText('PLAYER hit for ' + dam + ' damage!', true);
@@ -386,8 +388,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let enemy = this.combatService.enemyList[index];
 
     if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
-      let dam = Math.floor(Math.random() * enemy.attack + 1);
-      dam = 1; //TODO: REMOVE THIS
+      let dam = Rand.random(enemy.minAttack, enemy.attack);
+
       this.combatService.player.health -= dam;
       if (enemy.health !== 0){ 
         this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true, 'enemyTextGrey');         
