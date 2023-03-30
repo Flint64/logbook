@@ -224,11 +224,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
  ****************************************************************************************/
     let effectNames = [];
     let classListArr = []
+    classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
+
     for (let i = 0; i < this.combatService.player.effects.length; i++){
       effectNames.push(this.combatService.player.effects[i].name);
     }
+    
     if (!effectNames.includes('poison')){
-      classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
       if (classListArr.includes('playerHealthBarPoison')){
         this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
       }
@@ -348,7 +350,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
                 case 'poison':
                   this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
                   this.colorGameBox(false, true, 'greenBorder');
-                  
+
                   //Makes player health bar green when poisoned (when using consumable only).
                   //Is removed in the main game loop in the effects loop
                   this.playerHealthBar.nativeElement.classList.add('playerHealthBarPoison');
