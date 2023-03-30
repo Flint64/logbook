@@ -192,10 +192,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
       this.stopATB(true);
     }
-    
-    //When ATB guage is full, auto player attack if rage or something
-    // if (this.combatService.player.ATB >= 100){
-    // }
 
     //When ATB guage is full, enemy attack
     for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
@@ -229,12 +225,26 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.combatService.player.effects.length; i++){
       effectNames.push(this.combatService.player.effects[i].name);
     }
-    
+
     if (!effectNames.includes('poison')){
       if (classListArr.includes('playerHealthBarPoison')){
         this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
       }
-    }    
+    }
+/*
+  // When ATB guage is full, auto player attack if rage or something. Doesn't work yet, needs a rework
+  //needs to be able to select a random enemy that is above 0 hp
+  
+  let enemyHealthValues = this.combatService.enemyHealthValues;
+  enemyHealthValues.forEach((e, index) => {
+    if (e < 0){ enemyHealthValues.splice(index, 1); }
+  });
+
+  console.log(Rand.random(0, enemyHealthValues.length - 1));
+
+  // if (this.combatService.player.ATB >= 100){
+  // }
+*/
   }
 
   /****************************************************************************************
