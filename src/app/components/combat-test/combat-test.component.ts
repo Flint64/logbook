@@ -406,7 +406,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       
     } else {
       if (enemy.health !== 0){this.appendText(enemy.name + ' miss!', true, 'enemyTextGrey'); }
-      if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true, 'enemyTextGrey'); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
+      if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true, 'enemyTextRed'); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
     }
 
     //If the player or the enemy is at 0 hit points, they get one
@@ -438,7 +438,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           this.gameBox.forEach((e) => {
             e.nativeElement.classList.remove('playerHit');
           });
-        }, 175);
+        }, 225);
       }
     }
 
@@ -452,7 +452,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           this.gameBox.forEach((e) => {
             e.nativeElement.classList.remove(className);
           });
-        }, 175);
+        }, 225);
     }
   }
 
