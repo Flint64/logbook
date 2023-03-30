@@ -96,10 +96,10 @@ button{
     color: white;
 }
 
-.mana{
-    background-color: purple;
-    color: white;
-}
+// .mana{
+    // background-color: purple;
+    // color: white;
+// }
 
 .storyText{
     font-size: 1.2em;
@@ -280,3 +280,7 @@ progress, progress::-webkit-progress-value {
 .enemyTextRed{ color: darkred !important; }
 
 .enemyTextGrey{ color: #9f9f9f !important; }
+
+.playerHealthBarPoison::-webkit-progress-value{
+    background: green !important;
+}

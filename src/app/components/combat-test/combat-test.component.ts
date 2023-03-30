@@ -16,6 +16,7 @@ import * as Rand from '../../../../node_modules/lodash';
 export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   @ViewChild('story', {static: false}) story: ElementRef;
+  @ViewChild('playerHealthBar', {static: false}) playerHealthBar: ElementRef;
   @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>;
   @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>;
   @ViewChildren('gameBox') gameBox: QueryList<ElementRef>;
@@ -54,9 +55,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, -5, null, null, null));
     let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null));
     let s = new ConsumableItem('Speed Potion', 2, 10, new Effect(null, null, null, 400, null, null, null, null));
-    let sp = new ConsumableItem('Poison Yourself', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
-    let sp2 = new ConsumableItem('Poison Yourself 2', 1, 10, new Effect(null, null, null, null, null, null, null, 5));
-    let sp3 = new ConsumableItem('Poison Yourself 3', 1, 10, new Effect(null, null, null, null, -10, null, null, 5));
+    let sp = new ConsumableItem('Poison Yourself', 1, 3, new Effect(null, null, null, null, null, null, null, 5));
+    let sp2 = new ConsumableItem('Poison Yourself 2', 1, 3, new Effect(null, null, null, null, null, null, null, 5));
+    let sp3 = new ConsumableItem('Poison Yourself 3', 1, 3, new Effect(null, null, null, null, -10, null, null, 5));
     let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, -5, null, null, 5));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
@@ -213,7 +214,25 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         this.combatService.enemyATBValues[i] += (this.combatService.enemyList[i].speed/100);
       }
     }
-    
+
+/****************************************************************************************
+ * This is here to check the player effects list to remove any classes that may be adding
+ * styles such as changing the player's health bar to green when they are poisoned.
+ * 
+ * When the effect is removed, if the styling class is present, it gets removed to reset
+ * the view
+ ****************************************************************************************/
+    let effectNames = [];
+    let classListArr = []
+    for (let i = 0; i < this.combatService.player.effects.length; i++){
+      effectNames.push(this.combatService.player.effects[i].name);
+    }
+    if (!effectNames.includes('poison')){
+      classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
+      if (classListArr.includes('playerHealthBarPoison')){
+        this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
+      }
+    }    
   }
 
   /****************************************************************************************
@@ -329,6 +348,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
                 case 'poison':
                   this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
                   this.colorGameBox(false, true, 'greenBorder');
+                  
+                  //Makes player health bar green when poisoned (when using consumable only).
+                  //Is removed in the main game loop in the effects loop
+                  this.playerHealthBar.nativeElement.classList.add('playerHealthBarPoison');
               break;
             }
         }
