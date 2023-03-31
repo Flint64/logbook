@@ -26,6 +26,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   enemyForm: FormGroup;
   previousTarget = null;
   intervalID = null;
+  playerCanSelectEnemy: boolean = true;
 
   mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
 
@@ -233,6 +234,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (effectNames.includes('rage')){
+      this.playerCanSelectEnemy = false;
 
     let searchForEnemy;
     //If all enemy health is less than 0 or player health is less than 0, end the battle
@@ -247,11 +249,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
             let enemyIndex = Rand.random(0, (this.combatService.enemyHealthValues.length - 1));
             if (this.combatService.enemyHealthValues[enemyIndex] > 0){
               this.selectEnemy(enemyIndex, this.enemyBoxes.toArray()[enemyIndex].nativeElement);
-              this.playerAttack();
+              setTimeout(() => {
+                this.playerAttack();
+              }, 500);
               searchForEnemy = false;
             }
         }
       }
+    } else {
+      this.playerCanSelectEnemy = true;
     }
   }
 

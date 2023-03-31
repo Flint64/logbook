@@ -85,7 +85,7 @@ export class CombatService {
       } else {
         this.player.effects[i].duration--;
       }
-      console.log(this.player.effects[i]);
+      // console.log(this.player.effects[i]);
     };
     
   }
