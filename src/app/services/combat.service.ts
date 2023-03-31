@@ -48,9 +48,10 @@ export class CombatService {
         break;
 
         //These need to be here to prevent them from being removed before their duration is up
-        //Any new effects added need to be added here or else they are removed automatically
+        //ANY new effects added need to be added here or else they are removed automatically
         case 'speed':
         case 'rage':
+        case 'attack':
         break;
           
         default:
@@ -68,6 +69,7 @@ export class CombatService {
 
         //Because these effects don't match a player value, make sure they are only removed and aren't trying to be set back to default values
         //such as player.poison = maxPoison etc.
+        //Effects that DON't match player values are added here.
         switch(this.player.effects[i].name){
           case 'poison':
           case 'rage':

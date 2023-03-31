@@ -60,6 +60,7 @@ export class ConsumableItem {
                 //keeping track of the current value, not the max possible
                 switch(key){
                     case 'speed':
+                    case 'attack': //Modifies the upper bound, ie minAttack stays where it is, maxAttack is equal to the modifier of the effect. Dam = between min-max
                         player[`${key}`] += value;
                     break;
                 }
