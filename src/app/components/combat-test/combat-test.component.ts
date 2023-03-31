@@ -234,6 +234,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (effectNames.includes('rage')){
+      //Disable menu selection when in rage
       this.playerCanSelectEnemy = false;
 
     let searchForEnemy;
@@ -257,6 +258,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     } else {
+      //When the rage effect is no longer active, allow player selection of enemies again
       this.playerCanSelectEnemy = true;
     }
   }
