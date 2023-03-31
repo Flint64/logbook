@@ -19,7 +19,7 @@ export class ConsumableItem {
             // console.log(key + ': ' + value);
             
             //If the value of the selected propert(ies) isn't null and we have at least one of the item
-            if (value !== null && player.consumables[numSelected - 1].amount > 0){
+            if (value && player.consumables[numSelected - 1].amount > 0){
                 
                 //If there's already a value in the array that matches the key, add to its duration instead of adding a seperate effect
                 if (player.effects.length){

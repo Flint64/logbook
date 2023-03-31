@@ -52,20 +52,20 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, -5, null, null, null));
-    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null));
-    let s = new ConsumableItem('Speed Potion', 2, 10, new Effect(null, null, null, 400, null, null, null, null));
-    let sp = new ConsumableItem('Poison Yourself', 1, 3, new Effect(null, null, null, null, null, null, null, 5));
-    let sp2 = new ConsumableItem('Poison Yourself 2', 1, 3, new Effect(null, null, null, null, null, null, null, 5));
-    let sp3 = new ConsumableItem('Poison Yourself 3', 1, 3, new Effect(null, null, null, null, -10, null, null, 5));
-    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, -5, null, null, 5));
+    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, -5, null, null, null, false));
+    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null, false));
+    let s = new ConsumableItem('Speed Potion', 2, 10, new Effect(null, null, null, 400, null, null, null, null, false));
+    let sp = new ConsumableItem('Poison Yourself', 1, 6, new Effect(null, null, null, null, null, null, null, 5, false));
+    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, -5, null, null, 5, false));
+    let rage = new ConsumableItem('Rage Potion', 1, 5, new Effect(null, null, null, null, null, null, null, null, true));
+    let atk = new ConsumableItem('Damage+', 1, 5, new Effect(null, 20, null, null, null, null, null, null, false));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);
     this.combatService.player.consumables.push(sp);
-    this.combatService.player.consumables.push(sp2);
-    this.combatService.player.consumables.push(sp3);
     this.combatService.player.consumables.push(ps);
+    this.combatService.player.consumables.push(rage);
+    this.combatService.player.consumables.push(atk);
 
     let m = 'Fireball';
     this.combatService.player.magic.push(m);
@@ -231,20 +231,28 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
       }
     }
-/*
-  // When ATB guage is full, auto player attack if rage or something. Doesn't work yet, needs a rework
-  //needs to be able to select a random enemy that is above 0 hp
-  
-  let enemyHealthValues = this.combatService.enemyHealthValues;
-  enemyHealthValues.forEach((e, index) => {
-    if (e < 0){ enemyHealthValues.splice(index, 1); }
-  });
 
-  console.log(Rand.random(0, enemyHealthValues.length - 1));
+    if (effectNames.includes('rage')){
 
-  // if (this.combatService.player.ATB >= 100){
-  // }
-*/
+    let searchForEnemy;
+    //If all enemy health is less than 0 or player health is less than 0, end the battle
+    if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
+      searchForEnemy = false;
+    } else {
+      searchForEnemy = true;
+    }
+      
+      if (this.combatService.player.ATB >= 100){
+        while (searchForEnemy){
+            let enemyIndex = Rand.random(0, (this.combatService.enemyHealthValues.length - 1));
+            if (this.combatService.enemyHealthValues[enemyIndex] > 0){
+              this.selectEnemy(enemyIndex, this.enemyBoxes.toArray()[enemyIndex].nativeElement);
+              this.playerAttack();
+              searchForEnemy = false;
+            }
+        }
+      }
+    }
   }
 
   /****************************************************************************************
@@ -496,7 +504,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * on the enemy box selects them.
    ****************************************************************************************/
   selectEnemy(index, target){
-
     
     //If we select the label, hp value, or image in the enemy box,
     //set the target to the parent to actually select the enemy

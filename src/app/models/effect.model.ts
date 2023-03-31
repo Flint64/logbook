@@ -9,6 +9,7 @@ export class Effect {
         public accuracy: number,
         public luck: number,
         public poison: number,
+        public rage: boolean,
         ){
             this.health = health;
             this.attack = attack;
@@ -18,5 +19,6 @@ export class Effect {
             this.accuracy = accuracy;
             this.luck = luck;
             this.poison = poison;
+            this.rage = rage;
         }
     }
