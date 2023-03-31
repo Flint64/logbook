@@ -26,7 +26,7 @@
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
-            height: 50px;
+            height: 30px;
             div:first-of-type{
                 width: 100%;
             }
@@ -142,6 +142,24 @@ button{
     //Red filter for bosses?
     // filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%);
     filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
+}
+
+#statusEffects{
+    span{
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+    }
+}
+
+// #playerATBGauge{
+//     &::after{
+//         content: 'test';
+//     }
+// }
+
+.invisible{
+    visibility: hidden;
 }
 
 mat-progress-bar{

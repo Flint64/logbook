@@ -73,19 +73,22 @@ export class CombatService {
         switch(this.player.effects[i].name){
           case 'poison':
           case 'rage':
-          case 'speed':
             this.player.effects.splice(i, 1);
           break;
           
           default:
-            this.player.effects.splice(i, 1);
             this.player[`${this.player.effects[i].name}`] = this.player['max' + this.player.effects[i].name.charAt(0).toUpperCase() + this.player.effects[i].name.slice(1)];
+            this.player.effects.splice(i, 1);
         }
         
       } else {
         this.player.effects[i].duration--;
       }
-      // console.log(this.player.effects[i]);
+
+      // if (this.player.effects[i]){
+      //   console.log(this.player.effects[i]);
+      // }
+
     };
     
   }

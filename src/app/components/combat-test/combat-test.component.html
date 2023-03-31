@@ -34,14 +34,22 @@
         </div>
 
         <div class="playerBars">
+
+            <section id="statusEffects">
+                <span class="invisible">.</span>
+                <span *ngFor="let effect of combatService.player.effects">{{effect.name}} - {{effect.duration}}, </span>
+            </section>
+
             <div>
-                <progress max="100" [value]="combatService.player.ATB"></progress>
+                <progress id="playerATBGauge" max="100" [value]="combatService.player.ATB"></progress>
             </div>
+
             <div>
                 <!-- [style] binds to a CSS variable which is how we're displaying the hp/mp values in a CSS counter pseudo element -->
                 <progress #playerHealthBar [style.--healthValue]="combatService.player.health" id="playerHealthBar" max="100" [value]="100 * combatService.player.health / combatService.player.maxHealth"></progress>
                 <progress [style.--manaValue]="combatService.player.mana" id="manaBar" max="100" [value]="100 * combatService.player.mana / combatService.player.maxMana"></progress>
             </div>
+
         </div>
          
     </div>
