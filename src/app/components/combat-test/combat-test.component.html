@@ -35,9 +35,16 @@
 
         <div class="playerBars">
 
+            <!-- <span class="statusEffect"> <img src="../../../assets/images/statuses/rage.svg" alt=""></span> -->
+            
             <section id="statusEffects">
-                <span class="invisible" *ngIf="!combatService.player.effects.length">.</span>
-                <span *ngFor="let effect of combatService.player.effects">{{effect.name}} - {{effect.duration}}</span>
+                <span *ngIf="!combatService.player.effects.length" class="statusEffect invisible"><img src="../../../assets/images/statuses/water_drop.svg" alt=""></span>
+                <span *ngFor="let effect of combatService.player.effects" [ngSwitch]="effect.name"> 
+                    <span *ngSwitchCase="'poison'" class="statusEffect greenFilter"><img src="../../../assets/images/statuses/water_drop.svg" alt="Poison Icon"></span>
+                    <span *ngSwitchCase="'rage'" class="statusEffect redFilter"><img src="../../../assets/images/statuses/rage.svg" alt="Rage Icon"></span>
+                    <span *ngSwitchCase="'attack'" class="statusEffect redFilter"><img src="../../../assets/images/statuses/arrow_up.svg" alt="Attack Up Icon"></span>
+                    <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="../../../assets/images/statuses/speed.svg" alt="Speed Icon"></span>
+                </span>                
             </section>
 
             <div>

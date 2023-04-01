@@ -139,31 +139,20 @@ button{
 }
 
 .skull{
-    //Red filter for bosses?
-    // filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%);
     filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
 }
 
 #statusEffects{
-    width: 100%;
+    // width: 28px;
     display: flex;
-    justify-content: space-evenly;
+    // justify-content: space-evenly;
     span{
         display: block;
         margin: 0;
         padding: 0;
         font-size: 14px;
-        &:not(:last-child)::after{
-            content: ', ';
-        }
     }
 }
-
-// #playerATBGauge{
-//     &::after{
-//         content: 'test';
-//     }
-// }
 
 .invisible{
     visibility: hidden;
@@ -286,11 +275,18 @@ progress, progress::-webkit-progress-value {
     }
 }
 
+.statusEffect{
+    img{
+        width: 28px;
+        height: 28px;
+    }
+}
+
 /* Toggle styles for different events */
 
-.enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%); }
+.enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%) !important; }
 
-.enemyHit{ color: crimson; }
+.enemyHit{ color: crimson !important; }
 
 .playerHit{ border: 1px solid crimson !important; }
 
@@ -306,6 +302,12 @@ progress, progress::-webkit-progress-value {
 
 .enemyTextGrey{ color: #9f9f9f !important; }
 
-.playerHealthBarPoison::-webkit-progress-value{
-    background: green !important;
-}
+.playerHealthBarPoison::-webkit-progress-value{ background: green !important; }
+
+.whiteFilter { filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%) !important; } //White
+
+.greenFilter{ filter: invert(42%) sepia(29%) saturate(1040%) hue-rotate(84deg) brightness(85%) contrast(96%) !important; } //Green
+
+.redFilter{ filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%) !important; } //Red
+
+.yellowFilter { filter: invert(82%) sepia(73%) saturate(1004%) hue-rotate(9deg) brightness(105%) contrast(104%) !important; } //Yellow
