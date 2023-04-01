@@ -58,7 +58,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let s = new ConsumableItem('Speed Potion', 2, 6, new Effect(null, null, null, 400, null, null, null, null, false));
     let sp = new ConsumableItem('Poison Yourself', 1, 6, new Effect(null, null, null, null, null, null, null, 5, false));
     let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, -5, null, null, 5, false));
-    let rage = new ConsumableItem('Rage Potion', 1, 5, new Effect(null, null, null, null, null, null, null, null, true));
+    let rage = new ConsumableItem('Rage Potion', 1, 2, new Effect(null, null, null, null, null, null, null, null, true));
     let atk = new ConsumableItem('Damage+', 1, 3, new Effect(null, 5, null, null, null, null, null, null, false));
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
@@ -355,7 +355,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       
       // Display what was used and the effect it has based on the type
       for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
-        if (value !== null){
+        if (value){
             switch (key){
               case 'health':
                 this.colorGameBox();
@@ -364,23 +364,27 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.colorGameBox(false, true, 'purpleBorder');
               break;
                 
+              case 'rage':
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} has made you fly into an uncontrollable rage for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true, 'enemyTextRed');
+              break;
+                
               case 'speed':
               case 'attack':
               case 'defense':
               case 'accuracy':
               case 'luck':
-                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? `gain a ${key} boost` : `lower ${key}`} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true);
+                this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? `gain a ${key} boost` : `lower ${key}`} for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true);
                 this.colorGameBox(false, true, 'yellowBorder');
-                break;
-                
-                case 'poison':
-                  this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration} turns`, true, 'greenText');
-                  this.colorGameBox(false, true, 'greenBorder');
-
-                  //Makes player health bar green when poisoned (when using consumable only).
-                  //Is removed in the main game loop in the effects loop
-                  this.playerHealthBar.nativeElement.classList.add('playerHealthBarPoison');
               break;
+                
+              case 'poison':
+                this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true, 'greenText');
+                this.colorGameBox(false, true, 'greenBorder');
+
+                //Makes player health bar green when poisoned (when using consumable only).
+                //Is removed in the main game loop in the effects loop
+                this.playerHealthBar.nativeElement.classList.add('playerHealthBarPoison');
+            break;
             }
         }
         // console.log(`${key}: ${value}`);
