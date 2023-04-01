@@ -36,7 +36,7 @@
         <div class="playerBars">
 
             <section id="statusEffects">
-                <span class="invisible">.</span>
+                <span class="invisible" *ngIf="!combatService.player.effects.length">.</span>
                 <span *ngFor="let effect of combatService.player.effects">{{effect.name}} - {{effect.duration}}</span>
             </section>
 
