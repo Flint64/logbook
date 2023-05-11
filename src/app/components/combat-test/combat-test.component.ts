@@ -219,7 +219,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.combatService.enemyList[i].health >= 0){
         this.combatService.enemyATBValues[i] += (this.combatService.enemyList[i].speed/100);
       } else {
-        //If the enemy is dead, make it's text & icon red
+        //If the enemy is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
         if (!Array.from(this.enemyBoxes.toArray()[i].nativeElement.classList).includes('enemyHitSVG')){
             this.enemyBoxes.toArray()[i].nativeElement.classList.add('enemyHit');
             this.enemyIcons.toArray()[i].nativeElement.classList.add('enemyHitSVG');
