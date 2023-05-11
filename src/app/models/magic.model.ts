@@ -1,6 +1,6 @@
-import { CombatService } from "../services/combat.service";
-import { Effect } from "./effect.model";
 import { Injectable } from '@angular/core';
+import { Effect } from "./effect.model";
+import * as Rand from '../../../node_modules/lodash';
 
 @Injectable()
 export class Magic {
@@ -96,6 +96,13 @@ export class Magic {
         
         let spell = player.magic[numSelected - 1];
         let enemy = combatService.enemyList[enemyIndex];
+        let spellDamage = null;
+        
+        //If the spell has a damage value, apply it before the effect(s)
+        if (spell.minDamage || spell.maxDamage){
+            spellDamage = Rand.random(spell.minDamage, spell.maxDamage);
+            enemy.health -= spellDamage;
+        }
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
         spell.effect.forEach((effect) => {
@@ -114,5 +121,7 @@ export class Magic {
         
         player.mana -= spell.manaCost;
         // console.log(combatService.enemyList[enemyIndex].effects);
+
+        return spellDamage;
     }
 }

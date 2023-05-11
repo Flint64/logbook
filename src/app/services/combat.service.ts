@@ -21,7 +21,7 @@ export class CombatService {
   // luck
   // effects
   enemyList: Enemy[] = [
-    new Enemy('Goblin',      30, 30, 5, 1, 5, 80, 0, 60, 2, [], 0),
+    new Enemy('Goblin',      15, 30, 5, 1, 5, 80, 0, 60, 2, [], 0),
     new Enemy('Green Slime', 3, 3, 2, 1, 0, 75, 0, 60, 2, [], 0),
     new Enemy('Kobold',      4, 4, 5, 1, 5, 90, 10, 60, 2, [], 0),
   ];

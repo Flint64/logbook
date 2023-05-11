@@ -74,7 +74,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.player.consumables.push(atk2);
     
     let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false)]);
-    let enrage = new Magic('Enrage', 7, 6, 12, 2, [new Effect('rage', 4, null, true)]);
+    let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true)]);
     this.combatService.player.magic.push(fireball);
     this.combatService.player.magic.push(enrage);
     
@@ -218,6 +218,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
       if (this.combatService.enemyList[i].health >= 0){
         this.combatService.enemyATBValues[i] += (this.combatService.enemyList[i].speed/100);
+      } else {
+        //If the enemy is dead, make it's text & icon red
+        if (!Array.from(this.enemyBoxes.toArray()[i].nativeElement.classList).includes('enemyHitSVG')){
+            this.enemyBoxes.toArray()[i].nativeElement.classList.add('enemyHit');
+            this.enemyIcons.toArray()[i].nativeElement.classList.add('enemyHitSVG');
+        }
       }
     }
 
@@ -415,10 +421,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    //Only reset the menu if the item was actually consumed
+    //Only reset the menu if we have enough mana to cast the spell
     if ((this.combatService.player.mana - this.combatService.player.magic[numSelected - 1].manaCost) >= 0){
 
-      this.combatService.player.magic[numSelected - 1].castSpell(this.combatService.player, numSelected, this.enemyIndex, this.combatService);
+      //CastSpell returns the spell damage so that we can display it here in append text //TODO: reimplement all of the appendText stuff for magic and consumable items
+      let spellDamage = this.combatService.player.magic[numSelected - 1].castSpell(this.combatService.player, numSelected, this.enemyIndex, this.combatService);
       
       // Display what was used and the effect it has based on the type
       // for (const [key, value] of Object.entries(this.combatService.player.magic[numSelected - 1].effect)) {
