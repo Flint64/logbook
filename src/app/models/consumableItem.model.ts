@@ -42,7 +42,7 @@ export class ConsumableItem {
             }
         }
 
-        player.consumables[numSelected - 1].effect.forEach((effect) => {           
+        player.consumables[numSelected - 1].effect.forEach((effect) => {
             const originalPlayerValue = player[`${effect.name}`];
                     
             //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0

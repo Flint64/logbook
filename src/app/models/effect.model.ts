@@ -4,10 +4,12 @@ export class Effect {
         public name: string, 
         public duration: number,
         public modifier: number,
+        public self: boolean,
         ){ 
             this.name = name;
             this.duration = duration;
             this.modifier = modifier;
+            this.self = self;
     }
 
 

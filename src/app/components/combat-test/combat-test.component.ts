@@ -55,14 +55,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1,    [new Effect('health', null, 20)]);
-    let p = new ConsumableItem('Mana Potion', 1,       [new Effect('mana', null, -50)]);
-    let s = new ConsumableItem('Speed Potion', 2,      [new Effect('speed', 4, 400)]);
-    let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5)]);
-    let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null), new Effect('attack', 4, 5), new Effect('speed', 4, 400), new Effect('mana', null, -5)]);
-    let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null)]);
-    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5)]);
-    let atk2 = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5)]);
+    let t = new ConsumableItem('Healing Potion', 1,    [new Effect('health', null, 20, true)]);
+    let p = new ConsumableItem('Mana Potion', 1,       [new Effect('mana', null, 50, true)]);
+    let s = new ConsumableItem('Speed Potion', 2,      [new Effect('speed', 4, 400, true)]);
+    let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5, true)]);
+    let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null, true), new Effect('attack', 4, 5, true), new Effect('speed', 4, 400, true), new Effect('mana', null, -5, true)]);
+    let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null, true)]);
+    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true)]);
+    let atk2 = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true)]);
     
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
@@ -71,10 +71,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.player.consumables.push(ps);
     this.combatService.player.consumables.push(rage);
     this.combatService.player.consumables.push(atk);
-    this.combatService.player.consumables.push(atk2); //TODO: Next up, make the spells function this same way with the changes to the effect object
-
-    let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5)]);
+    this.combatService.player.consumables.push(atk2);
+    
+    let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false)]);
+    let enrage = new Magic('Enrage', 7, 6, 12, 2, [new Effect('rage', 4, null, true)]);
     this.combatService.player.magic.push(fireball);
+    this.combatService.player.magic.push(enrage);
     
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);

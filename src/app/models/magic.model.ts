@@ -20,80 +20,99 @@ export class Magic {
             this.effect = effect;
         }
 
-    castSpell(player, numSelected, enemyIndex, combatService){
-        for (const [key, value] of Object.entries(player.magic[numSelected - 1].effect)) {
-            // console.log(key + ': ' + value);
-
-            if (value){
-                
-                //If there's already a value in the array that matches the key, add to its duration instead of adding a seperate effect
-                if (combatService.enemyList[enemyIndex].effects.length){
-                    for (let i = 0; i < combatService.enemyList[enemyIndex].effects.length; i++){
-                        if (combatService.enemyList[enemyIndex].effects[i].name === key){
-                            combatService.enemyList[enemyIndex].effects[i].duration += player.magic[numSelected - 1].duration;
-                        }
+    /******************************************************************************************************
+     * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
+     ******************************************************************************************************/
+    removeDuplicateEffects(target: any, spell: any){
+        // Compare each item to every other
+        for (let i = 0; i < target.effects.length; i++) {
+            for (let j = i + 1; j < target.effects.length; j++) {
+                //If the names match (two duplicate effects), remove the one with the lower duration
+                if (target.effects[i].name === target.effects[j].name){
+                    if (target.effects[i].duration > target.effects[j].duration){
+                        target.effects.splice(j, 1);
                     }
                 }
-
-                //TODO: Change this so that the effect object is just a name, duration, modifier, and thing to be modified
-                //instead of the way its set up now where those get added after the current effect object is parsed down.
-                
-                //Otherwise just add the new effects
-                if (player.magic[numSelected - 1].duration !== null){
-                    combatService.enemyList[enemyIndex].effects.push({name: key, modifier: value, duration: player.magic[numSelected - 1].duration});
-                     /*// TODO: Right now all effects are being pushed to the enemy's list, each with the same duration. 
-                        Need to filter it out and make sure only the right ones are being applied and make sure that they are able
-                        to be decremented each turn
-                     */
-                }
-
-                //Remove duplicate effects (removing the one with the lower duration)
-                //Compare each item to every other
-                for (let i = 0; i < combatService.enemyList[enemyIndex].effects.length; i++) {
-                    for (let j = i + 1; j < combatService.enemyList[enemyIndex].effects.length; j++) {
-                        //If the names match (two duplicate effects), remove the one with the lower duration
-                        if (combatService.enemyList[enemyIndex].effects[i].name === combatService.enemyList[enemyIndex].effects[j].name){
-                        //   console.log(`Comparing ${combatService.enemyList[enemyIndex].effects[i].duration} > ${combatService.enemyList[enemyIndex].effects[j].duration}`);
-                          if (combatService.enemyList[enemyIndex].effects[i].duration > combatService.enemyList[enemyIndex].effects[j].duration){
-                                combatService.enemyList[enemyIndex].effects.splice(j, 1);
-                            }
-                        }
-                    }
-                }
-
-                //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
-                // if ((player[`${key}`] + value) >= player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
-                    // player[`${key}`] = player['max' + key.charAt(0).toUpperCase() + key.slice(1)];
-                // }
-
-                //Override the max value for the following keys.
-                //Essentially the max value for these are just
-                //keeping track of the current value, not the max possible
-                // switch(key){
-                //     case 'speed':
-                //     case 'attack': //Modifies the upper bound, ie minAttack stays where it is, maxAttack is equal to the modifier of the effect. Dam = between min-max
-                //         player[`${key}`] += value;
-                //     break;
-                // }
-                
-                //Original value set here or else after modifying in the first if block here it gets set to the wrong value
-                //due to the value being compared changing before the next comparison
-                // const originalPlayerValue = player[`${key}`];
-
-                //If adding the value is less than or equal to the max, add the value
-                // if ((originalPlayerValue + value) < player['max' + key.charAt(0).toUpperCase() + key.slice(1)]){
-                    // player[`${key}`] += value;
-                // }
-                
-                //If subtracting the value is less than 0, set it to 0
-                // if ((originalPlayerValue + value) < 0) {
-                    // player[`${key}`] = 0;
+            }
         }
-    }
-        // player.magic[numSelected - 1].amount -= 1;
-        player.mana -= player.magic[numSelected - 1].manaCost;
-        console.log(combatService.enemyList[enemyIndex].effects);
+        this.modifyTargetStats(target, spell);
     }
 
+    /******************************************************************************************************
+     * Add Spell Effect - Add the spell effect
+     ******************************************************************************************************/
+    addSpellEffect(target: any, effect: Effect){
+        //If we have more than one effect in the players list with the same name,
+        //increase duration instead of having a duplicate effect
+        if (target.effects.length > 1){
+            let index = target.effects.findIndex(obj => obj.name === effect.name);
+            if (index !== -1){ target.effects[index].duration += effect.duration; }
+        }
         
+        //Push a copy of the effect to prevent pass by reference from changing the values
+        target.effects.push({...effect});
+    }
+
+    /******************************************************************************************************
+     * Modify Target Stats - 
+     ******************************************************************************************************/
+    modifyTargetStats(target: any, spell){
+        spell.effect.forEach((effect) => {
+            const originalValue = target[`${effect.name}`];
+                    
+            //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
+            if ((target[`${effect.name}`] + effect.modifier) >= target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
+                target[`${effect.name}`] = target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
+            }
+            
+            // //If adding the value is less than or equal to the max, add the value
+            if ((originalValue + effect.modifier) < target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
+                target[`${effect.name}`] += effect.modifier;
+            }
+            
+            //If subtracting the value is less than 0, set it to 0
+            if ((originalValue + effect.modifier) < 0) {
+                target[`${effect.name}`] = 0;
+            }
+
+            //Override the max value for the following keys.
+            //Essentially the max value for these are just
+            //keeping track of the current value, not the max possible
+            switch(effect.name){
+                case 'speed':
+                case 'attack': //Modifies the upper bound, ie minAttack stays where it is, maxAttack is equal to the modifier of the effect. Dam = between min-max
+                case 'minAttack':
+                    target[`${effect.name}`] += effect.modifier;
+                break;
+            }
+        });
+    }
+
+    /******************************************************************************************************
+     * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
+     * well as the player
+     ******************************************************************************************************/
+    castSpell(player, numSelected, enemyIndex, combatService){
+        
+        let spell = player.magic[numSelected - 1];
+        let enemy = combatService.enemyList[enemyIndex];
+        
+        //If the spell has a duration and is targeted to yourself, add it to your effects list
+        spell.effect.forEach((effect) => {
+                      
+            if (effect.duration){
+                if (effect.self){
+                    this.addSpellEffect(player, effect);
+                } else {
+                    this.addSpellEffect(enemy, effect);
+                }
+            }
+        });
+
+        this.removeDuplicateEffects(player, spell);
+        this.removeDuplicateEffects(enemy, spell);
+        
+        player.mana -= spell.manaCost;
+        // console.log(combatService.enemyList[enemyIndex].effects);
+    }
 }
