@@ -85,15 +85,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // Allows selection of the first enemy to allow auto-start of combat
     this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
-    console.log(this.hasTouch());
   }
 
   ngOnDestroy(): void {
     this.keyListener();
-  }
-
-  hasTouch() {
-    return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0;
   }
 
   optionSelected(numSelected: number){
