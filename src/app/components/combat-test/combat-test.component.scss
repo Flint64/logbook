@@ -1,5 +1,266 @@
 .centerCombat{
     height: 100%;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    >div{
+        border: 1px solid white;
+        padding: 10px;
+        width: 80vw;
+        height: 28%;
+        &:last-child{
+            height: fit-content;
+        }
+
+        .storyText{
+            max-height: min-content;
+        }
+    }
+}
+
+button{
+    &:disabled{
+        background-color: gainsboro;
+        &:hover{
+            color: #9f9f9f;
+        }
+    }
+}
+
+.actionDisabled{
+    color: #9f9f9f !important;
+    &:hover{
+        color: #9f9f9f !important;
+        background-color: black !important;
+        cursor: default !important;
+    }
+}
+
+.enemyArea{
+    height: max-content !important;
+    max-height: 28%;
+}
+
+.enemyBox{  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    p{
+        padding-top: 0px;
+        margin: 0;
+    }
+    img{
+        max-width: 2em;
+        padding: 5px;
+    }
+}
+
+// .playerOptions{
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: space-between;
+// }
+
+#playerProgressDiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.playerBars{
+    // width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div:first-of-type{
+        width: 100%;
+    }
+    div:last-of-type{
+        progress{ 
+            width: 40vw;
+        }
+    }
+}
+
+.playerOptions p{
+    margin: 0;
+    padding: 0;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    
+    &:hover{
+        color: white;
+        background-color: black;
+        cursor: auto;
+    }
+}
+
+@media (hover: hover) {
+    .playerOptions p:hover {
+    /* solves sticky problem */
+    color: black;
+    background-color: white;
+    cursor: pointer;
+    }
+  }
+
+form{
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    justify-content: space-evenly;
+    div{
+        border: 1px solid white;
+        height: 5em;
+        width: 5em;
+        margin: 3px;
+
+        &:hover{
+            color: black;
+            background-color: white;
+            cursor: pointer;
+            img{
+                filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
+            }
+        }
+    }
+}
+
+.storyText{
+    font-size: 1.2em;
+    overflow-y: hidden;
+    margin: 0;
+    max-height: 20%;
+    width: 324px;
+}
+
+.showOverflow{
+    overflow-y: scroll;
+}
+
+// width
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+ // track
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+ // handle
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  // handle on hover
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+.invisible{
+    visibility: hidden;
+}
+
+.hidden{
+    display: none;
+}
+
+mat-progress-bar{
+    &.enemyATB{
+        width: 100%;
+        height: .5em;
+        border-radius: 0;
+        // display: none;
+    }
+}
+
+.none{
+    // display: none;
+}
+
+.enemySelected{
+    border: 5px solid white !important;
+}
+
+progress{
+    // min-width: 10em;
+}
+
+progress{
+    height: 10px;
+    width: 100%;
+    // max-width: 20.2em;
+    text-align: center;
+}
+
+#manaBar:after {
+    counter-reset: variable var(--manaValue);
+    content: counter(variable);
+}
+
+#playerHealthBar:after {
+    counter-reset: variable var(--healthValue);
+    content: counter(variable);
+}
+
+progress, progress::-webkit-progress-value {
+    background: rgb(89,159,201);
+    border: 1px solid rgba(69, 69, 69, 0.764);
+}
+
+#manaBar::-webkit-progress-value{
+    background: purple;
+    display: block;
+    float: right;
+}
+
+#playerHealthBar::-webkit-progress-value{ //TODO: FIX CSS, Figure out why the player ATB isn't resetting right
+    background: crimson;
+}
+
+#manaBar{
+    margin-left: 3px;
+}
+
+#playerHealthBar{
+    margin-left: -3px;
+}
+
+#statusEffects{
+    // width: 28px;
+    display: flex;
+    // justify-content: space-evenly;
+    span{
+        display: block;
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+    }
+}
+
+.statusEffect{
+    img{
+        width: 28px;
+        height: 28px;
+    }
+}
+
+#playerInventoryOptions{
+    height: 100%;
+    overflow-y: scroll;
+}
+
+/*
+
+.centerCombat{
+    height: 100%;
     display: grid;
     justify-content: center;
     align-content: center;
@@ -114,22 +375,22 @@ button{
     overflow-y: scroll;
 }
 
-/* width */
+// width
 ::-webkit-scrollbar {
     width: 5px;
   }
   
-  /* Track */
+ // track
   ::-webkit-scrollbar-track {
     background: #f1f1f1; 
   }
    
-  /* Handle */
+ // handle
   ::-webkit-scrollbar-thumb {
     background: #888; 
   }
   
-  /* Handle on hover */
+  // handle on hover
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
@@ -163,7 +424,7 @@ mat-progress-bar{
         width: 100%;
         height: 1em;
         border-radius: 0;
-        display: none;
+        // display: none;
     }
 }
 
@@ -260,7 +521,7 @@ progress, progress::-webkit-progress-value {
     }
 }
 
-.enemyBox{    
+.enemyBox{  
     display: flex;
     justify-content: center;
     align-items: center;
@@ -275,11 +536,18 @@ progress, progress::-webkit-progress-value {
     }
 }
 
+
 .statusEffect{
     img{
         width: 28px;
         height: 28px;
     }
+}
+
+*/
+
+.skull{
+    filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
 }
 
 /* Toggle styles for different events */

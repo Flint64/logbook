@@ -1,5 +1,7 @@
 import { ConsumableItem } from "./consumableItem.model";
 import { EquippableItem } from "./equippableItem.model";
+import { Magic } from "./magic.model";
+import { Effect } from "./effect.model";
 
 export class Player {
     constructor(){}
@@ -15,6 +17,7 @@ export class Player {
 
     maxHealth: number = 100;
     maxAttack: number = 10;
+    maxMinAttack: number = 3;
     maxDefense: number = 30;
     maxSpeed: number = 200;
     maxMana: number = 33;
@@ -26,8 +29,8 @@ export class Player {
     
     consumables: ConsumableItem[] = [];
     inventory: EquippableItem[] = [];
-    magic: any[] = [];
-    effects: any[] = [];
+    magic: Magic[] = [];
+    effects: Effect[] = [];
 
     //Resets any modified player values to the max value after combat excluding health and mana
     //TODO: Make sure this accounts for any equipment

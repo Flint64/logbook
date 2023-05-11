@@ -5,6 +5,7 @@ import { ConsumableItem } from 'src/app/models/consumableItem.model';
 import { CombatService } from 'src/app/services/combat.service';
 import { Effect } from 'src/app/models/effect.model';
 import * as Rand from '../../../../node_modules/lodash';
+import { Magic } from 'src/app/models/magic.model';
 
 @Component({
   selector: 'app-combat-test',
@@ -23,6 +24,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   keyListener = null;
 
   selectedEnemy: Enemy = null;
+  enemyIndex: number = null;
   enemyForm: FormGroup;
   previousTarget = null;
   intervalID = null;
@@ -53,13 +55,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1, null, new Effect(20, null, null, null, -5, null, null, null, false));
-    let p = new ConsumableItem('Mana Potion', 1, null, new Effect(null, null, null, null, -20, null, null, null, false));
-    let s = new ConsumableItem('Speed Potion', 2, 6, new Effect(null, null, null, 400, null, null, null, null, false));
-    let sp = new ConsumableItem('Poison Yourself', 1, 6, new Effect(null, null, null, null, null, null, null, 5, false));
-    let ps = new ConsumableItem('Multiple Effects', 1, 13, new Effect(20, null, null, null, -5, null, null, 5, false));
-    let rage = new ConsumableItem('Rage Potion', 1, 2, new Effect(null, null, null, null, null, null, null, null, true));
-    let atk = new ConsumableItem('Damage+', 1, 3, new Effect(null, 5, null, null, null, null, null, null, false));
+    let t = new ConsumableItem('Healing Potion', 1,    [new Effect('health', null, 20)]);
+    let p = new ConsumableItem('Mana Potion', 1,       [new Effect('mana', null, -50)]);
+    let s = new ConsumableItem('Speed Potion', 2,      [new Effect('speed', 4, 400)]);
+    let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5)]);
+    let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null), new Effect('attack', 4, 5), new Effect('speed', 4, 400), new Effect('mana', null, -5)]);
+    let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null)]);
+    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5)]);
+    let atk2 = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5)]);
+    
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
     this.combatService.player.consumables.push(s);
@@ -67,9 +71,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.player.consumables.push(ps);
     this.combatService.player.consumables.push(rage);
     this.combatService.player.consumables.push(atk);
+    this.combatService.player.consumables.push(atk2); //TODO: Next up, make the spells function this same way with the changes to the effect object
 
-    let m = 'Fireball';
-    this.combatService.player.magic.push(m);
+    let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5)]);
+    this.combatService.player.magic.push(fireball);
     
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
@@ -80,10 +85,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // Allows selection of the first enemy to allow auto-start of combat
     this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
+    console.log(this.hasTouch());
   }
 
   ngOnDestroy(): void {
     this.keyListener();
+  }
+
+  hasTouch() {
+    return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0;
   }
 
   optionSelected(numSelected: number){
@@ -115,6 +125,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.viewingMagicOptions && numSelected === this.combatService.player.magic.length + 1){
           // Go back to main menu
           this.menuBack('main');
+        } else {
+        this.useSpell(numSelected);
       }
         
 
@@ -161,7 +173,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     // When starting combat, create a value to bind to each invididual enemy ATB guage
     if (this.combatService.enemyATBValues.length === 0){
       this.combatService.enemyList.forEach((e) => {
-        let num = Math.floor(Math.random() * 50) + 1; // this will get a number between 1 and 99;
+        let num = Math.floor(Math.random() * 25) + 1; // this will get a number between 1 and 25;
         num *= Math.round(Math.random()) ? 1 : -1; // this will add minus sign in 50% of cases
         /*
           Enemies will have a chance to start battle with their ATB guage anywhere from
@@ -288,7 +300,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
     }
-    
+
     // Returns a random integer from 1-100:
     if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
       
@@ -354,6 +366,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
       
       // Display what was used and the effect it has based on the type
+      /*
       for (const [key, value] of Object.entries(this.combatService.player.consumables[numSelected - 1].effect)) {
         if (value){
             switch (key){
@@ -389,6 +402,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         // console.log(`${key}: ${value}`);
       }
+      */
 
       this.menuBack('main');
       this.combatService.endTurn();
@@ -396,9 +410,65 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
   }
 
-  /****************************************************************************************
-   * Magick - Handles selecting the magic option during combat. Displays spell list
-   ****************************************************************************************/
+/****************************************************************************************
+ * Use Spell - Allows usage of a spell item from the magic menu
+ ****************************************************************************************/
+  useSpell(numSelected){
+    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+      return;
+    }
+
+    //Only reset the menu if the item was actually consumed
+    if ((this.combatService.player.mana - this.combatService.player.magic[numSelected - 1].manaCost) >= 0){
+
+      this.combatService.player.magic[numSelected - 1].castSpell(this.combatService.player, numSelected, this.enemyIndex, this.combatService);
+      
+      // Display what was used and the effect it has based on the type
+      // for (const [key, value] of Object.entries(this.combatService.player.magic[numSelected - 1].effect)) {
+      //   if (value){
+      //       switch (key){
+      //         case 'health':
+      //           this.colorGameBox();
+      //         case 'mana':
+      //           this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? 'restore' : 'remove'} ${Math.abs(value)} ${key}`, true);
+      //           this.colorGameBox(false, true, 'purpleBorder');
+      //         break;
+                
+      //         case 'rage':
+      //           this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} has made you fly into an uncontrollable rage for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true, 'enemyTextRed');
+      //         break;
+                
+      //         case 'speed':
+      //         case 'attack':
+      //         case 'defense':
+      //         case 'accuracy':
+      //         case 'luck':
+      //           this.appendText(`${this.combatService.player.consumables[numSelected - 1].name} used to ${value > 0 ? `gain a ${key} boost` : `lower ${key}`} for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true);
+      //           this.colorGameBox(false, true, 'yellowBorder');
+      //         break;
+                
+      //         case 'poison':
+      //           this.appendText(`You've been poisoned by ${this.combatService.player.consumables[numSelected - 1].name} for ${this.combatService.player.consumables[numSelected - 1].duration - 1} turn(s)`, true, 'greenText');
+      //           this.colorGameBox(false, true, 'greenBorder');
+
+      //           //Makes player health bar green when poisoned (when using consumable only).
+      //           //Is removed in the main game loop in the effects loop
+      //           this.playerHealthBar.nativeElement.classList.add('playerHealthBarPoison');
+      //       break;
+      //       }
+      //   }
+        // console.log(`${key}: ${value}`);
+      // }
+
+      this.menuBack('main');
+      this.combatService.endTurn();
+    }
+  }
+  
+
+/****************************************************************************************
+ * Magick - Handles selecting the magic option during combat. Displays spell list
+ ****************************************************************************************/
   magick(){
     if (this.combatService.player.ATB < 100 || this.intervalID === null){
       return;
@@ -471,9 +541,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopATB(); 
     }
 
-    //Reset ATB guage to -10 to display empty guage instead of partially
-    //filled due to interval counter never stopping
-    this.combatService.enemyATBValues[index] = -10;
+    this.combatService.endEnemyTurn(index);
   }
 
   /****************************************************************************************
@@ -516,6 +584,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * on the enemy box selects them.
    ****************************************************************************************/
   selectEnemy(index, target){
+    
+    this.enemyIndex = index;
     
     //If we select the label, hp value, or image in the enemy box,
     //set the target to the parent to actually select the enemy

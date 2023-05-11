@@ -8,17 +8,19 @@ export class Enemy {
         public speed: number,
         public mana: number,
         public accuracy: number,
-        public luck: number){
+        public luck: number,
+        public effects: Array<any>){
 
         this.name = name;
         this.health = health;
         this.attack = attack;
         this.minAttack = minAttack;
         this.defense = defense;
-        this.speed = speed; //Lower = faster
+        this.speed = speed;
         this.mana = mana;
         this.accuracy = accuracy;
         this.luck = luck;
+        this.effects = effects;
         }
         
         
