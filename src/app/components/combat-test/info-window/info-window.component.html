@@ -1,0 +1,36 @@
+<body>
+    <div class="infoBox">
+        <p *ngIf="data.helpText">{{data.helpText}}</p>
+
+        <!-- //FIXME: Figure out a better way to display the detail text on the items so that the description doesn't have to be repeated for effects sharing the same name -->
+        <section *ngIf="data.itemDetails">
+            <p class="bold">{{data.itemDetails.name}}</p>
+            <p>Number Held: {{data.itemDetails.amount}}</p>
+            <p>Effects:</p>
+            <ul *ngFor="let effect of data.itemDetails.effect">
+                <li class="bold">{{effect.name.charAt(0).toUpperCase() + effect.name.slice(1)}}</li>
+                <li *ngIf="effect.modifier > 0 && (effect.name === 'health' || effect.name === 'mana')">+{{effect.modifier + ' ' + effect.name}}</li>
+                <li *ngIf="effect.modifier < 0 && (effect.name === 'health' || effect.name === 'mana')">{{effect.modifier + ' ' + effect.name}}</li>
+
+
+                <li *ngIf="effect.duration">Duration: {{(effect.duration - 1)}} turns</li>
+                <li *ngIf="!effect.duration">Duration: Instant</li>
+
+                <li *ngIf="effect.self">Target: Self</li>
+                <li *ngIf="!effect.self">Target: Enemy</li>
+
+                <li *ngIf="effect.helpDescription">{{effect.helpDescription}}</li>
+            </ul>
+        </section>
+
+        <!-- //TODO: Make this also display spell details -->
+        <section *ngIf="data.spellDetails">
+
+        </section>
+        
+    </div>
+
+    <div class="options">
+        <button (click)="onCancel()">Close</button>
+    </div>
+</body>

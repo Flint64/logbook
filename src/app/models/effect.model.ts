@@ -5,11 +5,13 @@ export class Effect {
         public duration: number,
         public modifier: number,
         public self: boolean,
+        public helpDescription: string,
         ){ 
             this.name = name;
             this.duration = duration;
             this.modifier = modifier;
             this.self = self;
+            this.helpDescription = helpDescription;
     }
 
 

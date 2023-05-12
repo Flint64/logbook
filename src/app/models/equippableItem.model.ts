@@ -1,7 +1,7 @@
 export class EquippableItem {
     constructor(
         public name: string,
-        public healthModifier: number,
+        public healthModifier: number, //TODO: Rename these to just health, defense, etc. Add isEquipped bool
         public attackModifier: number,
         public defenseModifier: number,
         public speedModifier: number,

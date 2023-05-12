@@ -2,7 +2,7 @@ import { Effect } from "./effect.model";
 
 export class Enemy {
     constructor(
-        public name: string,
+        public name: string, //TODO: Maybe have some attacks that take longer to recover from, like a strong attack that increases the ATB negative after using
         public health: number,
         public maxHealth: number,
         public attack: number,

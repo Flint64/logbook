@@ -57,6 +57,9 @@
             <progress [style.--manaValue]="combatService.player.mana" id="manaBar" max="100" [value]="100 * combatService.player.mana / combatService.player.maxMana"></progress>
         </div>
 
+        <button (click)="openInfoWindow(combatService.player.consumables[4])">?</button>
+        <button (click)="openHelpWindow(helpText)">?</button>
+
     </div>
     
 </div>

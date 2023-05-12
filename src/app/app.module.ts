@@ -11,13 +11,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { InfoWindowComponent } from './components/combat-test/info-window/info-window.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SacrificeComponent,
     HomeComponent,
-    CombatTestComponent
+    CombatTestComponent,
+    InfoWindowComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,8 @@ import { MatIconModule } from '@angular/material/icon';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     MatProgressBarModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

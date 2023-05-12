@@ -6,6 +6,8 @@ import { CombatService } from 'src/app/services/combat.service';
 import { Effect } from 'src/app/models/effect.model';
 import * as Rand from '../../../../node_modules/lodash';
 import { Magic } from 'src/app/models/magic.model';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoWindowComponent } from './info-window/info-window.component';
 
 @Component({
   selector: 'app-combat-test',
@@ -29,6 +31,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   previousTarget = null;
   intervalID = null;
   playerCanSelectEnemy: boolean = true;
+  helpText: string = "this is the help text!!!";
 
   mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
 
@@ -36,7 +39,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   viewingMagicOptions: boolean = false;
   viewingInventoryOptions: boolean = false;
   
-  constructor(public combatService: CombatService, private renderer: Renderer2) {
+  constructor(public combatService: CombatService, private renderer: Renderer2, private dialog: MatDialog) {
     if (!this.keyListener){
       this.keyListener = renderer.listen('document', 'keypress', (e) => {
         if (parseInt(e.key) >= 0 || parseInt(e.key) >= 9 ){
@@ -55,14 +58,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
-    let t = new ConsumableItem('Healing Potion', 1,    [new Effect('health', null, 20, true)]);
-    let p = new ConsumableItem('Mana Potion', 1,       [new Effect('mana', null, 50, true)]);
-    let s = new ConsumableItem('Speed Potion', 2,      [new Effect('speed', 4, 400, true)]);
-    let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5, true)]);
-    let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null, true), new Effect('attack', 4, 5, true), new Effect('speed', 4, 400, true), new Effect('mana', null, -5, true)]);
-    let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null, true)]);
-    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true)]);
-    let atk2 = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true)]);
+    let t = new ConsumableItem('Healing Potion', 1,    [new Effect('health', null, 20, true, '')]);
+    let p = new ConsumableItem('Mana Potion', 1,       [new Effect('mana', null, 50, true, '')]);
+    let s = new ConsumableItem('Speed Potion', 2,      [new Effect('speed', 4, 400, true, 'Increases your speed')]);
+    let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5, true, 'Take poison damage over time')]);
+    let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability'), new Effect('attack', 4, 5, true, 'Increases attack power'), new Effect('speed', 4, 400, true, 'Increases your speed'), new Effect('mana', null, -5, true, '')]);
+    let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
+    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true, 'Increase attack power')]);
+    let atk2 = new ConsumableItem('Damage+', 1,        [new Effect('attack', 4, 5, true, 'Increase attack power')]);
     
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
@@ -73,8 +76,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.player.consumables.push(atk);
     this.combatService.player.consumables.push(atk2);
     
-    let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false)]);
-    let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true)]);
+    let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false, 'Take fire damage over time')]);
+    let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
     this.combatService.player.magic.push(fireball);
     this.combatService.player.magic.push(enrage);
     
@@ -93,6 +96,39 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.keyListener();
   }
 
+  openHelpWindow(data: any): void {
+    if (this.intervalID !== null){ this.stopATB(); }
+
+    const dialogRef = this.dialog.open(InfoWindowComponent, {
+        panelClass: 'custom-dialog-container',
+        width: '80vw',
+        height: '40vh',
+        data: {helpText: data},
+        disableClose: true,
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+          if (this.intervalID === null){ this.startCombat(); }
+      });
+  }
+
+  openInfoWindow(data: any): void {
+    if (this.intervalID !== null){ this.stopATB(); }
+
+      const dialogRef = this.dialog.open(InfoWindowComponent, {
+        panelClass: 'custom-dialog-container',
+        width: '80vw',
+        height: '40vh',
+        data: {itemDetails: data},
+        backdropClass: 'backdropBackground',
+        disableClose: true,
+      });
+    
+      dialogRef.afterClosed().subscribe(result => {
+          if (this.intervalID === null){ this.startCombat(); }
+      });
+  }
+  
   optionSelected(numSelected: number){
     try {
       if (this.viewingMainOptions){

@@ -6,6 +6,10 @@ import { Effect } from "./effect.model";
 export class Player {
     constructor(){}
 
+    //TODO: Rework some of these fields to be more in line with chrono trigger and stuff like a strength score that adds to attack rather than hard coded numbers. 
+    //Or maybe it's okay? It works as is but idk if it would be better that way because then weapons and your score can add to damage rather than right now
+    //none of that is being taken into account.
+
     health: number = 100;
     attack: number = 10;
     minAttack: number = 3;

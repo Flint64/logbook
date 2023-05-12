@@ -217,7 +217,7 @@ progress, progress::-webkit-progress-value {
     float: right;
 }
 
-#playerHealthBar::-webkit-progress-value{ //TODO: FIX CSS, Figure out why the player ATB isn't resetting right
+#playerHealthBar::-webkit-progress-value{
     background: crimson;
 }
 
