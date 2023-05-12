@@ -13,6 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InfoWindowComponent } from './components/combat-test/info-window/info-window.component';
+import { LongPressDirective } from './directives/long-press.directive';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { InfoWindowComponent } from './components/combat-test/info-window/info-w
     SacrificeComponent,
     HomeComponent,
     CombatTestComponent,
-    InfoWindowComponent
+    InfoWindowComponent,
+    LongPressDirective
   ],
   imports: [
     BrowserModule,
