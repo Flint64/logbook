@@ -31,8 +31,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   previousTarget = null;
   intervalID = null;
   playerCanSelectEnemy: boolean = true;
-  helpText_inventory: string = 'Not sure what an item does? You can long press any item to view its details';
-  helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details'
+  helpText_inventory: string = 'Not sure what an item does? You can long press any item to view its details.';
+  helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details.'
 
 
   mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
@@ -106,6 +106,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '80vw',
         height: '40vh',
         data: {helpText: data},
+        backdropClass: 'backdropBackground',
         disableClose: true,
       });
 

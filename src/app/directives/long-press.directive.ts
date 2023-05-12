@@ -33,6 +33,7 @@ export class LongPressDirective {
   private longPressSubscription?: Subscription;
 
   @HostListener('mousedown', ['$event'])
+  @HostListener('touchstart', ['$event'])
   onPress(event: MouseEvent) {
     if (this.disabled) {
       event.stopPropagation();
@@ -64,6 +65,8 @@ export class LongPressDirective {
   }
 
   @HostListener('mouseup', ['$event'])
+  @HostListener('touchend', ['$event'])
+  @HostListener('touchmove', ['$event'])
   @HostListener('mouseleave', ['$event'])
   onRelease(event: MouseEvent) {
     this.pressing = false;
