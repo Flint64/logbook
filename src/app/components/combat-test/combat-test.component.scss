@@ -251,6 +251,9 @@ progress, progress::-webkit-progress-value {
 #playerInventoryOptions{
     height: 100%;
     overflow-y: scroll;
+}
+
+#playerMainOptions, #playerMagicOptions, #playerInventoryOptions{
     p{
         width: max-content;
     }
