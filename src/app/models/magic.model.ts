@@ -23,7 +23,7 @@ export class Magic {
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
      ******************************************************************************************************/
-    removeDuplicateEffects(target: any, spell: any){
+    private removeDuplicateEffects(target: any, spell: any){
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -41,7 +41,7 @@ export class Magic {
     /******************************************************************************************************
      * Add Spell Effect - Add the spell effect
      ******************************************************************************************************/
-    addSpellEffect(target: any, effect: Effect){
+    private addSpellEffect(target: any, effect: Effect){
         //If we have more than one effect in the players list with the same name,
         //increase duration instead of having a duplicate effect
         if (target.effects.length > 1){
@@ -54,9 +54,10 @@ export class Magic {
     }
 
     /******************************************************************************************************
-     * Modify Target Stats - 
+     * Modify Target Stats - Modifies the target (player or enemy's) stats based on the effect 
+     * name and modifier
      ******************************************************************************************************/
-    modifyTargetStats(target: any, spell){
+    private modifyTargetStats(target: any, spell){
         spell.effect.forEach((effect) => {
             const originalValue = target[`${effect.name}`];
                     
