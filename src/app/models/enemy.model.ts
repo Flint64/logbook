@@ -27,6 +27,8 @@ export class Enemy {
         this.effects = effects;
         this.turnCount = turnCount;
     }
+    
+    //TODO: Enemy weaknesses & resistances
 
     calcBaseAttackDamage(){
         //Damage is a random number between player min attack and attack

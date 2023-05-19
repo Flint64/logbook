@@ -41,6 +41,8 @@ export class Player {
     magic: Magic[] = [];
     effects: Effect[] = [];
 
+    //TODO: Player weaknesses & resistances
+
     //Resets any modified player values to the max value after combat excluding health and mana
     //TODO: Make sure this accounts for any equipment
     reset(){
