@@ -1,20 +1,22 @@
 export class EquippableItem {
     constructor(
         public name: string,
-        public healthModifier: number, //TODO: Rename these to just health, defense, etc. Add isEquipped bool
-        public attackModifier: number,
-        public defenseModifier: number,
-        public speedModifier: number,
-        public manaModifier: number,
-        public accuracyModifier: number,
-        public luckModifier: number,
+        public health: number,
+        public strength: number,
+        public defense: number,
+        public speed: number,
+        public mana: number,
+        public accuracy: number,
+        public luck: number,
+        public isEquipped: boolean,
         ){
-            this.healthModifier = healthModifier;
-            this.attackModifier = attackModifier;
-            this.defenseModifier = defenseModifier;
-            this.speedModifier = speedModifier;
-            this.manaModifier = manaModifier;
-            this.accuracyModifier = accuracyModifier;
-            this.luckModifier = luckModifier;
+            this.health = health;
+            this.strength = strength;
+            this.defense = defense;
+            this.speed = speed;
+            this.mana = mana;
+            this.accuracy = accuracy;
+            this.luck = luck;
+            this.isEquipped = isEquipped;
         }
 }
