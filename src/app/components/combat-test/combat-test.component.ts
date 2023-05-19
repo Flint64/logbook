@@ -66,8 +66,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let sp = new ConsumableItem('Poison Yourself', 1,  [new Effect('poison', 4, 5, true, 'Take poison damage over time')]);
     let ps = new ConsumableItem('Multiple Effects', 3, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability'), new Effect('attack', 4, 5, true, 'Increases attack power'), new Effect('speed', 4, 400, true, 'Increases your speed'), new Effect('mana', null, -5, true, '')]);
     let rage = new ConsumableItem('Rage Potion', 1,    [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
-    let atk = new ConsumableItem('Damage+', 1,         [new Effect('attack', 4, 5, true, 'Increase attack power')]);
-    let atk2 = new ConsumableItem('Damage+', 1,        [new Effect('attack', 4, 5, true, 'Increase attack power')]);
+    let atk = new ConsumableItem('Damage+', 1,         [new Effect('strength', 4, 5, true, 'Increase attack power')]);
+    let atk2 = new ConsumableItem('Damage+', 1,        [new Effect('strength', 4, 5, true, 'Increase attack power')]);
     
     this.combatService.player.consumables.push(t);
     this.combatService.player.consumables.push(p);
@@ -346,8 +346,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     // Returns a random integer from 1-100:
     if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
       
-      //Damage is a random number between player min attack and attack
-      let dam = Rand.random(this.combatService.player.minAttack, this.combatService.player.attack);
+      let dam = this.combatService.player.calcBaseAttackDamage();
             
       //If the player has more than 0 hp allow the hit
       if (this.combatService.player.health !== 0){
@@ -556,7 +555,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     let enemy = this.combatService.enemyList[index];
 
     if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
-      let dam = Rand.random(enemy.minAttack, enemy.attack);
+      
+      let dam = this.combatService.enemyList[index].calcBaseAttackDamage();
 
       this.combatService.player.health -= dam;
       if (enemy.health !== 0){ 

@@ -12,8 +12,7 @@ export class CombatService {
   // name
   // health
   // maxHealth
-  // attack
-  // minAttack
+  // strength
   // defense
   // speed
   // mana
@@ -21,9 +20,9 @@ export class CombatService {
   // luck
   // effects
   enemyList: Enemy[] = [
-    new Enemy('Goblin',      15, 30, 5, 1, 5, 80, 0, 60, 2, [], 0),
-    new Enemy('Green Slime', 3, 3, 2, 1, 0, 75, 0, 60, 2, [], 0),
-    new Enemy('Kobold',      4, 4, 5, 1, 5, 90, 10, 60, 2, [], 0),
+    new Enemy('Goblin',      15, 30, 2, 5, 80, 0, 60, 2, [], 0),
+    new Enemy('Green Slime', 3, 3, 2, 0, 75, 0, 60, 2, [], 0),
+    new Enemy('Kobold',      4, 4, 2, 5, 90, 10, 60, 2, [], 0),
   ];
   
   enemyATBValues: number[] = [];
@@ -89,18 +88,9 @@ export class CombatService {
         //Reset player values before removing from list or else effect never ends. 
         for (const [key, value] of Object.entries(target)) {
 
-          //If the player has an effect name that matches a player value, reset it to the max value of that field* with the exception of minAttack
-          //attack -> maxAttack
-          //minAttack -> maxMinAttack
+          //If the player has an effect name that matches a player value, reset it to the max value of that field
           if (target.effects[i].name === key){
-            if (target.effects[i].name === 'minAttack'){
-              //Reset to maxMinAttack instead of just appending max to the field
-              target[`${key}`] = target['maxMin' + target.effects[i].name.charAt(0).toUpperCase() + target.effects[i].name.slice(1)]
-            } else {
-              target[`${key}`] = target['max' + target.effects[i].name.charAt(0).toUpperCase() + target.effects[i].name.slice(1)]
-            }
-
-            
+              target[`${key}`] = target['max' + target.effects[i].name.charAt(0).toUpperCase() + target.effects[i].name.slice(1)];          
           }
         }
         

@@ -65,8 +65,7 @@ export class ConsumableItem {
             //keeping track of the current value, not the max possible
             switch(effect.name){
                 case 'speed':
-                case 'attack': //Modifies the upper bound, ie minAttack stays where it is, maxAttack is equal to the modifier of the effect. Dam = between min-max
-                case 'minAttack':
+                case 'strength':
                     player[`${effect.name}`] += effect.modifier;
                 break;
             }
