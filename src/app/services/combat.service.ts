@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Enemy } from '../models/enemy.model';
 import { Player } from '../models/player.model';
-import * as Enemies from '../components/combat-test/enemyList.js';
+import { enemies } from '../components/combat-test/enemyList';
 
 @Injectable({
   providedIn: 'root'

@@ -8,7 +8,7 @@ import * as Rand from '../../../../node_modules/lodash';
 import { Magic } from 'src/app/models/magic.model';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
-import { enemies } from './enemyList.js';
+import { enemies } from './enemyList';
 
 @Component({
   selector: 'app-combat-test',
@@ -57,7 +57,17 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   ngOnInit(): void {
 
-    console.log(enemies);
+    //Converts the enemy list into actual Enemy objects
+    let convertedEnemyList = enemies.map(enemyData => new Enemy(enemyData));
+    console.log(convertedEnemyList);
+
+    //i is less than the number of enemies we want displayed
+    for (let i = 0; i < 3; i++){
+      //Push the random enemies chosen to the combatService
+      this.combatService.enemyList.push(convertedEnemyList[Rand.random(0, (enemies.length - 1))]);
+    }
+
+    
 
     this.enemyForm = new FormGroup({
       'enemySelected': new FormControl(null)
