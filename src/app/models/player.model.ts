@@ -12,7 +12,7 @@ export class Player {
     defense: number = 30; //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
     speed: number = 200; //Speed = (Character's speed) + Accessory Bonuses
     mana: number = 33;
-    accuracy: number = 90; //TODO: Hit Rate = (Character's Accuracy% / 2) + Weapon Hit% + Accessory Bonuses
+    accuracy: number = 90;
     luck: number = 5;
 
     //TODO: Evade? dodge? Evade Rate = (Character's Evade% / 4) + Accessory Bonuses
@@ -58,7 +58,7 @@ export class Player {
     }
 
     calcBaseAttackDamage(){
-        //Damage is a random number between player min attack and attack
+    //Damage is a random number between player min attack and attack
       let dam = (this.strength / 2) + 5 //TODO: 5 is your equipped weapon damage stat, not implemented yet
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
@@ -74,6 +74,12 @@ export class Player {
       if (dam <= 0){ dam = 1; }
 
       return dam;
+    }
+    
+    //Hit Rate = (Character's Hit% / 2) + (Weapon Hit% + Accessory Bonuses) - Enemy Evade%
+    checkIfHit(){
+        // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
+        (this.accuracy / 2) + (5 + 5) - 3;
     }
     
 }

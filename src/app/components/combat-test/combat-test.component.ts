@@ -8,6 +8,7 @@ import * as Rand from '../../../../node_modules/lodash';
 import { Magic } from 'src/app/models/magic.model';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
+import { enemies } from './enemyList.js';
 
 @Component({
   selector: 'app-combat-test',
@@ -55,6 +56,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   ngOnInit(): void {
+
+    console.log(enemies);
 
     this.enemyForm = new FormGroup({
       'enemySelected': new FormControl(null)

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Enemy } from '../models/enemy.model';
 import { Player } from '../models/player.model';
+import * as Enemies from '../components/combat-test/enemyList.js';
 
 @Injectable({
   providedIn: 'root'
@@ -8,22 +9,8 @@ import { Player } from '../models/player.model';
 export class CombatService {
 
   player: Player = new Player();
-
-  // name
-  // health
-  // maxHealth
-  // strength
-  // defense
-  // speed
-  // mana
-  // accuracy
-  // luck
-  // effects
-  enemyList: Enemy[] = [
-    new Enemy('Goblin',      15, 30, 2, 5, 80, 0, 60, 2, [], 0),
-    new Enemy('Green Slime', 3, 3, 2, 0, 75, 0, 60, 2, [], 0),
-    new Enemy('Kobold',      4, 4, 2, 5, 90, 10, 60, 2, [], 0),
-  ];
+  
+  enemyList: Enemy[] = [];
   
   enemyATBValues: number[] = [];
   enemyHealthValues: number[] = [];
@@ -53,6 +40,7 @@ export class CombatService {
   endEnemyTurn(index: number){
     //Choose a random number between -30/-10 to reset the enemy ATB gauge to so that
     //the enemy attacks are a little more random
+    this.enemyList[index].turnCount++;
     let num = Math.floor(Math.random() * (30 - 10 + 1) + 10);
       num *= -1;
       this.enemyATBValues[index] = num;
