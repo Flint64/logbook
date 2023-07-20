@@ -4,7 +4,7 @@ import { Enemy } from 'src/app/models/enemy.model';
 import { ConsumableItem } from 'src/app/models/consumableItem.model';
 import { CombatService } from 'src/app/services/combat.service';
 import { Effect } from 'src/app/models/effect.model';
-import * as Rand from '../../../../node_modules/lodash';
+import _ from 'lodash';
 import { Magic } from 'src/app/models/magic.model';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
@@ -58,16 +58,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
 
     //Converts the enemy list into actual Enemy objects
-    let convertedEnemyList = enemies.map(enemyData => new Enemy(enemyData));
-    console.log(convertedEnemyList);
-
+    let convertedEnemyList: Enemy[] = enemies.map(enemyData => new Enemy(enemyData));
+    
     //i is less than the number of enemies we want displayed
     for (let i = 0; i < 3; i++){
       //Push the random enemies chosen to the combatService
-      this.combatService.enemyList.push(convertedEnemyList[Rand.random(0, (enemies.length - 1))]); //FIXME: Add a copy via ...spread operator or else if two of the same enemy are added they're treated as one
-    }
-//FIXME: Also images on ghpages aren't displaying correctly because the path has to be /assets/ without any ../ up level things
-    
+      let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
+      let clone = _.cloneDeep(new Enemy(enemy));
+      this.combatService.enemyList.push(clone);
+    }    
 
     this.enemyForm = new FormGroup({
       'enemySelected': new FormControl(null)
@@ -314,7 +313,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       
       if (this.combatService.player.ATB >= 100){
         while (searchForEnemy){
-            let enemyIndex = Rand.random(0, (this.combatService.enemyHealthValues.length - 1));
+            let enemyIndex = _.random(0, (this.combatService.enemyHealthValues.length - 1));
             if (this.combatService.enemyHealthValues[enemyIndex] > 0){
               this.selectEnemy(enemyIndex, this.enemyBoxes.toArray()[enemyIndex].nativeElement);
               setTimeout(() => {

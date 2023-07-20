@@ -1,5 +1,5 @@
 import { Effect } from "./effect.model";
-import * as Rand from '../../../node_modules/lodash';
+import _ from 'lodash';
 
 export class Enemy {
     
@@ -23,11 +23,11 @@ export class Enemy {
     //TODO: Enemy weaknesses & resistances
 
     calcBaseAttackDamage(){
-        //Damage is a random number between player min attack and attack
+      //Damage is a random number between player min attack and attack
       let dam = (this.strength / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
       //Damage variance, a random number from 1-5 more or less than the calculated value, minimum of 1
-      let variance = Rand.random(1, 5);
+      let variance = _.random(1, 5);
 
       // this will add minus sign in 50% of cases
       variance *= Math.round(Math.random()) ? 1 : -1; 

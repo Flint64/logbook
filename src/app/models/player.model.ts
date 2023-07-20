@@ -2,7 +2,7 @@ import { ConsumableItem } from "./consumableItem.model";
 import { EquippableItem } from "./equippableItem.model";
 import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
-import * as Rand from '../../../node_modules/lodash';
+import _ from 'lodash';
 
 export class Player {
     constructor(){}
@@ -62,7 +62,7 @@ export class Player {
       let dam = (this.strength / 2) + 5 //TODO: 5 is your equipped weapon damage stat, not implemented yet
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
-      let variance = Rand.random(1, 7);
+      let variance = _.random(1, 7);
 
       // this will add minus sign in 50% of cases
       variance *= Math.round(Math.random()) ? 1 : -1; 

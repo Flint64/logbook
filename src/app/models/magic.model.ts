@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Effect } from "./effect.model";
-import * as Rand from '../../../node_modules/lodash';
+import _ from 'lodash';
 
 @Injectable()
 export class Magic {
@@ -101,7 +101,7 @@ export class Magic {
         
         //If the spell has a damage value, apply it before the effect(s)
         if (spell.minDamage || spell.maxDamage){
-            spellDamage = Rand.random(spell.minDamage, spell.maxDamage);
+            spellDamage = _.random(spell.minDamage, spell.maxDamage);
             enemy.health -= spellDamage;
         }
         
