@@ -64,9 +64,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //i is less than the number of enemies we want displayed
     for (let i = 0; i < 3; i++){
       //Push the random enemies chosen to the combatService
-      this.combatService.enemyList.push(convertedEnemyList[Rand.random(0, (enemies.length - 1))]);
+      this.combatService.enemyList.push(convertedEnemyList[Rand.random(0, (enemies.length - 1))]); //FIXME: Add a copy via ...spread operator or else if two of the same enemy are added they're treated as one
     }
-
+//FIXME: Also images on ghpages aren't displaying correctly because the path has to be /assets/ without any ../ up level things
     
 
     this.enemyForm = new FormGroup({

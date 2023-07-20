@@ -5,7 +5,7 @@
             <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i, $event.target)">
                 <label (click)="selectEnemy(i, $event.target)">{{enemy.name}}</label>
                 <p (click)="selectEnemy(i, $event.target)">{{enemy.health}}</p>
-                <img (click)="selectEnemy(i, $event.target)" #enemyIcons class="skull" src="../../../assets/images/general/skull.svg" alt="enemy skull">
+                <img (click)="selectEnemy(i, $event.target)" #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">
                 <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
                 <mat-progress-bar class="enemyATB none" mode="determinate" [value]="combatService.enemyATBValues[i]" color="accent"></mat-progress-bar>
             </div>
@@ -40,12 +40,12 @@
     
     <div class="playerBars">            
         <section id="statusEffects">
-            <span *ngIf="!combatService.player.effects.length" class="statusEffect invisible"><img src="../../../assets/images/statuses/water_drop.svg" alt=""></span>
+            <span *ngIf="!combatService.player.effects.length" class="statusEffect invisible"><img src="assets/images/statuses/water_drop.svg" alt=""></span>
             <span *ngFor="let effect of combatService.player.effects" [ngSwitch]="effect.name"> 
-                <span *ngSwitchCase="'poison'" class="statusEffect greenFilter"><img src="../../../assets/images/statuses/water_drop.svg" alt="Poison Icon"></span>
-                <span *ngSwitchCase="'rage'" class="statusEffect redFilter"><img src="../../../assets/images/statuses/rage.svg" alt="Rage Icon"></span>
-                <span *ngSwitchCase="'strength'" class="statusEffect redFilter"><img src="../../../assets/images/statuses/arrow_up.svg" alt="Attack Up Icon"></span>
-                <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="../../../assets/images/statuses/speed.svg" alt="Speed Icon"></span>
+                <span *ngSwitchCase="'poison'" class="statusEffect greenFilter"><img src="assets/images/statuses/water_drop.svg" alt="Poison Icon"></span>
+                <span *ngSwitchCase="'rage'" class="statusEffect redFilter"><img src="assets/images/statuses/rage.svg" alt="Rage Icon"></span>
+                <span *ngSwitchCase="'strength'" class="statusEffect redFilter"><img src="assets/images/statuses/arrow_up.svg" alt="Attack Up Icon"></span>
+                <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="assets/images/statuses/speed.svg" alt="Speed Icon"></span>
             </span>                
         </section>
 
