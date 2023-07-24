@@ -1,41 +1,11 @@
-//THESE HAVE TO MATCH THE PLAYER/ENEMY MODEL NAMES OR ELSE THINGS BREAK
 export class Effect {
-    constructor(
-        public name: string, 
-        public duration: number,
-        public modifier: number,
-        public self: boolean,
-        public helpDescription: string,
-        ){ 
-            this.name = name;
-            this.duration = duration;
-            this.modifier = modifier;
-            this.self = self;
-            this.helpDescription = helpDescription;
-    }
+    constructor(data: Partial<Effect>) {
+        Object.assign(this, data);
+      }
 
-
-    // constructor(
-    //     public health: number,
-    //     public attack: number,
-    //     public defense: number,
-    //     public speed: number,
-    //     public mana: number,
-    //     public accuracy: number,
-    //     public luck: number,
-    //     public poison: number,
-    //     public rage: boolean,
-    //     public burn: number,
-    //     ){
-    //         this.health = health;
-    //         this.attack = attack;
-    //         this.defense = defense;
-    //         this.speed = speed;
-    //         this.mana = mana;
-    //         this.accuracy = accuracy;
-    //         this.luck = luck;
-    //         this.poison = poison;
-    //         this.rage = rage;
-    //         this.burn = burn;
-    //     }
-    }
+    name: string
+    duration: number
+    modifier: number
+    self: boolean
+    helpDescription: string    
+}
