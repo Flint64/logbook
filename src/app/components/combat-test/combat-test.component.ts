@@ -83,9 +83,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //Populate your potions list from those in the potionList file. Currently adds all potions in the file to your inventory
     convertedPotions.forEach((potion) => {
-      this.combatService.player.consumables.push(potion);
+        this.combatService.player.consumables.push(potion);
     });
     
+    //TODO: Set up a file for spells and do the same as the potions above
     // let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false, 'Take fire damage over time')]);
     // let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
     // this.combatService.player.magic.push(fireball);

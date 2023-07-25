@@ -21,7 +21,7 @@ export class ConsumableItem {
                 
                 //If we have more than one effect in the players list with the same name,
                 //increase duration instead of having a duplicate effect
-                if (player.effects.length > 1){
+                if (player.effects.length > 0){
                     let index = player.effects.findIndex(obj => obj.name === effect.name);
                     if (index !== -1){ player.effects[index].duration += effect.duration; }
                 }
