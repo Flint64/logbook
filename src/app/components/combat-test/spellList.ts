@@ -52,4 +52,29 @@ export const spells: MagicData[] = [
       },
     ],
   },
+  
+  {
+    name: 'Enrage',
+    manaCost: 12,
+    minDamage: 0,
+    maxDamage: 0,
+    targets: 0,
+    effect: [
+      {
+        name: 'rage',
+        duration: 4,
+        modifier: null,
+        self: true,
+        helpDescription: 'Attack randomly, unable to choose a target or special ability',
+      },
+      {
+        name: 'strength',
+        duration: 4,
+        modifier: 5,
+        self: true,
+        helpDescription: 'Increase attack power',
+      },
+    ],
+  },
+
 ];

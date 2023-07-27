@@ -115,8 +115,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.party.members[1].magic.push(convertedSpells[1])
     this.combatService.party.members[2].magic.push(convertedSpells[2])
     
-    // let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
-    
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
     this.startCombat();
