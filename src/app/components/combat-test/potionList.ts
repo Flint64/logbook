@@ -1,8 +1,6 @@
-import { ConsumableItem } from "src/app/models/consumableItem.model";
 import { Effect } from "src/app/models/effect.model";
 
-// export const potions: Partial<ConsumableItem[] & Effect[]>[] = [
-    // export const potions = [
+//TODO: Think about adding an id field to each potion, as well as an amount (separate from the amount currently stored) as if the game is updated when people are playing it if changes are made to the base file those changes won't be reflected and could cause some problems if effects are changed or something. If we have an id field and an amount and that's all we store when saving the game, then we can repopulate it on load with fresh versions of the items and there shouldn't be any issues. And do the same with the magic as well.
 
 // Define a separate interface for ConsumableItemData
 interface ConsumableItemData {
@@ -55,7 +53,7 @@ interface ConsumableItemData {
   },
   {
     name: 'Poison Yourself',
-    amount: 1,
+    amount: 3,
     effect: [
       {
         name: 'poison',

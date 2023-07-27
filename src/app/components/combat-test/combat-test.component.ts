@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
 import { enemies } from './enemyList';
 import { potions } from './potionList';
+import { Player } from 'src/app/models/player.model';
 
 @Component({
   selector: 'app-combat-test',
@@ -21,23 +22,34 @@ import { potions } from './potionList';
 export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   @ViewChild('story', {static: false}) story: ElementRef;
-  @ViewChild('playerHealthBar', {static: false}) playerHealthBar: ElementRef;
+  // @ViewChild('playerHealthBar', {static: false}) playerHealthBar: ElementRef;
+  @ViewChildren('memberBoxes') memberBoxes: QueryList<ElementRef>;
   @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>;
   @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>;
   @ViewChildren('gameBox') gameBox: QueryList<ElementRef>;
   keyListener = null;
 
   selectedEnemy: Enemy = null;
+  selectedPartyMember: Player = null;
+
   enemyIndex: number = null;
+  memberIndex: number = null;
+
   enemyForm: FormGroup;
+  partyForm: FormGroup;
+
   previousTarget = null;
+  previousPartyMember = null;
+
   intervalID = null;
   playerCanSelectEnemy: boolean = true;
   helpText_inventory: string = 'Not sure what an item does? You can long press any item to view its details.';
   helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details.'
 
 
-  mainMenuOptions = ['Attack', 'Magick', 'Inventory'];
+  //These items in this list HAVE to match those in the switch
+  //in the optionSelected function or else they are inaccessible.
+  mainMenuOptions = ['Attack', 'Magick', 'Potions'];
 
   viewingMainOptions: boolean = true;
   viewingMagicOptions: boolean = false;
@@ -57,7 +69,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   ngOnInit(): void {
-
     //Converts the enemy list into actual Enemy objects
     let convertedEnemyList: Enemy[] = enemies.map(enemyData => new Enemy(enemyData));
     
@@ -73,6 +84,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       'enemySelected': new FormControl(null)
     });
 
+    this.partyForm = new FormGroup({
+      'memberSelected': new FormControl(null)
+    });
+
     let convertedPotions: ConsumableItem[] = potions.map(potionData => {
       // Create instances of Effect for the effect property inside the nested map
       const effects = (potionData.effect || []).map(effectData => new Effect(effectData));
@@ -83,7 +98,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //Populate your potions list from those in the potionList file. Currently adds all potions in the file to your inventory
     convertedPotions.forEach((potion) => {
-        this.combatService.player.consumables.push(potion);
+        this.combatService.party.consumables.push(potion);
     });
     
     //TODO: Set up a file for spells and do the same as the potions above
@@ -99,8 +114,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Allows selection of the first enemy to allow auto-start of combat
-    this.selectEnemy(0, this.enemyBoxes.first.nativeElement);
+    // Allows selection of the first enemy & party member to allow auto-start of combat
+    this.selectEnemy(0);
+    this.enemyIndex = 0;
+    
+    this.selectPartyMember(0);
+    this.memberIndex = 0;
   }
 
   ngOnDestroy(): void {
@@ -155,19 +174,41 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       switch(this.mainMenuOptions[numSelected - 1]){
 
           case 'Attack':
-            this.playerAttack();
+            let result = this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID);
+            this.appendText(result.appendText.text, result.appendText.newline, result.appendText.color);
+            result.target.health -= result.damage;
+
+            this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
+            this.previousTarget.classList.add('enemyHit');
+        
+            // If enemy is not dead, flash red to show damage was taken
+            setTimeout(() => {
+              if (this.selectedEnemy.health > 0){
+                this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove('enemyHitSVG');
+                this.previousTarget.classList.remove('enemyHit');
+              }
+            }, 100);
+            
+            // If the enemy is dead, make it's text & icon red
+            if (this.selectedEnemy.health < 0){
+              this.previousTarget.classList.add('enemyHit');
+              this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
+            }
+            
+            if (result.playerDeath){ this.selectedPartyMember.health -= 1; }
+            this.combatService.endTurn(this.selectedPartyMember);
           break;
 
           case 'Magick':
             this.magick();
           break;
 
-          case 'Inventory':
+          case 'Potions':
             this.inventory();
           break;
         }
       } else if (this.viewingMagicOptions){
-        if (this.viewingMagicOptions && numSelected === this.combatService.player.magic.length + 1){
+        if (this.viewingMagicOptions && numSelected === this.combatService.party.members[this.memberIndex].magic.length + 1){
           // Go back to main menu
           this.menuBack('main');
         } else {
@@ -176,7 +217,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         
 
       } else if (this.viewingInventoryOptions){
-        if (this.viewingInventoryOptions && numSelected === this.combatService.player.consumables.length + 1){
+        if (this.viewingInventoryOptions && numSelected === this.combatService.party.consumables.length + 1){
           // Go back to main menu
           this.menuBack('main');
         } else {
@@ -216,17 +257,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // When starting combat, create a value to bind to each invididual enemy ATB guage
-    if (this.combatService.enemyATBValues.length === 0){
       this.combatService.enemyList.forEach((e) => {
         let num = Math.floor(Math.random() * 25) + 1; // this will get a number between 1 and 25;
         num *= Math.round(Math.random()) ? 1 : -1; // this will add minus sign in 50% of cases
-        /*
-          Enemies will have a chance to start battle with their ATB guage anywhere from
-          half filled  to negative half filled to stagger their attack times a bit. 
-        */
-        this.combatService.enemyATBValues.push(num);
+
+        //Enemies will have a chance to start battle with their ATB guage anywhere from
+        //half filled  to negative half filled to stagger their attack times a bit. 
+        e.ATB = num;
       });
-    }
     
     //Handles initially starting combat & resuming from pausing
     if (!this.intervalID){
@@ -241,40 +279,61 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   incrementATB(){
 
     this.combatService.enemyHealthValues = [];
+    this.combatService.memberHealthValues = [];
     const isBelowThreshold = (currentValue) => currentValue < 0;
+    const isAboveThreshold = (currentValue) => currentValue > 100; //Not currently used, can be used for a team attack or something though to make sure each party member is able to act
 
-    //Fill an array that only holds enemy health values to check each one to know if we should end combat or not
+    //Fill an array that only holds party/enemy health values to check each one to know if we should end combat or not
     this.combatService.enemyList.forEach((e) => {this.combatService.enemyHealthValues.push(e.health)});
+    this.combatService.party.members.forEach((e) => {this.combatService.memberHealthValues.push(e.health)});
     
-    //If all enemy health is less than 0 or player health is less than 0, end the battle
-    if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
+    //If all party or enemy health is less than 0, end the battle
+    if (this.combatService.enemyHealthValues.every(isBelowThreshold) || this.combatService.memberHealthValues.every(isBelowThreshold)){
       this.stopATB(true);
     }
 
     //When ATB guage is full, enemy attack
-    for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
-        if (this.combatService.enemyATBValues[i] >= 100){
-            this.enemyAttack(i);
-        }
-    }
-
-    //Fill the bar based on percent rather than straight value
-    //based on the speed.
-    this.combatService.player.ATB += (this.combatService.player.speed/100);
-
-    //Increment each individual enemy's ATB guage if they have health remaining
-    for (let i = 0; i < this.combatService.enemyATBValues.length; i++){
-      if (this.combatService.enemyList[i].health >= 0){
-        this.combatService.enemyATBValues[i] += (this.combatService.enemyList[i].speed/100);
+    //Since we don't have access to the combatService within the class file,
+    //pass in to the enemyAttack function the enemy making the attack and the
+    //list of party members. Then apply the result here after calculations
+    //have been made & end the enemy turn.
+    this.combatService.enemyList.forEach((e, index) => {
+      if (e.ATB >= 100){
+        let result = e.enemyAttack(e, this.combatService.party.members);
+        this.appendText(result.appendText.text, result.appendText.newline, result.appendText.color);
+        result.target.health -= result.damage;
+        if (result.enemyDeath){ e.health -= 1; }
+        this.combatService.endEnemyTurn(index);
+      }
+    });
+    
+    //Increment each individual party member's ATB guage if they have health remaining
+    this.combatService.party.members.forEach((member, index) => {
+      if (member.health >= 0){
+        member.ATB += (member.speed/100);
       } else {
-        //If the enemy is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
-        if (!Array.from(this.enemyBoxes.toArray()[i].nativeElement.classList).includes('enemyHitSVG')){
-            this.enemyBoxes.toArray()[i].nativeElement.classList.add('enemyHit');
-            this.enemyIcons.toArray()[i].nativeElement.classList.add('enemyHitSVG');
+        //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
+        if (!Array.from(this.memberBoxes.toArray()[index].nativeElement.classList).includes('playerHit')){
+            this.memberBoxes.toArray()[index].nativeElement.classList.add('playerHit');
         }
       }
-    }
+    });
+    
+    //Increment each individual enemy's ATB guage if they have health remaining
+    this.combatService.enemyList.forEach((enemy, index) => {
+      if (enemy.health >= 0){
+        enemy.ATB += (enemy.speed/100);
+      } else {
+        //If the enemy is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
+        if (!Array.from(this.enemyBoxes.toArray()[index].nativeElement.classList).includes('enemyHitSVG')){
+            this.enemyBoxes.toArray()[index].nativeElement.classList.add('enemyHit');
+            this.enemyIcons.toArray()[index].nativeElement.classList.add('enemyHitSVG');
+        }
+      }
+    });
+    
 
+  //TODO:: Rework effect display, current version won't work with more than one party member
 /****************************************************************************************
  * This is here to check the player effects list to remove any classes that may be adding
  * styles such as changing the player's health bar to green when they are poisoned.
@@ -282,48 +341,53 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
  * When the effect is removed, if the styling class is present, it gets removed to reset
  * the view
  ****************************************************************************************/
-    let effectNames = [];
-    let classListArr = []
-    classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
+    // let effectNames = [];
+    // let classListArr = []
+    // // classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
 
-    for (let i = 0; i < this.combatService.player.effects.length; i++){
-      effectNames.push(this.combatService.player.effects[i].name);
-    }
+    // this.combatService.party.members.forEach(member => {
+    //   member.effects.forEach((efffect) => {
 
-    if (!effectNames.includes('poison')){
-      if (classListArr.includes('playerHealthBarPoison')){
-        this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
-      }
-    }
+    //   });
+    // });
+    // // for (let i = 0; i < this.combatService.player.effects.length; i++){
+    // //   effectNames.push(this.combatService.player.effects[i].name);
+    // // }
 
-    if (effectNames.includes('rage')){
-      //Disable menu selection when in rage
-      this.playerCanSelectEnemy = false;
+    // if (!effectNames.includes('poison')){
+    //   if (classListArr.includes('playerHealthBarPoison')){
+    //     // this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
+    //   }
+    // }
 
-    let searchForEnemy;
-    //If all enemy health is less than 0 or player health is less than 0, end the battle
-    if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
-      searchForEnemy = false;
-    } else {
-      searchForEnemy = true;
-    }
+    // if (effectNames.includes('rage')){ //FIXME: Rage will no longer work correctly with more than one party member
+    //   //Disable menu selection when in rage
+    //   this.playerCanSelectEnemy = false;
+
+    // let searchForEnemy;
+    // //If all enemy health is less than 0 or player health is less than 0, end the battle
+    // if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
+    //   searchForEnemy = false;
+    // } else {
+    //   searchForEnemy = true;
+    // }
       
-      if (this.combatService.player.ATB >= 100){
-        while (searchForEnemy){
-            let enemyIndex = _.random(0, (this.combatService.enemyHealthValues.length - 1));
-            if (this.combatService.enemyHealthValues[enemyIndex] > 0){
-              this.selectEnemy(enemyIndex, this.enemyBoxes.toArray()[enemyIndex].nativeElement);
-              setTimeout(() => {
-                this.playerAttack();
-              }, 500);
-              searchForEnemy = false;
-            }
-        }
-      }
-    } else {
-      //When the rage effect is no longer active, allow player selection of enemies again
-      this.playerCanSelectEnemy = true;
-    }
+    //   if (this.combatService.player.ATB >= 100){
+    //     while (searchForEnemy){
+    //         let enemyIndex = _.random(0, (this.combatService.enemyHealthValues.length - 1));
+    //         if (this.combatService.enemyHealthValues[enemyIndex] > 0){
+    //           this.selectEnemy(enemyIndex);
+    //           setTimeout(() => {
+    //             this.playerAttack();
+    //           }, 500);
+    //           searchForEnemy = false;
+    //         }
+    //     }
+    //   }
+    // } else {
+    //   //When the rage effect is no longer active, allow player selection of enemies again
+    //   this.playerCanSelectEnemy = true;
+    // }
   }
 
   /****************************************************************************************
@@ -334,7 +398,9 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   stopATB(endCombat: boolean = false){
 
     if (endCombat){
-      this.combatService.player.reset();
+      this.combatService.party.members.forEach(member => {
+        member.reset();
+      });
     }
     
     console.log("stopping combat");
@@ -342,78 +408,22 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.intervalID = null;
   }
 
-  /****************************************************************************************
-   * Player Attack - Handles basic player attacks.
-   * Damage is based on attack power.
-   * //TODO: Defense stat
-   ****************************************************************************************/
-  playerAttack(){
-    if (this.combatService.player.ATB < 100 || this.intervalID === null){
-      return;
-    }
-
-    // Returns a random integer from 1-100:
-    if ((Math.floor(Math.random() * 100) + 1) < this.combatService.player.accuracy){
-      
-      let dam = this.combatService.player.calcBaseAttackDamage();
-            
-      //If the player has more than 0 hp allow the hit
-      if (this.combatService.player.health !== 0){
-        this.appendText('PLAYER hit for ' + dam + ' damage!', true);
-        this.selectedEnemy.health -= dam;
-        this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
-        this.previousTarget.classList.add('enemyHit');
-        
-        //If enemy is not dead, flash red to show damage was taken
-        setTimeout(() => {
-          if (this.selectedEnemy.health > 0){
-            this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove('enemyHitSVG');
-            this.previousTarget.classList.remove('enemyHit');
-          }
-        }, 100);
-        
-        //If the enemy is dead, make it's text & icon red
-        if (this.selectedEnemy.health < 0){
-          this.previousTarget.classList.add('enemyHit');
-          this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
-        }
-      }
-      
-      //Enemy gets one last attack before dying if it ends up at 0 hp
-      if (this.combatService.player.health === 0){ 
-        this.appendText('PLAYER at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true);
-    }
-
-    //If we miss
-    } else {
-      if (this.combatService.player.health !== 0){this.appendText('PLAYER miss!', true); }
-      if (this.combatService.player.health === 0){ this.appendText('PLAYER at near death attempts one final attack before perishing and misses!', true) }
-    }
-
-    //If the player or the enemy is at 0 hit points, they get one
-    //last attack before dying. (Only attack, not action)
-    //FIXME: With current setup, if hit again before the last attack, combat ends
-    if (this.combatService.player.health === 0){
-      this.stopATB();
-    }
-
-    this.combatService.endTurn();
-
-  }
 
   /****************************************************************************************
    * Use Consumable - Allows usage of a consumable item from the inventory menu
    ****************************************************************************************/
   useConsumable(numSelected){
-    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+    let playerTarget = this.combatService.party.members[this.memberIndex];
+
+    if (playerTarget.ATB < 100 || this.intervalID === null){
       return;
     }
     
     //Only reset the menu if the item was actually consumed
-    if ((this.combatService.player.consumables[numSelected - 1].amount - 1) < 0){
+    if ((this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
       return;
     } else {
-      this.combatService.player.consumables[numSelected - 1].useItem(this.combatService.player, numSelected);
+      this.combatService.party.consumables[numSelected - 1].useItem(playerTarget, numSelected, this.combatService.party.consumables);
       
       // Display what was used and the effect it has based on the type
       /*
@@ -455,7 +465,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       */
 
       this.menuBack('main');
-      this.combatService.endTurn();
+      this.combatService.endTurn(this.selectedPartyMember);
     }
     
   }
@@ -464,15 +474,17 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
  * Use Spell - Allows usage of a spell item from the magic menu
  ****************************************************************************************/
   useSpell(numSelected){
-    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+    let playerTarget = this.combatService.party.members[this.memberIndex];
+
+    if (playerTarget.ATB < 100 || this.intervalID === null){
       return;
     }
 
     //Only reset the menu if we have enough mana to cast the spell
-    if ((this.combatService.player.mana - this.combatService.player.magic[numSelected - 1].manaCost) >= 0){
+    if ((playerTarget.mana - playerTarget.magic[numSelected - 1].manaCost) >= 0){
 
       //CastSpell returns the spell damage so that we can display it here in append text //TODO: reimplement all of the appendText stuff for magic and consumable items
-      let spellDamage = this.combatService.player.magic[numSelected - 1].castSpell(this.combatService.player, numSelected, this.enemyIndex, this.combatService);
+      let spellDamage = playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.enemyIndex, this.combatService);
       
       // Display what was used and the effect it has based on the type
       // for (const [key, value] of Object.entries(this.combatService.player.magic[numSelected - 1].effect)) {
@@ -512,7 +524,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       // }
 
       this.menuBack('main');
-      this.combatService.endTurn();
+      this.combatService.endTurn(this.selectedPartyMember);
     }
   }
   
@@ -521,7 +533,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
  * Magick - Handles selecting the magic option during combat. Displays spell list
  ****************************************************************************************/
   magick(){
-    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+    if (this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null){
       return;
     }
     this.viewingMainOptions = false;
@@ -534,7 +546,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * items.
    ****************************************************************************************/
   inventory(){
-    if (this.combatService.player.ATB < 100 || this.intervalID === null){
+    if (this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null){
       return;
     }
     this.viewingMainOptions = false;
@@ -556,47 +568,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /****************************************************************************************
-   * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
-   * //TODO: Defense stat
-   ****************************************************************************************/
-  enemyAttack(index){
-
-    let enemy = this.combatService.enemyList[index];
-
-    if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
-      
-      let dam = this.combatService.enemyList[index].calcBaseAttackDamage();
-
-      this.combatService.player.health -= dam;
-      if (enemy.health !== 0){ 
-        this.appendText(enemy.name +  ' hits for ' + dam + ' damage!', true, 'enemyTextGrey');         
-        this.colorGameBox();
-      }
-
-      /*Kill the enemy once the final attack has happened*/
-      if (enemy.health === 0){
-        this.appendText(enemy.name +  ' at near death attempts one final attack before perishing and hits for ' + dam + ' damage!', true, 'enemyTextRed'); 
-        this.colorGameBox();
-        enemy.health -= 1; 
-        this.previousTarget.classList.add('enemyHit');
-      }
-      
-    } else {
-      if (enemy.health !== 0){this.appendText(enemy.name + ' miss!', true, 'enemyTextGrey'); }
-      if (enemy.health === 0){ this.appendText(enemy.name + ' at near death attempts one final attack before perishing and misses!', true, 'enemyTextRed'); enemy.health -= 1; /*Kill the enemy once the final attack has happened*/ }
-    }
-
-    //If the player or the enemy is at 0 hit points, they get one
-    //last attack before dying. (Only attack, not action)
-    //If hit again before the last attack, combat ends
-    if (enemy.health === 0){
-      this.stopATB(); 
-    }
-
-    this.combatService.endEnemyTurn(index);
-  }
-
-  /****************************************************************************************
    * Player Takes Damage - Makes the game window flash red if the player is hit. Stays red
    * if player is dead
    ****************************************************************************************/
@@ -608,7 +579,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       
       //If you are not dead, flash red to show damage was taken
-      if (this.combatService.player.health > 0){
+      if (this.combatService.party.members[this.memberIndex].health > 0){ //TODO: Make this check each member, not just the currently selected one
       setTimeout(() => {
           this.gameBox.forEach((e) => {
             e.nativeElement.classList.remove('playerHit');
@@ -635,21 +606,26 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Select Enemy - Allows you to select which enemy to attack. Clicking anywhere
    * on the enemy box selects them.
    ****************************************************************************************/
-  selectEnemy(index, target){
-    
+  selectEnemy(index){
     this.enemyIndex = index;
-    
-    //If we select the label, hp value, or image in the enemy box,
-    //set the target to the parent to actually select the enemy
-    if (target.innerHTML.charAt(0) !== '<'){
-      target = target.parentNode;
-    }
-
     if (this.previousTarget !== null){ this.previousTarget.classList.remove('enemySelected'); }
     this.selectedEnemy = this.combatService.enemyList[index];
     this.enemyForm.controls.enemySelected.setValue(index);
-    target.classList.add('enemySelected');
-    this.previousTarget = target;
+    this.enemyBoxes.toArray()[index].nativeElement.classList.add('enemySelected');
+    this.previousTarget = this.enemyBoxes.toArray()[index].nativeElement;
+  }
+
+  /****************************************************************************************
+   * Select Party Member - Allows you to select which party member to use their turn with. 
+   * Clicking anywhere on the enemy box selects them.
+   ****************************************************************************************/
+  selectPartyMember(index){
+    this.memberIndex = index;
+    if (this.previousPartyMember !== null){ this.previousPartyMember.classList.remove('memberSelected'); }
+    this.selectedPartyMember = this.combatService.party.members[index];
+    this.partyForm.controls.memberSelected.setValue(index);
+    this.memberBoxes.toArray()[index].nativeElement.classList.add('memberSelected');
+    this.previousPartyMember = this.memberBoxes.toArray()[index].nativeElement;
   }
 
 }

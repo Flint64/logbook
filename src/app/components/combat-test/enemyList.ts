@@ -11,7 +11,8 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       effects: [],
-      turnCount: 0
+      turnCount: 0,
+      ATB: 0
     },
     {
       name: 'Green Slime',
@@ -24,7 +25,8 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       effects: [],
-      turnCount: 0
+      turnCount: 0,
+      ATB: 0
     },
     {
       name: 'Red Slime',
@@ -37,7 +39,8 @@ export const enemies = [
       accuracy: 50,
       luck: 2,
       effects: [],
-      turnCount: 0
+      turnCount: 0,
+      ATB: 0
     },
     {
       name: 'Kobold',
@@ -50,6 +53,7 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       effects: [],
-      turnCount: 0
+      turnCount: 0,
+      ATB: 0
     }
   ];

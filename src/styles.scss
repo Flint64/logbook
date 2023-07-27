@@ -79,7 +79,9 @@ button{
 
 .storyText{
     font-size: 18px;
-    padding: 5px;
+    span{
+      padding: 5px;
+    }
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -10,7 +10,7 @@
     
     >div{
         border: 1px solid white;
-        padding: 10px;
+        // padding: 10px;
         width: 80vw;
         height: 28%;
         &:last-child{
@@ -46,7 +46,7 @@ button{
     max-height: 28%;
 }
 
-.enemyBox{  
+.enemyBox {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,32 +61,59 @@ button{
     }
 }
 
+.memberBox {
+    border: 1px solid white;
+    height: 5em;
+    width: 30%; //TODO: Dynamic width for 2 or 1 party member
+    margin-bottom: 10px;
+    &:hover{
+        label{ border-bottom: 1px solid black; cursor: pointer; }
+        color: black;
+        background-color: white;
+        cursor: pointer;
+    }
+    
+    p{
+        padding-top: 0px;
+        margin: 0;
+    }
+}
+
+.innerBoxWrapper{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-between;
+}
+
 // .playerOptions{
     // display: flex;
     // flex-direction: column;
     // justify-content: space-between;
 // }
 
-#playerProgressDiv{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+// #playerProgressDiv{
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+// }
 
-.playerBars{
-    // width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    div:first-of-type{
-        width: 100%;
-    }
-    div:last-of-type{
-        progress{ 
-            width: 40vw;
-        }
-    }
-}
+// .playerBars{
+//     // width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     div:first-of-type{
+//         width: 100%;
+//     }
+//     div:last-of-type{
+//         progress{ 
+//             width: 40vw;
+//         }
+//     }
+// }
 
 .playerOptions p{
     margin: 0;
@@ -110,7 +137,7 @@ button{
     }
   }
 
-form{
+.enemyForm{
     display: flex;
     flex-wrap: wrap;
     height: 100%;
@@ -119,7 +146,8 @@ form{
         border: 1px solid white;
         height: 5em;
         width: 5em;
-        margin: 3px;
+        margin-top: 5px;
+        margin-bottom: 5px;
 
         &:hover{
             color: black;
@@ -130,6 +158,13 @@ form{
             }
         }
     }
+}
+
+.partyForm {
+    display: flex;
+    height: 100%;
+    justify-content: space-evenly;
+    label{ border-bottom: 1px solid white; }
 }
 
 .storyText{
@@ -189,6 +224,10 @@ mat-progress-bar{
     border: 5px solid white !important;
 }
 
+.memberSelected{
+    border: 5px solid white !important;
+}
+
 progress{
     height: 10px;
     width: 100%;
@@ -207,7 +246,8 @@ progress{
 }
 
 progress, progress::-webkit-progress-value {
-    background: rgb(89,159,201);
+    // background: rgb(89,159,201);
+    background: #4caf50;
     border: 1px solid rgba(69, 69, 69, 0.764);
 }
 
@@ -256,6 +296,10 @@ progress, progress::-webkit-progress-value {
 #playerMainOptions, #playerMagicOptions, #playerInventoryOptions{
     p{
         width: max-content;
+        padding-left: 5px;
+        &:first-of-type{
+            padding-top: 5px;
+        }
     }
 }
 

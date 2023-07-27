@@ -13,10 +13,10 @@ export class ConsumableItem {
         amount: number
         effect: Effect[]
 
-    useItem(player, numSelected){
+    useItem(player, numSelected, consumables){
         
         //Add all effects from the item used if they have a duration
-        player.consumables[numSelected - 1].effect.forEach((effect) => {
+        consumables[numSelected - 1].effect.forEach((effect) => {
             if (effect.duration){
                 
                 //If we have more than one effect in the players list with the same name,
@@ -44,7 +44,7 @@ export class ConsumableItem {
             }
         }
 
-        player.consumables[numSelected - 1].effect.forEach((effect) => {
+        consumables[numSelected - 1].effect.forEach((effect) => {
             const originalPlayerValue = player[`${effect.name}`];
                     
             //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
@@ -73,7 +73,7 @@ export class ConsumableItem {
             }
         });
         
-        player.consumables[numSelected - 1].amount -= 1;        
+        consumables[numSelected - 1].amount -= 1;        
     }
 
         

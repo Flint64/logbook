@@ -7,6 +7,7 @@ import _ from 'lodash';
 export class Player {
     constructor(){}
 
+    name: string = "";
     health: number = 100;
     strength: number = 10; //basic attack damage = (Character's Strength / 2) + Weapon Attack
     defense: number = 30; //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
@@ -36,8 +37,7 @@ export class Player {
     ATB: number = 100;
     turnCount: number = 0;
     
-    consumables: ConsumableItem[] = [];
-    inventory: EquippableItem[] = [];
+    equippedItems: EquippableItem[] = [];
     magic: Magic[] = [];
     effects: Effect[] = [];
 
@@ -77,9 +77,68 @@ export class Player {
     }
     
     //Hit Rate = (Character's Hit% / 2) + (Weapon Hit% + Accessory Bonuses) - Enemy Evade%
-    checkIfHit(){
+    // checkIfHit(){
         // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
-        (this.accuracy / 2) + (5 + 5) - 3;
+        // (this.accuracy / 2) + (5 + 5) - 3;
+    // }
+    
+    /****************************************************************************************
+   * Player Attack - Handles basic player attacks.
+   * Damage is based on attack power.
+   * //TODO: Defense stat
+   ****************************************************************************************/
+  playerAttack(playerTarget, enemyTarget, intervalID){
+    
+    if (playerTarget.ATB < 100 || intervalID === null){
+      return;
     }
+    
+    let result = {
+        damage: null,
+        target: null,
+        playerDeath: null,
+        appendText: {
+          text: null,
+          newline: true,
+          color: null
+        }
+      }
+    
+    // Returns a random integer from 1-100:
+    if ((Math.floor(Math.random() * 100) + 1) < playerTarget.accuracy){
+      
+      result.damage = playerTarget.calcBaseAttackDamage();
+      result.target = enemyTarget;
+            
+      //If the player has more than 0 hp allow the hit
+      if (playerTarget.health !== 0){
+        result.appendText.text = `${playerTarget.name} hit ${enemyTarget.name} for ${result.damage} damage!`
+      }
+      
+      //Player gets one last attack before dying if it ends up at 0 hp
+      if (playerTarget.health === 0){
+        result.appendText.text = `${playerTarget.name} at near death attempts one final attack on ${enemyTarget.name} before perishing and hits for ${result.damage} damage!`;
+        result.playerDeath = true;
+    }
+
+    //If we miss
+    } else {
+      if (playerTarget.health !== 0){
+        result.appendText.text = `${playerTarget.name} misses ${enemyTarget.name}!`;
+    }
+      if (playerTarget.health === 0){
+        result.appendText.text = `${playerTarget.name} at near death attempts one final attack on ${enemyTarget.name} before perishing and misses!`;
+        result.playerDeath = true;
+    }
+    }
+
+    //If the player or the enemy is at 0 hit points, they get one
+    //last attack before dying. (Only attack, not action)
+    //FIXME: With current setup, if hit again before the last attack, combat ends
+    // this.combatService.endTurn(this.memberIndex);
+
+    return result;
+
+  }
     
 }

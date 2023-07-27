@@ -2,32 +2,51 @@ import { Injectable } from '@angular/core';
 import { Enemy } from '../models/enemy.model';
 import { Player } from '../models/player.model';
 import { enemies } from '../components/combat-test/enemyList';
+import { Party } from '../models/party.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CombatService {
 
-  player: Player = new Player();
+  party: Party = new Party();
+  
+  player1: Player = new Player();
+  player2: Player = new Player();
+  player3: Player = new Player();
+
+  memberHealthValues: number[] = [];
   
   enemyList: Enemy[] = [];
-  
-  enemyATBValues: number[] = [];
   enemyHealthValues: number[] = [];
   
-  constructor() { }
+  constructor() {
+    this.player1.name = "Gort";
+    this.player1.speed = 150;
+    
+    this.player2.name = "Luke";
+    this.player2.speed = 250;
+
+    this.player3.name = "Max";
+    this.player3.speed = 125;
+    
+    this.party.members.push(this.player1);
+    this.party.members.push(this.player2);
+    this.party.members.push(this.player3);
+   }
 
   /****************************************************************************************
    * End Turn - Ends the player turn in combat. Resets the player's ATB gauge and
    * decrements any active effects on the player
    ****************************************************************************************/
-  endTurn(){
-    this.player.ATB = 0;
-    this.player.turnCount++;
-
-    this.decrementEffects(this.player);
+  endTurn(member: Player){
     
-    // this.player.effects.forEach((e, index) => {
+    member.ATB = -30;
+    member.turnCount++;
+
+    this.decrementEffects(member);
+    
+    // this.party.members[memberIndex].effects.forEach((e, index) => {
     //   console.log(e);
     // });
     
@@ -43,7 +62,7 @@ export class CombatService {
     this.enemyList[index].turnCount++;
     let num = Math.floor(Math.random() * (30 - 10 + 1) + 10);
       num *= -1;
-      this.enemyATBValues[index] = num;
+      this.enemyList[index].ATB = num;
 
       this.decrementEffects(this.enemyList[index]);
       
