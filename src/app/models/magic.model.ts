@@ -17,6 +17,7 @@ export class Magic {
       minDamage: number
       maxDamage: number
       targets: number
+      textColor: string
       effect: Effect[]
 
     /******************************************************************************************************
@@ -43,7 +44,7 @@ export class Magic {
     private addSpellEffect(target: any, effect: Effect){
         //If we have more than one effect in the players list with the same name,
         //increase duration instead of having a duplicate effect
-        if (target.effects.length > 1){
+        if (target.effects.length > 0){
             let index = target.effects.findIndex(obj => obj.name === effect.name);
             if (index !== -1){ target.effects[index].duration += effect.duration; }
         }
@@ -92,16 +93,16 @@ export class Magic {
      * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
      * well as the player
      ******************************************************************************************************/
-    castSpell(player, numSelected, enemyIndex, combatService){
+    //TODO: Add spell accuracy. Right now they always hit and always apply effects. No resistances either.
+    castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string) => void){
         
-        let spell = player.magic[numSelected - 1];
-        let enemy = combatService.enemyList[enemyIndex];
+        let spell = playerTarget.magic[numSelected - 1];
         let spellDamage = null;
         
         //If the spell has a damage value, apply it before the effect(s)
         if (spell.minDamage || spell.maxDamage){
             spellDamage = _.random(spell.minDamage, spell.maxDamage);
-            enemy.health -= spellDamage;
+            enemyTarget.health -= spellDamage;
         }
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
@@ -109,19 +110,27 @@ export class Magic {
                       
             if (effect.duration){
                 if (effect.self){
-                    this.addSpellEffect(player, effect);
+                    this.addSpellEffect(playerTarget, effect);
                 } else {
-                    this.addSpellEffect(enemy, effect);
+                    this.addSpellEffect(enemyTarget, effect);
                 }
             }
         });
 
-        this.removeDuplicateEffects(player, spell);
-        this.removeDuplicateEffects(enemy, spell);
+        this.removeDuplicateEffects(playerTarget, spell);
+        this.removeDuplicateEffects(enemyTarget, spell);
         
-        player.mana -= spell.manaCost;
+        playerTarget.mana -= spell.manaCost;
         // console.log(combatService.enemyList[enemyIndex].effects);
 
-        return spellDamage;
+        appendText('* ' + playerTarget.name, true);
+        appendText('casts', false, 'greyText');
+        appendText(spell.name, false, spell.textColor);
+        appendText('and hits', false, 'greyText');
+        appendText(enemyTarget.name, false);
+        appendText('for', false, 'greyText');
+        appendText(spellDamage, false, spell.textColor);
+        appendText('damage!', false, 'greyText');
+
     }
 }

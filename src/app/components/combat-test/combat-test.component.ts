@@ -183,7 +183,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
           case 'Attack':
             let result = this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID);
-            this.appendText(result.appendText.text, result.appendText.newline, result.appendText.color);
+            this.appendText('* ' + result.appendText.text, result.appendText.newline, result.appendText.color);
             result.target.health -= result.damage;
 
             this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
@@ -308,7 +308,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.enemyList.forEach((e, index) => {
       if (e.ATB >= 100){
         let result = e.enemyAttack(e, this.combatService.party.members);
-        this.appendText(result.appendText.text, result.appendText.newline, result.appendText.color);
+        this.appendText('* ' + result.appendText.text, result.appendText.newline, result.appendText.color);
         result.target.health -= result.damage;
         if (result.enemyDeath){ e.health -= 1; }
         this.combatService.endEnemyTurn(index);
@@ -424,6 +424,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   /****************************************************************************************
    * Use Consumable - Allows usage of a consumable item from the inventory menu
    ****************************************************************************************/
+  //TODO: reimplement appendText for consumable items
+  //TODO: Can't target another party member with a spell/item. Add that in somehow?
   useConsumable(numSelected){
     let playerTarget = this.combatService.party.members[this.memberIndex];
 
@@ -488,15 +490,18 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   useSpell(numSelected){
     let playerTarget = this.combatService.party.members[this.memberIndex];
 
-    if (playerTarget.ATB < 100 || this.intervalID === null){
-      return;
-    }
+    if (playerTarget.ATB < 100 || this.intervalID === null){ return; }
 
     //Only reset the menu if we have enough mana to cast the spell
     if ((playerTarget.mana - playerTarget.magic[numSelected - 1].manaCost) >= 0){
 
-      //CastSpell returns the spell damage so that we can display it here in append text //TODO: reimplement all of the appendText stuff for magic and consumable items
-      let spellDamage = playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.enemyIndex, this.combatService);
+      //Cast the spell, and pass in appendText so that we can directly display the results instead of returning data here and using it
+      playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.selectedEnemy, this.appendText.bind(this));
+      
+      this.menuBack('main');
+      this.combatService.endTurn(this.selectedPartyMember);
+
+
       
       // Display what was used and the effect it has based on the type
       // for (const [key, value] of Object.entries(this.combatService.player.magic[numSelected - 1].effect)) {
@@ -534,9 +539,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       //   }
         // console.log(`${key}: ${value}`);
       // }
-
-      this.menuBack('main');
-      this.combatService.endTurn(this.selectedPartyMember);
     }
   }
   

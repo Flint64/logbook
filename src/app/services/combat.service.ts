@@ -68,7 +68,7 @@ export class CombatService {
       
   }
 
-  decrementEffects(target: any){
+  decrementEffects(target: Enemy | Player){
 
     //If the target is at 0 hp or less, don't decrement the effects and instead let them die
     if (target.health === 0 || target.health < 0){ return; }

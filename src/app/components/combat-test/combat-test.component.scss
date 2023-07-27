@@ -44,6 +44,7 @@ button{
 .enemyArea{
     height: max-content !important;
     max-height: 28%;
+    padding: 5px;
 }
 
 .enemyBox {
@@ -65,7 +66,8 @@ button{
     border: 1px solid white;
     height: 5em;
     width: 30%; //TODO: Dynamic width for 2 or 1 party member
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     &:hover{
         label{ border-bottom: 1px solid black; cursor: pointer; }
         color: black;
@@ -114,6 +116,10 @@ button{
 //         }
 //     }
 // }
+
+.playerOptions, .playerBars{
+    padding: 5px;
+}
 
 .playerOptions p{
     margin: 0;
@@ -170,9 +176,16 @@ button{
 .storyText{
     font-size: 1.2em;
     overflow-y: hidden;
+    overflow-x: hidden;
     margin: 0;
     max-height: 20%;
     width: 324px;
+    padding: 5px;
+    span{
+        width: max-content;
+        padding-right: 2.5px;
+        padding-left: 2.5px;
+    }
 }
 
 .showOverflow{
@@ -611,10 +624,10 @@ progress, progress::-webkit-progress-value {
 .greenBorder{ border: 1px solid green !important; }
 
 .greenText{ color: green !important; }
-
-.enemyTextRed{ color: darkred !important; }
-
-.enemyTextGrey{ color: #9f9f9f !important; }
+.redText{ color: darkred !important; }
+.greyText{ color: #9f9f9f !important; }
+.orchidText{ color: orchid !important; }
+.lightBlueText{ color: skyblue !important }
 
 .playerHealthBarPoison::-webkit-progress-value{ background: green !important; }
 

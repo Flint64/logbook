@@ -6,6 +6,7 @@ interface MagicData {
   minDamage: number;
   maxDamage: number;
   targets: number;
+  textColor: string;
   effect: Partial<Effect>[];
 }
 
@@ -16,6 +17,7 @@ export const spells: MagicData[] = [
     minDamage: 6,
     maxDamage: 12,
     targets: 2,
+    textColor: 'redText',
     effect: [
       {
         name: 'burn',
@@ -33,6 +35,7 @@ export const spells: MagicData[] = [
     minDamage: 4,
     maxDamage: 10,
     targets: 1,
+    textColor: 'lightBlueText',
     effect: [],
   },
 
@@ -42,6 +45,7 @@ export const spells: MagicData[] = [
     minDamage: 3,
     maxDamage: 5,
     targets: 1,
+    textColor: 'greenText',
     effect: [
       {
         name: 'poison',
@@ -59,6 +63,7 @@ export const spells: MagicData[] = [
     minDamage: 0,
     maxDamage: 0,
     targets: 0,
+    textColor: 'redText',
     effect: [
       {
         name: 'rage',

@@ -72,14 +72,14 @@ export class Enemy {
       if (enemy.health !== 0){
         result.appendText.text = `${enemy.name} hits ${result.target.name} for ${result.damage} damage!`;
         result.appendText.newline = true;
-        result.appendText.color = 'enemyTextGrey'
+        result.appendText.color = 'greyText'
       }
 
       /*Kill the enemy once the final attack has happened*/
       if (enemy.health === 0){
         result.appendText.text = `${enemy.name} at near death attempts one final attack on ${result.target.name} before perishing and hits for ${result.damage} damage`;
         result.appendText.newline = true;
-        result.appendText.color = 'enemyTextRed';
+        result.appendText.color = 'redText';
         result.enemyDeath = true;
         // this.previousTarget.classList.add('enemyHit');
       }
@@ -89,7 +89,7 @@ export class Enemy {
       if (enemy.health !== 0){
         result.appendText.text = `${enemy.name} misses ${result.target.name}!`;
         result.appendText.newline = true;
-        result.appendText.color = 'enemyTextGrey';
+        result.appendText.color = 'greyText';
       }
 
       if (enemy.health === 0){
@@ -97,7 +97,7 @@ export class Enemy {
         result.appendText.text = `${enemy.name} at near death attempts one final attack on ${result.target.name} before perishing and misses!`;
         result.enemyDeath = true;
         result.appendText.newline = true;
-        result.appendText.color = 'enemyTextRed';
+        result.appendText.color = 'redText';
     }
   }
 
