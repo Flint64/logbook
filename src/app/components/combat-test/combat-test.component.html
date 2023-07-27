@@ -24,7 +24,7 @@
         </div>
 
         <div id="playerMagicOptions" *ngIf="viewingMagicOptions">
-            <p *ngFor="let magic of combatService.party.members[memberIndex].magic; let i = index" [longPress]="1000" (longPressFinish)="openInfoWindow(combatService.party.members[memberIndex].magic[i])" [ngClass]="{'actionDisabled': (combatService.party.members[memberIndex].mana - combatService.party.members[memberIndex].magic[i].manaCost) < 0}" (click)="optionSelected(i+1)">{{(i+1) + '. ' + magic.name + ' - ' +  magic.manaCost}}</p>
+            <p *ngFor="let magic of combatService.party.members[memberIndex].magic; let i = index" [longPress]="1000" (longPressFinish)="openInfoWindow(combatService.party.members[memberIndex].magic[i])" [ngClass]="{'actionDisabled': (combatService.party.members[memberIndex].mana - combatService.party.members[memberIndex].magic[i].manaCost) < 0 || combatService.party.members[memberIndex]?.ATB < 100}" (click)="optionSelected(i+1)">{{(i+1) + '. ' + magic.name + ' - ' +  magic.manaCost}}</p>
             <p (click)="menuBack('main')" >{{combatService.party.members[memberIndex].magic.length + 1 + '.'}} Back</p>
             <p (click)="openHelpWindow(helpText_magic)">?</p>
         </div>

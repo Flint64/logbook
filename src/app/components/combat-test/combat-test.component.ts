@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
 import { enemies } from './enemyList';
 import { potions } from './potionList';
+import { spells } from './spellList';
 import { Player } from 'src/app/models/player.model';
 
 @Component({
@@ -100,12 +101,21 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     convertedPotions.forEach((potion) => {
         this.combatService.party.consumables.push(potion);
     });
+
+    let convertedSpells: Magic[] = spells.map(spellData => {
+      // Create instances of Effect for the effect property inside the nested map
+      const effects = (spellData.effect || []).map(effectData => new Effect(effectData));
+      
+      // Create a new ConsumableItem instance with the updated effect property
+      return new Magic({ ...spellData, effect: effects });
+    });
+
+    //To start, give each party member one of the spells from the spell list
+    this.combatService.party.members[0].magic.push(convertedSpells[0])
+    this.combatService.party.members[1].magic.push(convertedSpells[1])
+    this.combatService.party.members[2].magic.push(convertedSpells[2])
     
-    //TODO: Set up a file for spells and do the same as the potions above
-    // let fireball = new Magic('Fireball', 11, 6, 12, 2, [new Effect('burn', 4, 5, false, 'Take fire damage over time')]);
     // let enrage = new Magic('Enrage', 7, 0, 0, 0, [new Effect('rage', 4, null, true, 'Attack randomly, unable to choose a target or special ability')]);
-    // this.combatService.player.magic.push(fireball);
-    // this.combatService.player.magic.push(enrage);
     
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
@@ -274,7 +284,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /****************************************************************************************
-   * Increment ATB - The main 'game' loop that handles incrememting the ATB gauges
+   * Increment ATB - The main game loop that handles incrememting the ATB gauges
    ****************************************************************************************/
   incrementATB(){
 
@@ -310,7 +320,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //Increment each individual party member's ATB guage if they have health remaining
     this.combatService.party.members.forEach((member, index) => {
       if (member.health >= 0){
-        member.ATB += (member.speed/100);
+        if (member.ATB > 100){
+          //Do nothing if ATB is greater than 100 to prevent the numbers from overflowing
+        } else {
+          member.ATB += (member.speed/100);
+        }
       } else {
         //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
         if (!Array.from(this.memberBoxes.toArray()[index].nativeElement.classList).includes('playerHit')){

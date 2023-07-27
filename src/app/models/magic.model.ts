@@ -4,21 +4,20 @@ import _ from 'lodash';
 
 @Injectable()
 export class Magic {
-    constructor(
-        public name: string,
-        public manaCost: number,
-        public minDamage: number,
-        public maxDamage: number,
-        public targets: number,
-        public effect: Effect[],
-        ){
-            this.name = name;
-            this.manaCost = manaCost;
-            this.minDamage = minDamage;
-            this.maxDamage = maxDamage;
-            this.targets = targets;
-            this.effect = effect;
-        }
+
+    constructor(data: Partial<Magic>) {
+        Object.assign(this, data);
+        
+        // Create instances of Effect for the effect property
+        this.effect = (data.effect || []).map(effectData => new Effect(effectData));
+      }
+    
+      name: string
+      manaCost: number
+      minDamage: number
+      maxDamage: number
+      targets: number
+      effect: Effect[]
 
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)

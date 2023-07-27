@@ -69,6 +69,10 @@ export class CombatService {
   }
 
   decrementEffects(target: any){
+
+    //If the target is at 0 hp or less, don't decrement the effects and instead let them die
+    if (target.health === 0 || target.health < 0){ return; }
+    
     //Handle decrementing and removing effects from the player or enemy based on duration.
     //Looping backwards here to not affect the array indexes
     for (let i = target.effects.length - 1; i >= 0; i--){
@@ -82,9 +86,14 @@ export class CombatService {
 
         //Currently does x% of health damage based on its modifier.
         case 'poison':
-          target.health -= (target.effects[i].modifier / 100) * target.maxHealth;
-          break;
-          case 'burn':
+          if ((target.health -= (target.effects[i].modifier / 100) * target.maxHealth) % 1 !== 0){
+            target.health = Math.round((target.effects[i].modifier / 100) * target.maxHealth);
+          } else {
+            target.health -= (target.effects[i].modifier / 100) * target.maxHealth;
+          }
+        break;
+        //Currently does flat damage equal to the modifier
+        case 'burn':
           target.health -= (target.effects[i].modifier);
         break;
       }
