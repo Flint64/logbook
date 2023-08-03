@@ -93,8 +93,8 @@ export class Magic {
      * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
      * well as the player
      ******************************************************************************************************/
-    //TODO: Add spell accuracy. Right now they always hit and always apply effects. No resistances either.
-    castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string) => void){
+    //TODO: Add spell accuracy. Right now they always hit and always apply effects. No resistances either. And no spell scaling
+    castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
         let spell = playerTarget.magic[numSelected - 1];
         let spellDamage = null;
@@ -123,14 +123,15 @@ export class Magic {
         playerTarget.mana -= spell.manaCost;
         // console.log(combatService.enemyList[enemyIndex].effects);
 
-        appendText('* ' + playerTarget.name, true);
-        appendText('casts', false, 'greyText');
+        appendText('*', true);
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('casts', false);
         appendText(spell.name, false, spell.textColor);
-        appendText('and hits', false, 'greyText');
+        appendText('and hits', false,);
         appendText(enemyTarget.name, false);
-        appendText('for', false, 'greyText');
+        appendText('for', false);
         appendText(spellDamage, false, spell.textColor);
-        appendText('damage!', false, 'greyText');
+        appendText('damage!', false);
 
     }
 }

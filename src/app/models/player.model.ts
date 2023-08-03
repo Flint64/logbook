@@ -87,58 +87,71 @@ export class Player {
    * Damage is based on attack power.
    * //TODO: Defense stat
    ****************************************************************************************/
-  playerAttack(playerTarget, enemyTarget, intervalID){
+  playerAttack(playerTarget, enemyTarget, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
     
-    if (playerTarget.ATB < 100 || intervalID === null){
-      return;
-    }
-    
-    let result = {
-        damage: null,
-        target: null,
-        playerDeath: null,
-        appendText: {
-          text: null,
-          newline: true,
-          color: null
-        }
-      }
+    //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
+    let attackHits = null;
+
+    if (playerTarget.ATB < 100 || intervalID === null){ return; }
     
     // Returns a random integer from 1-100:
-    if ((Math.floor(Math.random() * 100) + 1) < playerTarget.accuracy){
+    if ((_.random(1, 100)) < playerTarget.accuracy){
       
-      result.damage = playerTarget.calcBaseAttackDamage();
-      result.target = enemyTarget;
+      let damage = playerTarget.calcBaseAttackDamage();
+      attackHits = true;
             
       //If the player has more than 0 hp allow the hit
       if (playerTarget.health !== 0){
-        result.appendText.text = `${playerTarget.name} hit ${enemyTarget.name} for ${result.damage} damage!`
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('hits', false);
+        appendText(enemyTarget.name, false);
+        appendText('for', false);
+        appendText(damage, false, 'redText');
+        appendText('damage!', false);
+        enemyTarget.health -= damage;
       }
       
       //Player gets one last attack before dying if it ends up at 0 hp
       if (playerTarget.health === 0){
-        result.appendText.text = `${playerTarget.name} at near death attempts one final attack on ${enemyTarget.name} before perishing and hits for ${result.damage} damage!`;
-        result.playerDeath = true;
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(enemyTarget.name, false, 'redText');
+        appendText('before perishing and hits for', false, 'redText');
+        appendText(damage, false, 'crimsonText');
+        appendText('damage!', false, 'redText');
+        enemyTarget.health -= damage;
+        playerTarget.health -= 1;
     }
 
     //If we miss
     } else {
+      attackHits = false;
       if (playerTarget.health !== 0){
-        result.appendText.text = `${playerTarget.name} misses ${enemyTarget.name}!`;
-    }
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('misses', false, 'greyText');
+        appendText(enemyTarget.name + '!', false, 'greyText');
+      }
       if (playerTarget.health === 0){
-        result.appendText.text = `${playerTarget.name} at near death attempts one final attack on ${enemyTarget.name} before perishing and misses!`;
-        result.playerDeath = true;
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(enemyTarget.name, false, 'redText');
+        appendText('before perishing and misses!', false, 'redText');
+        playerTarget.health -= 1;
+      }
     }
-    }
+
+    return attackHits;
 
     //If the player or the enemy is at 0 hit points, they get one
     //last attack before dying. (Only attack, not action)
     //FIXME: With current setup, if hit again before the last attack, combat ends
     // this.combatService.endTurn(this.memberIndex);
-
-    return result;
-
   }
     
 }

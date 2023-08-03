@@ -55,5 +55,19 @@ export const enemies = [
       effects: [],
       turnCount: 0,
       ATB: 0
+    },
+    {
+      name: 'Giant',
+      health: 35,
+      maxHealth: 35,
+      strength: 8,
+      defense: 4,
+      speed: 50,
+      mana: 0,
+      accuracy: 50,
+      luck: 2,
+      effects: [],
+      turnCount: 0,
+      ATB: 0
     }
   ];

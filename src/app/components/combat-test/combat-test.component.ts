@@ -117,7 +117,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
-    this.startCombat();
+    this.startCombat(true);
     this.stopATB();    
   }
 
@@ -182,28 +182,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       switch(this.mainMenuOptions[numSelected - 1]){
 
           case 'Attack':
-            let result = this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID);
-            this.appendText('* ' + result.appendText.text, result.appendText.newline, result.appendText.color);
-            result.target.health -= result.damage;
+            if (this.selectedPartyMember.ATB < 100 || this.intervalID === null){ return; }
 
-            this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
-            this.previousTarget.classList.add('enemyHit');
-        
-            // If enemy is not dead, flash red to show damage was taken
-            setTimeout(() => {
-              if (this.selectedEnemy.health > 0){
-                this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove('enemyHitSVG');
-                this.previousTarget.classList.remove('enemyHit');
-              }
-            }, 100);
-            
-            // If the enemy is dead, make it's text & icon red
-            if (this.selectedEnemy.health < 0){
-              this.previousTarget.classList.add('enemyHit');
-              this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add('enemyHitSVG');
+            //true if the attack hits, false if it was a miss
+            if (this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID, this.appendText.bind(this))){
+              this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
             }
-            
-            if (result.playerDeath){ this.selectedPartyMember.health -= 1; }
             this.combatService.endTurn(this.selectedPartyMember);
           break;
 
@@ -242,12 +226,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   /****************************************************************************************
    * Append Text - Appends text to the story box whenever an attack is made, etc
    ****************************************************************************************/
-  appendText(text: string, newline: boolean = false, className: string = null){
+  appendText(text: string, newline: boolean = false, className: string = null, className2: string = null){
 
     //Use renderer instead of docuoment.createElement so that the view encapsulation works to apply styles correctly
     let child = this.renderer.createElement('span');
     let lineBreak = document.createElement('br');
     if (className){child.classList.add(className);}
+    if (className2){child.classList.add(className2);}
     child.innerText = text;
     
     if (newline){this.story.nativeElement.appendChild(lineBreak)};
@@ -259,11 +244,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Start Combat - Starts combat and handles starting enemy ATB gauges at different
    * values to shake up combat a bit
    ****************************************************************************************/
-  startCombat(){
+  startCombat(setEnemyATB: boolean = false){
     if (this.enemyForm.controls.enemySelected.value === null){
       return;
     }
 
+    if (setEnemyATB){
     // When starting combat, create a value to bind to each invididual enemy ATB guage
       this.combatService.enemyList.forEach((e) => {
         let num = Math.floor(Math.random() * 25) + 1; // this will get a number between 1 and 25;
@@ -273,12 +259,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         //half filled  to negative half filled to stagger their attack times a bit. 
         e.ATB = num;
       });
+    }
     
     //Handles initially starting combat & resuming from pausing
     if (!this.intervalID){
       console.log("starting combat");
       this.intervalID = setInterval( () => this.incrementATB(), 25 );
-    }
+    }    
   }
 
   /****************************************************************************************
@@ -297,20 +284,21 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     //If all party or enemy health is less than 0, end the battle
     if (this.combatService.enemyHealthValues.every(isBelowThreshold) || this.combatService.memberHealthValues.every(isBelowThreshold)){
-      this.stopATB(true);
+      //settimeout here for any color effects to be removed when combat ends 
+      //(normally they are removed 100ms after being applied, but when combat ends abruptly they stick around)
+      setTimeout(() => {
+        this.stopATB(true);
+      }, 115);
     }
 
     //When ATB guage is full, enemy attack
-    //Since we don't have access to the combatService within the class file,
-    //pass in to the enemyAttack function the enemy making the attack and the
-    //list of party members. Then apply the result here after calculations
-    //have been made & end the enemy turn.
     this.combatService.enemyList.forEach((e, index) => {
       if (e.ATB >= 100){
-        let result = e.enemyAttack(e, this.combatService.party.members);
-        this.appendText('* ' + result.appendText.text, result.appendText.newline, result.appendText.color);
-        result.target.health -= result.damage;
-        if (result.enemyDeath){ e.health -= 1; }
+        let result = e.enemyAttack(e, this.combatService.party.members, this.appendText.bind(this));
+        if (result.attackHits){
+          this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
+        }
+        
         this.combatService.endEnemyTurn(index);
       }
     });
@@ -408,16 +396,18 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Also used to pause combat so we don't clear ATB gauges
    ****************************************************************************************/
   stopATB(endCombat: boolean = false){
+    if (!this.intervalID){ return; }
 
     if (endCombat){
       this.combatService.party.members.forEach(member => {
         member.reset();
       });
     }
-    
+
     console.log("stopping combat");
     clearInterval(this.intervalID);
     this.intervalID = null;
+
   }
 
 
@@ -614,6 +604,39 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }, 225);
     }
+  }
+
+  /****************************************************************************************
+   * Color Enemy Box - Makes enemy box flash if the player is hit. Stays red
+   * if player is dead
+   ****************************************************************************************/
+  colorEnemyBox(filterColor: string, textColor: string, borderColor: string){
+    this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add(filterColor);
+    this.previousTarget.classList.add(textColor);
+    this.previousTarget.classList.add(borderColor);
+    console.log(this.previousTarget);
+
+    // If enemy is not dead, flash red to show damage was taken
+    setTimeout(() => {
+        this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.remove(filterColor);
+        this.previousTarget.classList.remove(textColor);
+        this.previousTarget.classList.remove(borderColor);
+    }, 100);
+  }
+
+  /****************************************************************************************
+   * Color Player Box - Makes player box flash if the player is hit. Stays red
+   * if player is dead
+   ****************************************************************************************/
+  colorPlayerBox(playerTargetIndex, textColor: string, borderColor: string){
+    this.memberBoxes.toArray()[playerTargetIndex].nativeElement.classList.add(textColor);
+    this.memberBoxes.toArray()[playerTargetIndex].nativeElement.classList.add(borderColor);
+
+    // If player is not dead, flash red to show damage was taken
+    setTimeout(() => {
+      this.memberBoxes.toArray()[playerTargetIndex].nativeElement.classList.remove(textColor);
+      this.memberBoxes.toArray()[playerTargetIndex].nativeElement.classList.remove(borderColor);
+    }, 100);
   }
 
   /****************************************************************************************

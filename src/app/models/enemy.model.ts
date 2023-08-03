@@ -47,61 +47,80 @@ export class Enemy {
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
    * //TODO: Defense stat
    ****************************************************************************************/
-  enemyAttack(enemy, party){
-
-    //Since we don't have access to the combatService within the class file,
-    //make a record of the result of the enemy attack and pass that back to
-    //where the attack happens. Then apply the result
-    let result = {
-      damage: null,
-      target: null,
-      enemyDeath: null,
-      appendText: {
-        text: null,
-        newline: null,
-        color: null
-      }
+  enemyAttack(enemy, party, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    
+    //Select a random party member to attack & calculate damage
+    let rand = _.random(0, (party.length - 1));
+    
+    let playerTarget = party[rand];
+    
+    //Only target players that are alive
+    while(playerTarget.health < 0){
+      rand = _.random(0, (party.length - 1));
+      playerTarget = party[rand];
     }
 
-    //Select a random party member to attack & calculate damage
-    result.target = party[_.random(0, (party.length - 1))];
-    result.damage = enemy.calcBaseAttackDamage();
-    
+        //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
+        let result = {
+          attackHits: null,
+          playerTargetIndex: rand
+        }
+
     if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
 
+      let damage = enemy.calcBaseAttackDamage();
+      result.attackHits = true;
+
+      //If the enemy has more than 0 hp allow the hit
       if (enemy.health !== 0){
-        result.appendText.text = `${enemy.name} hits ${result.target.name} for ${result.damage} damage!`;
-        result.appendText.newline = true;
-        result.appendText.color = 'greyText'
+        appendText('*', true, 'crimsonText');
+        appendText(enemy.name, false, 'crimsonText');
+        appendText('hits', false, 'greyText');
+        appendText(playerTarget.name, false, 'greyText', 'underline');
+        appendText('for', false, 'greyText');
+        appendText(damage, false, 'redText');
+        appendText('damage!', false);
+        playerTarget.health -= damage;
       }
 
-      /*Kill the enemy once the final attack has happened*/
+      //Kill the enemy once the final attack has happened
       if (enemy.health === 0){
-        result.appendText.text = `${enemy.name} at near death attempts one final attack on ${result.target.name} before perishing and hits for ${result.damage} damage`;
-        result.appendText.newline = true;
-        result.appendText.color = 'redText';
-        result.enemyDeath = true;
-        // this.previousTarget.classList.add('enemyHit');
+        appendText('*', true, 'redText');
+        appendText(enemy.name, false, 'redText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(playerTarget.name, false, 'redText', 'underline');
+        appendText('before perishing and hits for', false, 'redText');
+        appendText(damage, false, 'crimsonText');
+        appendText('damage!', false, 'redText');
+        playerTarget.health -= damage;
+        enemy.health -= 1;
       }
       
     //If enemy misses
     } else {
+      result.attackHits = false;
+      
       if (enemy.health !== 0){
-        result.appendText.text = `${enemy.name} misses ${result.target.name}!`;
-        result.appendText.newline = true;
-        result.appendText.color = 'greyText';
+        appendText('*', true, 'greyText');
+        appendText(enemy.name, false, 'greyText');
+        appendText('misses', false, 'greyText');
+        appendText(playerTarget.name + '!', false, 'greyText', 'underline');
       }
 
+      //Kill the enemy once the final attack has happened
       if (enemy.health === 0){
-        /*Kill the enemy once the final attack has happened*/
-        result.appendText.text = `${enemy.name} at near death attempts one final attack on ${result.target.name} before perishing and misses!`;
-        result.enemyDeath = true;
-        result.appendText.newline = true;
-        result.appendText.color = 'redText';
+        appendText('*', true, 'redText');
+        appendText(enemy.name, false, 'redText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(playerTarget.name, false, 'redText', 'underline');
+        appendText('before perishing and misses!', false, 'redText');
+        enemy.health -= 1;
     }
-  }
+  }    
 
-    return result;
-    
+  return result;
+  
   }
 }
