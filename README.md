@@ -26,3 +26,25 @@ There is currently no formal story in this version of The Logbook, but if
 you navigate to [the home page](https://flint64.github.io/logbook/) you
 can get a bit of a preview of what is to come in later versions, starting
 with the Path of the Sacrifice.
+
+## Changelog v0.1.0
+Since I wasn't keeping a record previously, the most recent release out 8/2/23
+will start our versioning! Changes since the previous live release are as follows:
+
+### Added
+- Added ability to view help text for magic, functions the same as viewing help text for potions
+- Added 3 party members rather than playing through with just a single player entity. Game auto selects first party member much like it auto selects the first enemy
+- Added red flash to party borders when attacked to better reflect being hit
+
+### Changed
+- Renamed main menu 'Inventory' to 'Potions'
+- Enrage spell now also increases attack power at the cost of more mana
+- Changed how info is displayed in the history window, asterisks denote new entries, colors specific to players/enemy actions for easier reading
+
+### Fixed
+- Fixed duplicate enemies being linked together when added to the game and being treated as a single entity
+- Fixed duplicate effects from applying to the player when they should be merged in to one effect with a longer duration
+- Fixed spells not being grayed out if selected party member's ATB is less than 100
+- Fixed rounding errors and preventing decimals when taking percent based health damage
+- Fixed decrementing effects preventing enemy from dying when at 0 hp
+- Fixed attacking an enemy not displaying red flash correctly
