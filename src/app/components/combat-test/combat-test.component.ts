@@ -614,7 +614,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.enemyIcons.toArray()[this.enemyForm.controls.enemySelected.value].nativeElement.classList.add(filterColor);
     this.previousTarget.classList.add(textColor);
     this.previousTarget.classList.add(borderColor);
-    console.log(this.previousTarget);
 
     // If enemy is not dead, flash red to show damage was taken
     setTimeout(() => {
