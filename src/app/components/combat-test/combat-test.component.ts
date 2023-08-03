@@ -12,6 +12,7 @@ import { enemies } from './enemyList';
 import { potions } from './potionList';
 import { spells } from './spellList';
 import { Player } from 'src/app/models/player.model';
+//ng deploy --base-href=https://flint64.github.io/logbook/
 
 @Component({
   selector: 'app-combat-test',
