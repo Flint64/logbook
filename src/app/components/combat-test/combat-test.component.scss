@@ -1,24 +1,26 @@
 .centerCombat{
-    height: 100%;
-    background-color: black;
     color: white;
-    border: 1px solid white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    width: 100%;
+    max-width: 35rem;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
     
     >div{
         border: 1px solid white;
-        // padding: 10px;
-        width: 80vw;
-        height: 28%;
-        &:last-child{
+        width: 95%;
+        height: 95%;
+        margin: 4px;
+        &:first-child{
             height: fit-content;
         }
-
-        .storyText{
-            max-height: min-content;
+        &:last-child{
+            height: fit-content;
         }
     }
 }
