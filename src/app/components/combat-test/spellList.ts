@@ -3,9 +3,9 @@ import { Effect } from 'src/app/models/effect.model';
 interface MagicData {
   name: string;
   manaCost: number;
-  minDamage: number;
-  maxDamage: number;
+  power: number;
   accuracy: number;
+  variance: number;
   targets: number;
   textColor: string;
   effect: Partial<Effect>[];
@@ -15,9 +15,9 @@ export const spells: MagicData[] = [
   {
     name: 'Fireball',
     manaCost: 11,
-    minDamage: 6,
-    maxDamage: 12,
+    power: 6,
     accuracy: 80,
+    variance: 6,
     targets: 2,
     textColor: 'redText',
     effect: [
@@ -34,9 +34,9 @@ export const spells: MagicData[] = [
   {
     name: 'Ice Shard',
     manaCost: 8,
-    minDamage: 4,
-    maxDamage: 10,
+    power: 4,
     accuracy: 80,
+    variance: 2,
     targets: 1,
     textColor: 'lightBlueText',
     effect: [],
@@ -45,9 +45,9 @@ export const spells: MagicData[] = [
   {
     name: 'Poison Bolt',
     manaCost: 10,
-    minDamage: 3,
-    maxDamage: 5,
+    power: 3,
     accuracy: 80,
+    variance: 2,
     targets: 1,
     textColor: 'greenText',
     effect: [
@@ -64,9 +64,9 @@ export const spells: MagicData[] = [
   {
     name: 'Enrage',
     manaCost: 12,
-    minDamage: 0,
-    maxDamage: 0,
+    power: 0,
     accuracy: 100,
+    variance: 0,
     targets: 0,
     textColor: 'redText',
     effect: [

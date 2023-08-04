@@ -14,9 +14,9 @@ export class Magic {
     
       name: string
       manaCost: number
-      minDamage: number
-      maxDamage: number
+      power: number
       accuracy: number
+      variance: number
       targets: number
       textColor: string
       effect: Effect[]
@@ -97,19 +97,27 @@ export class Magic {
     //TODO: Add spell resistances and spell scaling
     castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
-        let spell = playerTarget.magic[numSelected - 1];
+        let spell: Magic = playerTarget.magic[numSelected - 1];
         let spellDamage = null;
 
         //Regardless of hit/miss, the spell costs mana
         playerTarget.mana -= spell.manaCost;
-        
+                
         //If the spell hits
         if ((_.random(1, 100)) < spell.accuracy){
             
-        //If the spell has a damage value, apply it before the effect(s)
-        if (spell.minDamage || spell.maxDamage){
-            spellDamage = _.random(spell.minDamage, spell.maxDamage);
-            enemyTarget.health -= spellDamage;
+            //If the spell has a damage value, apply it before the effect(s)
+        if (spell.power){
+            spellDamage = ((playerTarget.intelligence / 2.5) * spell.power)
+
+            //Damage variance equal  to a range between 1 and the spell's power
+            let variance = _.random(1, spell.variance);
+            
+            // this will add minus sign in 50% of cases
+            variance *= Math.round(Math.random()) ? 1 : -1; 
+
+            spellDamage += variance;
+            enemyTarget.health -= Math.round(spellDamage);
         }
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
@@ -134,7 +142,7 @@ export class Magic {
         appendText('and hits', false,);
         appendText(enemyTarget.name, false);
         appendText('for', false);
-        appendText(spellDamage, false, spell.textColor);
+        appendText(Math.round(spellDamage).toString(), false, spell.textColor);
         appendText('damage!', false);
 
         //If the spell misses

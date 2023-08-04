@@ -10,6 +10,7 @@ export class Player {
     name: string = "";
     health: number = 100;
     strength: number = 10; //basic attack damage = (Character's Strength / 2) + Weapon Attack
+    intelligence: number = 5;
     defense: number = 30; //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
     speed: number = 200; //Speed = (Character's speed) + Accessory Bonuses
     mana: number = 33;
@@ -28,6 +29,7 @@ export class Player {
 
     maxHealth: number = 100;
     maxStrength: number = 10;
+    maxIntelligence: number = 5;
     maxDefense: number = 30;
     maxSpeed: number = 200;
     maxMana: number = 33;
