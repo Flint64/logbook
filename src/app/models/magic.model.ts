@@ -99,7 +99,13 @@ export class Magic {
         
         let spell = playerTarget.magic[numSelected - 1];
         let spellDamage = null;
+
+        //Regardless of hit/miss, the spell costs mana
+        playerTarget.mana -= spell.manaCost;
         
+        //If the spell hits
+        if ((_.random(1, 100)) < spell.accuracy){
+            
         //If the spell has a damage value, apply it before the effect(s)
         if (spell.minDamage || spell.maxDamage){
             spellDamage = _.random(spell.minDamage, spell.maxDamage);
@@ -121,9 +127,6 @@ export class Magic {
         this.removeDuplicateEffects(playerTarget, spell);
         this.removeDuplicateEffects(enemyTarget, spell);
         
-        playerTarget.mana -= spell.manaCost;
-        // console.log(combatService.enemyList[enemyIndex].effects);
-
         appendText('*', true);
         appendText(playerTarget.name, false, 'underline', 'playerText');
         appendText('casts', false);
@@ -134,5 +137,14 @@ export class Magic {
         appendText(spellDamage, false, spell.textColor);
         appendText('damage!', false);
 
+        //If the spell misses
+        } else {
+            appendText('*', true);
+            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText('casts', false, 'greyText');
+            appendText(spell.name, false, spell.textColor);
+            appendText('and misses', false, 'greyText');
+            appendText(enemyTarget.name + '!', false, 'greyText');
+        }
     }
 }
