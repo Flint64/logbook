@@ -16,6 +16,7 @@ export class Magic {
       manaCost: number
       minDamage: number
       maxDamage: number
+      accuracy: number
       targets: number
       textColor: string
       effect: Effect[]
@@ -93,7 +94,7 @@ export class Magic {
      * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
      * well as the player
      ******************************************************************************************************/
-    //TODO: Add spell accuracy. Right now they always hit and always apply effects. No resistances either. And no spell scaling
+    //TODO: Add spell resistances and spell scaling
     castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
         let spell = playerTarget.magic[numSelected - 1];

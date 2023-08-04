@@ -5,6 +5,7 @@ interface MagicData {
   manaCost: number;
   minDamage: number;
   maxDamage: number;
+  accuracy: number;
   targets: number;
   textColor: string;
   effect: Partial<Effect>[];
@@ -16,6 +17,7 @@ export const spells: MagicData[] = [
     manaCost: 11,
     minDamage: 6,
     maxDamage: 12,
+    accuracy: 80,
     targets: 2,
     textColor: 'redText',
     effect: [
@@ -34,6 +36,7 @@ export const spells: MagicData[] = [
     manaCost: 8,
     minDamage: 4,
     maxDamage: 10,
+    accuracy: 80,
     targets: 1,
     textColor: 'lightBlueText',
     effect: [],
@@ -44,6 +47,7 @@ export const spells: MagicData[] = [
     manaCost: 10,
     minDamage: 3,
     maxDamage: 5,
+    accuracy: 80,
     targets: 1,
     textColor: 'greenText',
     effect: [
@@ -62,6 +66,7 @@ export const spells: MagicData[] = [
     manaCost: 12,
     minDamage: 0,
     maxDamage: 0,
+    accuracy: 100,
     targets: 0,
     textColor: 'redText',
     effect: [
