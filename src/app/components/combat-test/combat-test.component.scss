@@ -55,6 +55,7 @@ button{
     height: max-content !important;
     max-height: 28%;
     padding: 5px;
+    min-height: 6em;
 }
 
 .enemyBox {
@@ -130,6 +131,7 @@ button{
 .playerOptions{
     padding: 5px;
     margin-top: -1px;
+    min-height: 7em;
 }
 
 .playerBars{
@@ -196,6 +198,7 @@ button{
     max-height: 20%;
     width: 324px;
     padding: 5px;
+    min-height: 6em;
     span{
         // width: max-content;
         display: inline-block;
