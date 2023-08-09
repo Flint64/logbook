@@ -23,6 +23,39 @@ export class Enemy {
         ATB: number = 0;
     
     //TODO: Enemy weaknesses & resistances
+    /*
+      TODO: Add special abilities/attacks to enemy model. Have it be a % like accuracy to see
+      if the attack is a regular attack or special attack. If an enemy has more than one special
+      attack/magic ability (it'll be an array of abilities) each one should have a % value (totaling
+      up to 100%) to see which one gets used. Ex, an enemy may have 20% chance to use a special ability.
+      If they have 1 special ability, it's a 100% chance within the 20%. If they have 3, it can be 
+      any variation of 33% each, 20/40/40, 10/70/20 etc. Since it's out of 100%, we can programmatically
+      determine percent chance of any variation of percentages/number of abilities:
+
+let abilities = [{chance: 10}, {chance: 70}, {chance: 20}];
+let split = [];
+
+let rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+abilities.forEach((e, index) => {
+  if (index === 0){ split.push(e.chance)} else {
+  split.push(split[index-1]+e.chance);  
+  }
+});
+
+console.log(split);
+console.log(rand);
+
+split.forEach((e, index) => {
+  //First	
+  if (index === 0){
+    if (rand <= e) {console.log(abilities[index])}
+  //Every other value
+  }else {
+    if (rand > split[index-1] && rand <= e){console.log(abilities[index])}
+  }
+});
+     
+    */
 
     calcBaseAttackDamage(){
       //Damage is a random number between player min attack and attack
