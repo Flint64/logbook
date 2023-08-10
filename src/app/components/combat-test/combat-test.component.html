@@ -46,7 +46,6 @@
                 <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="assets/images/statuses/speed.svg" alt="Speed Icon"></span>
             </span>                
         </section> -->
-
         <form [formGroup]="partyForm" class="partyForm">
             <div class="memberBox" #memberBoxes *ngFor="let member of combatService.party.members; let i = index" (click)="selectPartyMember(i, $event.target)">
                 <div class="innerBoxWrapper">
@@ -57,39 +56,12 @@
                     </div>
     
                     <div style="width: 100%;">
-                        <!-- <mat-progress-bar class="enemyATB none" mode="determinate" [value]="member.ATB"></mat-progress-bar> -->
                         <progress class="enemyATB" max="100" [value]="member.ATB"></progress>
                         <input type="radio" [formControlName]="'memberSelected'" [value]="i" class="hidden">
                     </div>
                 </div>
-                
-                <!-- <progress class="memberATBGauge" max="100" [value]="member.ATB"></progress> -->
             </div>
         </form>
 
-    </div>
-
-    <!-- <div class="playerBars">            
-        <section id="statusEffects">
-            <span *ngIf="!combatService.player.effects.length" class="statusEffect invisible"><img src="assets/images/statuses/water_drop.svg" alt=""></span>
-            <span *ngFor="let effect of combatService.player.effects" [ngSwitch]="effect.name"> 
-                <span *ngSwitchCase="'poison'" class="statusEffect greenFilter"><img src="assets/images/statuses/water_drop.svg" alt="Poison Icon"></span>
-                <span *ngSwitchCase="'rage'" class="statusEffect redFilter"><img src="assets/images/statuses/rage.svg" alt="Rage Icon"></span>
-                <span *ngSwitchCase="'strength'" class="statusEffect redFilter"><img src="assets/images/statuses/arrow_up.svg" alt="Attack Up Icon"></span>
-                <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="assets/images/statuses/speed.svg" alt="Speed Icon"></span>
-            </span>                
-        </section>
-
-        <div id="playerProgressDiv">
-            <progress id="playerATBGauge" max="100" [value]="combatService.player.ATB"></progress>
-        </div>
-
-        <div>
-            [style] binds to a CSS variable which is how we're displaying the hp/mp values in a CSS counter pseudo element
-            <progress #playerHealthBar [style.--healthValue]="combatService.player.health" id="playerHealthBar" max="100" [value]="100 * combatService.player.health / combatService.player.maxHealth"></progress>
-            <progress [style.--manaValue]="combatService.player.mana" id="manaBar" max="100" [value]="100 * combatService.player.mana / combatService.player.maxMana"></progress>
-        </div>
-
-    </div> -->
-    
+    </div>    
 </div>
