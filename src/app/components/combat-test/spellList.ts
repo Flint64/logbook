@@ -7,6 +7,7 @@ interface MagicData {
   accuracy: number;
   variance: number;
   targets: number;
+  self: boolean;
   textColor: string;
   effect: Partial<Effect>[];
 }
@@ -19,6 +20,7 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 6,
     targets: 2,
+    self: false,
     textColor: 'redText',
     effect: [
       {
@@ -38,6 +40,7 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 2,
     targets: 1,
+    self: false,
     textColor: 'lightBlueText',
     effect: [],
   },
@@ -49,6 +52,7 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 2,
     targets: 1,
+    self: false,
     textColor: 'greenText',
     effect: [
       {
@@ -68,6 +72,7 @@ export const spells: MagicData[] = [
     accuracy: 100,
     variance: 0,
     targets: 0,
+    self: true,
     textColor: 'redText',
     effect: [
       {

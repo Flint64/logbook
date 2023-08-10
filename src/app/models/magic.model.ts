@@ -18,6 +18,7 @@ export class Magic {
       accuracy: number
       variance: number
       targets: number
+      self: boolean
       textColor: string
       effect: Effect[]
 
@@ -134,15 +135,30 @@ export class Magic {
         this.removeDuplicateEffects(playerTarget, spell);
         this.removeDuplicateEffects(enemyTarget, spell);
         
-        appendText('*', true);
-        appendText(playerTarget.name, false, 'underline', 'playerText');
-        appendText('casts', false);
-        appendText(spell.name, false, spell.textColor);
-        appendText('and hits', false,);
-        appendText(enemyTarget.name, false);
-        appendText('for', false);
-        appendText(Math.round(spellDamage).toString(), false, spell.textColor);
-        appendText('damage!', false);
+        if (spell.self){
+            appendText('*', true);
+            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText('casts', false);
+            appendText(spell.name, false, spell.textColor);
+
+            switch(spell.name){
+                case 'Enrage':
+                    appendText('and goes berserk!', false);
+                break;
+            }
+            
+        } else {
+            appendText('*', true);
+            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText('casts', false);
+            appendText(spell.name, false, spell.textColor);
+            appendText('and hits', false,);
+            appendText(enemyTarget.name, false);
+            appendText('for', false);
+            appendText(Math.round(spellDamage).toString(), false, spell.textColor);
+            appendText('damage!', false);
+        }
+
 
         //If the spell misses
         } else {
