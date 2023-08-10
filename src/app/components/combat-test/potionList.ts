@@ -77,7 +77,7 @@ interface ConsumableItemData {
         helpDescription: 'Attack randomly, unable to choose a target or special ability',
       },
       {
-        name: 'attack',
+        name: 'strength',
         duration: 4,
         modifier: 5,
         self: true,
