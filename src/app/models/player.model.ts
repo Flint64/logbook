@@ -16,6 +16,7 @@ export class Player {
     mana: number = 33;
     accuracy: number = 90;
     luck: number = 5;
+    canSelectEnemy: boolean = true;
 
     //TODO: Evade? dodge? Evade Rate = (Character's Evade% / 4) + Accessory Bonuses
     //TODO: Critical Hit Rate = (Character's Critical% / 4) + Weapon Critical% + Accessory Bonuses

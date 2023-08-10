@@ -44,7 +44,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   previousPartyMember = null;
 
   intervalID = null;
-  playerCanSelectEnemy: boolean = true;
   helpText_inventory: string = 'Not sure what an item does? You can long press any item to view its details.';
   helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details.'
 
@@ -300,7 +299,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (result.attackHits){
           this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
         }
-        
         this.combatService.endEnemyTurn(index);
       }
     });
@@ -362,34 +360,32 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //   }
     // }
 
-    // if (effectNames.includes('rage')){ //FIXME: Rage will no longer work correctly with more than one party member
-    //   //Disable menu selection when in rage
-    //   this.playerCanSelectEnemy = false;
+/****************************************************************************************
+ * This section here handles a party member with the rage status effect. It prevents
+ * them from selecting an enemy to attack and forces them to use basic attacks for
+ * the duration of the effect.
+****************************************************************************************/    
+    this.combatService.party.members.forEach((member) => {
+      if (member.effects.find(({ name }) => name === "rage")){
+        member.canSelectEnemy = false;
+        
+        if (member.ATB > 100){
+          // If our ATB gauge is full and we have the rage effect active, auto attack
+          let rand = _.random(0, (this.combatService.enemyList.length - 1));
+        
+          //Keep selecting a random enemy until one is selected that isn't dead
+          while(this.combatService.enemyList[rand].health < 0){ rand = _.random(0, (this.combatService.enemyList.length - 1)); }
 
-    // let searchForEnemy;
-    // //If all enemy health is less than 0 or player health is less than 0, end the battle
-    // if (this.combatService.enemyHealthValues.every(isBelowThreshold) || (this.combatService.player.health < 0)){
-    //   searchForEnemy = false;
-    // } else {
-    //   searchForEnemy = true;
-    // }
-      
-    //   if (this.combatService.player.ATB >= 100){
-    //     while (searchForEnemy){
-    //         let enemyIndex = _.random(0, (this.combatService.enemyHealthValues.length - 1));
-    //         if (this.combatService.enemyHealthValues[enemyIndex] > 0){
-    //           this.selectEnemy(enemyIndex);
-    //           setTimeout(() => {
-    //             this.playerAttack();
-    //           }, 500);
-    //           searchForEnemy = false;
-    //         }
-    //     }
-    //   }
-    // } else {
-    //   //When the rage effect is no longer active, allow player selection of enemies again
-    //   this.playerCanSelectEnemy = true;
-    // }
+          if (member.playerAttack(member, this.combatService.enemyList[rand], this.intervalID, this.appendText.bind(this))){
+            this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
+          }
+          this.combatService.endTurn(member);
+        }
+
+      } else {
+        member.canSelectEnemy = true;
+      }
+    });
   }
 
   /****************************************************************************************

@@ -13,7 +13,7 @@ export class ConsumableItem {
         amount: number
         effect: Effect[]
 
-    useItem(player, numSelected, consumables){
+    useItem(player, numSelected, consumables){ //TODO: Add appendText here to display when a potion is used in combat
         
         //Add all effects from the item used if they have a duration
         consumables[numSelected - 1].effect.forEach((effect) => {
