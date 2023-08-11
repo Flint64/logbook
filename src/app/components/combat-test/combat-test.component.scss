@@ -75,7 +75,9 @@ button{
 
 .memberBox {
     border: 1px solid white;
-    height: 5em;
+    // height: 5em;
+    min-height: 85px;
+    max-height: 93px;
     width: 30%; //TODO: Dynamic width for 2 or 1 party member
     margin-bottom: 5px;
     margin-top: 5px;
@@ -93,12 +95,26 @@ button{
 }
 
 .innerBoxWrapper{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    max-height: 93px;
+    display: grid;
+    grid-template-rows: 2fr 1fr 1fr;
     text-align: center;
-    justify-content: space-between;
+    // height: 100%;
+    // width: 100%;
+    // display: flex;
+    // flex-direction: column;
+    // text-align: center;
+    // justify-content: space-between;
+    // div:first-child{
+    //     display: flex;
+    //     flex-direction: column;
+    //     text-align: center;
+    //     justify-content: flex-start;
+    // }
+
+    // div:last-child{
+    //     align-content: flex-end; //FIXME: Fix this CSS
+    // }
 }
 
 // .playerOptions{
@@ -307,7 +323,7 @@ progress, progress::-webkit-progress-value {
 #statusEffects{
     // width: 28px;
     display: flex;
-    // justify-content: space-evenly;
+    justify-content: space-evenly;
     span{
         display: block;
         margin: 0;
@@ -317,11 +333,15 @@ progress, progress::-webkit-progress-value {
 }
 
 .statusEffect{
-    img{
-        width: 28px;
-        height: 28px;
-    }
+    width: fit-content;
+    border-radius: 10px;
+    padding: 2px;
 }
+
+.poisonStatus{background: rgb(0, 75, 0);}
+.speedStatus, .strengthStatus{background: rgb(150, 110, 9);}
+.freezeStatus{background: rgb(20, 20, 151);}
+.rageStatus, .burnStatus{background: rgb(138, 12, 38);}
 
 #playerInventoryOptions{
     height: 100%;

@@ -54,8 +54,19 @@
                         <p style="margin-top: 5px; color: crimson;">{{member.health}} / {{member.maxHealth}}</p>
                         <p style="color: orchid;">{{member.mana}} / {{member.maxMana}}</p>
                     </div>
-    
+
+                    <div id="statusEffects">
+                        <p *ngIf="checkStatus(member,'poison')" class="statusEffect poisonStatus">psn</p>
+                        <p *ngIf="checkStatus(member,'burn')" class="statusEffect burnStatus">brn</p>
+                        <p *ngIf="checkStatus(member,'speed')" class="statusEffect speedStatus">spd</p>
+                        <p *ngIf="checkStatus(member,'rage')" class="statusEffect rageStatus">rag</p>
+                        <p *ngIf="checkStatus(member,'freeze')" class="statusEffect freezeStatus">frz</p>
+                        <p *ngIf="checkStatus(member,'strength')" class="statusEffect strengthStatus">str</p>
+                        <!-- <span class="statusEffect greenFilter"><img src="assets/images/statuses/water_drop.svg" alt="Poison Icon"></span> -->
+                    </div>
+                    
                     <div style="width: 100%;">
+                        <!-- <span class="statusEffect redFilter"><img src="assets/images/statuses/rage.svg" alt="Rage Icon"></span> -->
                         <progress class="enemyATB" max="100" [value]="member.ATB"></progress>
                         <input type="radio" [formControlName]="'memberSelected'" [value]="i" class="hidden">
                     </div>

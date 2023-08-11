@@ -389,6 +389,16 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /****************************************************************************************
+   * Check Status - Used in the template to check for status effects on the party member
+   * and display the correct status in the player box
+   ****************************************************************************************/  
+  checkStatus(member: Player, statusName: string): boolean{
+    if (member.effects.find(({ name }) => name === statusName)){
+      return true;
+    }
+  }
+
+  /****************************************************************************************
    * Stop ATB - Stops combat when player/enemy is below 0 HP
    * Resets interval & ATB gauges
    * Also used to pause combat so we don't clear ATB gauges
