@@ -36,16 +36,7 @@
         </div>        
     </div>
     
-    <div class="playerBars">            
-        <!-- <section id="statusEffects">
-            <span *ngIf="!combatService.player.effects.length" class="statusEffect invisible"><img src="assets/images/statuses/water_drop.svg" alt=""></span>
-            <span *ngFor="let effect of combatService.player.effects" [ngSwitch]="effect.name"> 
-                <span *ngSwitchCase="'poison'" class="statusEffect greenFilter"><img src="assets/images/statuses/water_drop.svg" alt="Poison Icon"></span>
-                <span *ngSwitchCase="'rage'" class="statusEffect redFilter"><img src="assets/images/statuses/rage.svg" alt="Rage Icon"></span>
-                <span *ngSwitchCase="'strength'" class="statusEffect redFilter"><img src="assets/images/statuses/arrow_up.svg" alt="Attack Up Icon"></span>
-                <span *ngSwitchCase="'speed'" class="statusEffect yellowFilter"><img src="assets/images/statuses/speed.svg" alt="Speed Icon"></span>
-            </span>                
-        </section> -->
+    <div class="playerBars">
         <form [formGroup]="partyForm" class="partyForm">
             <div class="memberBox" #memberBoxes *ngFor="let member of combatService.party.members; let i = index" (click)="selectPartyMember(i, $event.target)">
                 <div class="innerBoxWrapper">
@@ -62,17 +53,15 @@
                         <p *ngIf="checkStatus(member,'rage')" class="statusEffect rageStatus">rag</p>
                         <p *ngIf="checkStatus(member,'freeze')" class="statusEffect freezeStatus">frz</p>
                         <p *ngIf="checkStatus(member,'strength')" class="statusEffect strengthStatus">str</p>
-                        <!-- <span class="statusEffect greenFilter"><img src="assets/images/statuses/water_drop.svg" alt="Poison Icon"></span> -->
                     </div>
                     
                     <div style="width: 100%;">
-                        <!-- <span class="statusEffect redFilter"><img src="assets/images/statuses/rage.svg" alt="Rage Icon"></span> -->
                         <progress class="enemyATB" max="100" [value]="member.ATB"></progress>
                         <input type="radio" [formControlName]="'memberSelected'" [value]="i" class="hidden">
                     </div>
                 </div>
             </div>
         </form>
+    </div>
 
-    </div>    
 </div>
