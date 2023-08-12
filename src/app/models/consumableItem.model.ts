@@ -24,8 +24,6 @@ export class ConsumableItem {
         
         //Add all effects from the item used if they have a duration
         consumables[numSelected - 1].effect.forEach((effect) => {
-            if (effect.duration){
-                
                 //If we have more than one effect in the players list with the same name,
                 //increase duration instead of having a duplicate effect
                 if (target.effects.length > 0){
@@ -35,7 +33,6 @@ export class ConsumableItem {
                 
                 //Push a copy of the effect to prevent pass by reference from changing the values in the consumableItem object
                 target.effects.push({...effect});
-            }
         });
 
         // Remove duplicate effects (removing the one with the lower duration)
@@ -51,32 +48,10 @@ export class ConsumableItem {
             }
         }
 
+        //For using healing/mana potions that have an instant affect
         consumables[numSelected - 1].effect.forEach((effect) => {
-            const originalPlayerValue = target[`${effect.name}`];
-                    
-            //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
-            if ((target[`${effect.name}`] + effect.modifier) >= target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
-                target[`${effect.name}`] = target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
-            }
-            
-            // //If adding the value is less than or equal to the max, add the value
-            if ((originalPlayerValue + effect.modifier) < target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
-                target[`${effect.name}`] += effect.modifier;
-            }
-            
-            //If subtracting the value is less than 0, set it to 0
-            if ((originalPlayerValue + effect.modifier) < 0) {
-                target[`${effect.name}`] = 0;
-            }
-
-            //Override the max value for the following keys.
-            //Essentially the max value for these are just
-            //keeping track of the current value, not the max possible
-            switch(effect.name){
-                case 'speed':
-                case 'strength':
-                    target[`${effect.name}`] += effect.modifier;
-                break;
+            if (effect.name === 'health' || effect.name === 'mana'){
+                target[effect.name] = target.calcTotalStatValue(effect.name);
             }
         });
         

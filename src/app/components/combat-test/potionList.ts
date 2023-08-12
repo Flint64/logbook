@@ -14,7 +14,7 @@ interface ConsumableItemData {
   export const potions: ConsumableItemData[] = [
   {
     name: 'Healing Potion',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: 'crimsonText',
     effect: [
@@ -30,7 +30,7 @@ interface ConsumableItemData {
 
   {
     name: 'Mana Potion',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: 'orchidText',
     effect: [
@@ -46,7 +46,7 @@ interface ConsumableItemData {
 
   {
     name: 'Speed Potion',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: 'goldText',
     effect: [
@@ -72,12 +72,19 @@ interface ConsumableItemData {
         self: true,
         helpDescription: 'Take poison damage over time',
       },
+      {
+        name: 'health',
+        duration: 0,
+        modifier: -10,
+        self: true,
+        helpDescription: 'Deals direct health damage',
+      }
     ],
   },
 
   {
     name: 'Multiple Effects',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: null,
     effect: [
@@ -114,7 +121,7 @@ interface ConsumableItemData {
 
   {
     name: 'Rage Potion',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: 'crimsonText',
     effect: [
@@ -130,7 +137,7 @@ interface ConsumableItemData {
 
   {
     name: 'Damage+',
-    amount: 1,
+    amount: 3,
     thrown: false,
     textColor: 'crimsonText',
     effect: [

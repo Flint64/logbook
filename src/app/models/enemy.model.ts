@@ -16,6 +16,7 @@ export class Enemy {
         defense: number = null;
         speed: number = null;
         mana: number = null;
+        maxMana: number = null;
         accuracy: number = null;
         luck: number = null;
         effects: Array<Effect> = [];
@@ -57,9 +58,39 @@ split.forEach((e, index) => {
      
     */
 
+//TODO: KEEP THIS UP TO DATE WITH THE ONE IN THE PLAYER MODEL CLASS
+calcTotalStatValue(statName: string){
+  let effect: Effect = this.effects.find(({ name }) => name === statName);
+  if (effect){
+    let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
+    if (statName === 'health' || statName === 'mana'){
+      //If the effect is targeting health or mana and adding the value is over the max allowed value, return the max value instead
+      if (effect.modifier + this[`${statName}`] >= maxValue){
+        return maxValue;
+      }
+
+      //If adding the value is less than 0, set it to 0
+      if (effect.modifier + this[`${statName}`] <= 0){
+        return 0;
+      }
+
+      //And if adding is less than the max, add the value
+      if (effect.modifier + this[`${statName}`] < maxValue){
+        return effect.modifier + this[`${statName}`];
+      }
+    }
+    
+    //If we have an effect matching the specified name, return the total value. 
+    //Otherwise, return the base value.
+    return this[`${statName}`] + effect.modifier;
+  } else {
+    return this[`${statName}`];
+  }
+}
+
     calcBaseAttackDamage(){
       //Damage is a random number between player min attack and attack
-      let dam = (this.strength / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
+      let dam = (this.calcTotalStatValue('strength') / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
       //Damage variance, a random number from 1-5 more or less than the calculated value, minimum of 1
       let variance = _.random(1, 5);

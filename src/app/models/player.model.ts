@@ -9,10 +9,20 @@ export class Player {
 
     name: string = "";
     health: number = 100;
-    strength: number = 10; //basic attack damage = (Character's Strength / 2) + Weapon Attack
+
+    //Only used now for displaying current value / total
+    maxHealth: number = 100;
+    maxMana: number = 33;
+
+    //basic attack damage = (Character's Strength / 2) + Weapon Attack
+    strength: number = 10;
+    
+    //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
     intelligence: number = 5;
-    defense: number = 30; //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
-    speed: number = 200; //Speed = (Character's speed) + Accessory Bonuses
+    defense: number = 30; 
+
+    //Speed = (Character's speed) + Accessory Bonuses
+    speed: number = 200;
     mana: number = 33;
     accuracy: number = 90;
     luck: number = 5;
@@ -27,15 +37,6 @@ export class Player {
 
     Doubleish the damage for crits
     */
-
-    maxHealth: number = 100;
-    maxStrength: number = 10;
-    maxIntelligence: number = 5;
-    maxDefense: number = 30;
-    maxSpeed: number = 200;
-    maxMana: number = 33;
-    maxAccuracy: number = 90;
-    maxLuck: number = 5;
     
     ATB: number = 100;
     turnCount: number = 0;
@@ -46,23 +47,48 @@ export class Player {
 
     //TODO: Player weaknesses & resistances
 
-    //Resets any modified player values to the max value after combat excluding health and mana
-    //TODO: Make sure this accounts for any equipment
+    //TODO: This will have to be modified when equipment comes in to play to correctly add up those values.
+    //Effects are one unique effect per party member, so checking once is fine. But equipment would have to
+    //search through all equipped items to see if there are any that match the search term and add them all up.
+    calcTotalStatValue(statName: string){
+      let effect: Effect = this.effects.find(({ name }) => name === statName);
+      if (effect){
+        let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
+        if (statName === 'health' || statName === 'mana'){
+          //If the effect is targeting health or mana and adding the value is over the max allowed value, return the max value instead
+          if (effect.modifier + this[`${statName}`] >= maxValue){
+            return maxValue;
+          }
+
+          //If adding the value is less than 0, set it to 0
+          if (effect.modifier + this[`${statName}`] <= 0){
+            return 0;
+          }
+
+          //And if adding is less than the max, add the value
+          if (effect.modifier + this[`${statName}`] < maxValue){
+            return effect.modifier + this[`${statName}`];
+          }
+        }
+        
+        //If we have an effect matching the specified name, return the total value. 
+        //Otherwise, return the base value.
+        return this[`${statName}`] + effect.modifier;
+      } else {
+        return this[`${statName}`];
+      }
+    }
+
+    //Resets any modified player values after combat excluding health and mana
     reset(){
         this.ATB = 100;
         this.turnCount = 0;
-
-        this.strength = this.maxStrength;
-        this.defense = this.maxDefense;
-        this.speed = this.maxSpeed;
-        this.accuracy = this.maxAccuracy;
-        this.luck = this.maxLuck;
         this.effects = [];
     }
 
     calcBaseAttackDamage(){
-      //Damage is a random number between player min attack and attack
-      let dam = (this.strength / 2) + 5 //TODO: 5 is your equipped weapon damage stat, not implemented yet
+      //TODO: 5 is your equipped weapon damage stat, not implemented yet
+      let dam = (this.calcTotalStatValue('strength') / 2) + 5;
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
       let variance = _.random(1, 7);

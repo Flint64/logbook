@@ -118,6 +118,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //To start, give each party member one of the spells from the spell list
     this.combatService.party.members[0].magic.push(convertedSpells[0])
     this.combatService.party.members[0].magic.push(convertedSpells[3])
+    this.combatService.party.members[0].magic.push(convertedSpells[4])
     this.combatService.party.members[1].magic.push(convertedSpells[1])
     this.combatService.party.members[2].magic.push(convertedSpells[2])
     
@@ -316,7 +317,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (member.ATB > 100){
           //Do nothing if ATB is greater than 100 to prevent the numbers from overflowing
         } else {
-          member.ATB += (member.speed/100);
+          member.ATB += (member.calcTotalStatValue('speed')/100);
         }
       } else {
         //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already

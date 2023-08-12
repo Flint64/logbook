@@ -39,7 +39,6 @@ export class Magic {
                 }
             }
         }
-        this.modifyTargetStats(target, spell);
     }
 
     /******************************************************************************************************
@@ -58,46 +57,12 @@ export class Magic {
     }
 
     /******************************************************************************************************
-     * Modify Target Stats - Modifies the target (player or enemy's) stats based on the effect 
-     * name and modifier
-     ******************************************************************************************************/
-    private modifyTargetStats(target: any, spell){
-        spell.effect.forEach((effect) => {
-            const originalValue = target[`${effect.name}`];
-                    
-            //If adding the value is greater than the max value, set it to the max. Otherwise if subtracting it is less than 0, set to 0
-            if ((target[`${effect.name}`] + effect.modifier) >= target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
-                target[`${effect.name}`] = target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
-            }
-            
-            // //If adding the value is less than or equal to the max, add the value
-            if ((originalValue + effect.modifier) < target['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)]){
-                target[`${effect.name}`] += effect.modifier;
-            }
-            
-            //If subtracting the value is less than 0, set it to 0
-            if ((originalValue + effect.modifier) < 0) {
-                target[`${effect.name}`] = 0;
-            }
-
-            //Override the max value for the following keys.
-            //Essentially the max value for these are just
-            //keeping track of the current value, not the max possible
-            switch(effect.name){
-                case 'speed':
-                case 'strength':
-                    target[`${effect.name}`] += effect.modifier;
-                break;
-            }
-        });
-    }
-
-    /******************************************************************************************************
      * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances and spell scaling
     //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
+    //TODO: Magic needs a rework, the self targeting might be finnicky. Doing the above like the consumables might be the best fix for it.
     castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
         let spell: Magic = player.magic[numSelected - 1];
@@ -111,7 +76,7 @@ export class Magic {
             
             //If the spell has a damage value, apply it before the effect(s)
         if (spell.power){
-            spellDamage = ((player.intelligence / 2.5) * spell.power)
+            spellDamage = ((player.calcTotalStatValue('intelligence') / 2.5) * spell.power);
 
             //Damage variance equal  to a range between 1 and the spell's power
             let variance = _.random(1, spell.variance);
@@ -126,18 +91,23 @@ export class Magic {
         //If the spell has a duration and is targeted to yourself, add it to your effects list
         spell.effect.forEach((effect) => {
                       
-            if (effect.duration){
-                if (effect.self){
-                    this.addSpellEffect(player, effect);
-                } else {
-                    this.addSpellEffect(spellTarget, effect);
-                }
+            if (effect.self){
+                this.addSpellEffect(player, effect);
+            } else {
+                this.addSpellEffect(spellTarget, effect);
             }
+
+            //For using healing/mana magic that have an instant affect
+            if (effect.name === 'health' || effect.name === 'mana'){
+                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name);
+                player[effect.name] = player.calcTotalStatValue(effect.name);
+            }
+            
         });
 
         this.removeDuplicateEffects(player, spell);
         this.removeDuplicateEffects(spellTarget, spell);
-        
+
         if (spell.self){
             appendText('*', true);
             appendText(player.name, false, 'underline', 'playerText');

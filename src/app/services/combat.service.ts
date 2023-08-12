@@ -23,6 +23,7 @@ export class CombatService {
   constructor() {
     this.player1.name = "Gort";
     this.player1.speed = 150;
+    this.player1.health = 80;
     
     this.player2.name = "Luke";
     this.player2.speed = 250;
@@ -46,9 +47,9 @@ export class CombatService {
 
     this.decrementEffects(member);
     
-    // this.party.members[memberIndex].effects.forEach((e, index) => {
-    //   console.log(e);
-    // });
+    this.party.members[0].effects.forEach((e, index) => {
+      console.log(e);
+    });
     
   }
 
@@ -69,9 +70,8 @@ export class CombatService {
   }
 
   decrementEffects(target: Enemy | Player){
-
     //If the target is at 0 hp or less, don't decrement the effects and instead let them die
-    if (target.health === 0 || target.health < 0){ return; }
+    if (target.health <= 0){ return; }
     
     //Handle decrementing and removing effects from the player or enemy based on duration.
     //Looping backwards here to not affect the array indexes
@@ -98,17 +98,7 @@ export class CombatService {
       }
       
       //If duration has gone down to 0, remove it from the list and reset player values
-      if (target.effects[i].duration === 0){
-        
-        //Reset player values before removing from list or else effect never ends. 
-        for (const [key, value] of Object.entries(target)) {
-
-          //If the player has an effect name that matches a player value, reset it to the max value of that field
-          if (target.effects[i].name === key){
-              target[`${key}`] = target['max' + target.effects[i].name.charAt(0).toUpperCase() + target.effects[i].name.slice(1)];          
-          }
-        }
-        
+      if (target.effects[i].duration === 0 || target.effects[i].duration < 0 || !target.effects[i].duration){
         target.effects.splice(i, 1);
       }
     }
