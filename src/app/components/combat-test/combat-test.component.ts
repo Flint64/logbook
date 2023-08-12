@@ -145,8 +145,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const dialogRef = this.dialog.open(InfoWindowComponent, {
         panelClass: 'custom-dialog-container',
-        width: '80vw',
-        height: '40vh',
+        width: '30rem',
+        height: '20rem',
         data: {helpText: data},
         backdropClass: 'backdropBackground',
         disableClose: true,
@@ -162,8 +162,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
       const dialogRef = this.dialog.open(InfoWindowComponent, {
         panelClass: 'custom-dialog-container',
-        width: '80vw',
-        height: '40vh',
+        width: '30rem',
+        height: '20rem',
         data: {itemDetails: data},
         backdropClass: 'backdropBackground',
         disableClose: true,

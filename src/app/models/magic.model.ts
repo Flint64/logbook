@@ -97,6 +97,7 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances and spell scaling
+    //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
     castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
         let spell: Magic = player.magic[numSelected - 1];
