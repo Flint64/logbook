@@ -33,7 +33,13 @@
             <p *ngFor="let item of combatService.party.consumables; let i = index"  type="button" [longPress]="1000" (longPressFinish)="openInfoWindow(combatService.party.consumables[i])" [ngClass]="{'actionDisabled': combatService.party.consumables[i].amount === 0 || combatService.party.members[memberIndex]?.ATB < 100}" (click)="optionSelected(i+1)">{{(i+1) + '. ' + item['name'] + ' - ' + item['amount']}}</p>
             <p (click)="menuBack('main')">{{combatService.party.consumables.length + 1 + '.'}} Back</p>
             <p (click)="openHelpWindow(helpText_inventory)">?</p>
-        </div>        
+        </div>
+        
+        <div id="selectingTargetText" *ngIf="selectingConsumableTarget">
+            <p>Select a <span class="underline playerText">party member</span> <span *ngIf="consumableIsThrowable">or an <span class="redText">enemy</span></span> to use <span [class]="selectedConsumableItem.textColor">{{selectedConsumableItem.name}}</span> on.</p>
+            <p (click)="menuBack('inventory')">1. Cancel</p>
+        </div>
+        
     </div>
     
     <div class="playerBars">

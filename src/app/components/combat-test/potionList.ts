@@ -6,6 +6,8 @@ import { Effect } from "src/app/models/effect.model";
 interface ConsumableItemData {
     name: string;
     amount: number;
+    thrown: boolean;
+    textColor: string;
     effect: Partial<Effect>[];
   }
     
@@ -13,6 +15,8 @@ interface ConsumableItemData {
   {
     name: 'Healing Potion',
     amount: 1,
+    thrown: false,
+    textColor: 'crimsonText',
     effect: [
       {
         name: 'health',
@@ -27,6 +31,8 @@ interface ConsumableItemData {
   {
     name: 'Mana Potion',
     amount: 1,
+    thrown: false,
+    textColor: 'orchidText',
     effect: [
       {
         name: 'mana',
@@ -41,6 +47,8 @@ interface ConsumableItemData {
   {
     name: 'Speed Potion',
     amount: 1,
+    thrown: false,
+    textColor: 'goldText',
     effect: [
       {
         name: 'speed',
@@ -52,8 +60,10 @@ interface ConsumableItemData {
     ],
   },
   {
-    name: 'Poison Yourself',
+    name: 'Poison Vial',
     amount: 3,
+    thrown: true,
+    textColor: 'greenText',
     effect: [
       {
         name: 'poison',
@@ -68,6 +78,8 @@ interface ConsumableItemData {
   {
     name: 'Multiple Effects',
     amount: 1,
+    thrown: false,
+    textColor: null,
     effect: [
       {
         name: 'rage',
@@ -103,6 +115,8 @@ interface ConsumableItemData {
   {
     name: 'Rage Potion',
     amount: 1,
+    thrown: false,
+    textColor: 'crimsonText',
     effect: [
         {
             name: 'rage',
@@ -117,6 +131,8 @@ interface ConsumableItemData {
   {
     name: 'Damage+',
     amount: 1,
+    thrown: false,
+    textColor: 'crimsonText',
     effect: [
       {
         name: 'strength',

@@ -34,6 +34,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedEnemy: Enemy = null;
   selectedPartyMember: Player = null;
 
+  selectingConsumableTarget: boolean = false;
+  selectedConsumableTarget: Player | Enemy = null;
+  consumableIsThrowable: boolean = false;
+  selectedConsumableItem: ConsumableItem = null;
+
   enemyIndex: number = null;
   memberIndex: number = null;
 
@@ -216,6 +221,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           this.useConsumable(numSelected); 
         }
+      } else if (this.selectingConsumableTarget && numSelected === 1){
+        this.menuBack('inventory');
       }
 
 
@@ -422,20 +429,35 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   /****************************************************************************************
    * Use Consumable - Allows usage of a consumable item from the inventory menu
    ****************************************************************************************/
-  //TODO: reimplement appendText for consumable items
-  //TODO: Can't target another party member with a spell/item. Add that in somehow?
-  useConsumable(numSelected){
-    let playerTarget = this.combatService.party.members[this.memberIndex];
+  async useConsumable(numSelected){
 
-    if (playerTarget.ATB < 100 || this.intervalID === null){
+    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) && (this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
       return;
     }
+
+  /*
+    You've chosen to use a consumable item, which means we now wait for a target
+    to be selected before moving on and ending your turn.
+  */
+  this.selectingConsumableTarget = true;
+  if (this.combatService.party.consumables[numSelected - 1].thrown){ this.consumableIsThrowable = true; }
+  this.viewingInventoryOptions = false;
+  this.selectedConsumableItem = this.combatService.party.consumables[numSelected - 1];
+
+  // Wait until this.selectedConsumableTarget is assigned a value
+  while (!this.selectedConsumableTarget && this.selectingConsumableTarget) {
+    await new Promise(resolve => setTimeout(resolve, 100)); // Delay before checking again
+  }
+  
+  //Prevent this from firing if we cancel out of selecting a target for an item by using the back button
+  if (this.selectedConsumableTarget){
+    this.menuBack('main');
+    this.combatService.party.consumables[numSelected - 1].useItem(this.selectedPartyMember, this.selectedConsumableTarget, numSelected, this.combatService.party.consumables, this.appendText.bind(this));
+    this.combatService.endTurn(this.selectedPartyMember);
+    this.selectedConsumableTarget = null;
+    this.selectedConsumableItem = null;
+  }
     
-    //Only reset the menu if the item was actually consumed
-    if ((this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
-      return;
-    } else {
-      this.combatService.party.consumables[numSelected - 1].useItem(playerTarget, numSelected, this.combatService.party.consumables);
       
       // Display what was used and the effect it has based on the type
       /*
@@ -475,10 +497,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         // console.log(`${key}: ${value}`);
       }
       */
-
-      this.menuBack('main');
-      this.combatService.endTurn(this.selectedPartyMember);
-    }
+    // }
     
   }
 
@@ -570,10 +589,24 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Menu Back - Handles going back from any nested menu or back to the main options
    ****************************************************************************************/
   menuBack(ref){
+    //If we were selecting a target for a consumable item and go back a menu to
+    //cancel it, prevent using the item
+    if (this.selectingConsumableTarget){ this.selectingConsumableTarget = false; this.selectedConsumableTarget = null; this.consumableIsThrowable = false; this.selectedConsumableItem = null;}
+    
     switch(ref){
       case "main":
         this.viewingMainOptions = true;
         this.viewingMagicOptions = false;
+        this.viewingInventoryOptions = false;
+      break;
+      case "inventory":
+        this.viewingMainOptions = false;
+        this.viewingMagicOptions = false;
+        this.viewingInventoryOptions = true;
+      break;
+      case "magic":
+        this.viewingMainOptions = false;
+        this.viewingMagicOptions = true;
         this.viewingInventoryOptions = false;
       break;
     }
@@ -651,6 +684,16 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * on the enemy box selects them.
    ****************************************************************************************/
   selectEnemy(index){
+
+    //Disallow selecting an enemy if we're currently picking a party member to use a consumable item on
+    //Selected consumable has to have the 'thrown' property or else it can't be used on an enemy
+    if (this.selectingConsumableTarget && this.consumableIsThrowable){
+      this.selectingConsumableTarget = false;
+      this.consumableIsThrowable = false;
+      this.selectedConsumableTarget = this.combatService.enemyList[index];
+      return;
+    }
+    
     this.enemyIndex = index;
     if (this.previousTarget !== null){ this.previousTarget.classList.remove('enemySelected'); }
     this.selectedEnemy = this.combatService.enemyList[index];
@@ -664,6 +707,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Clicking anywhere on the enemy box selects them.
    ****************************************************************************************/
   selectPartyMember(index){
+
+    //Disallow selecting party members if we're currently picking a party member to use a consumable item on
+    if (this.selectingConsumableTarget){
+      this.selectingConsumableTarget = false;
+      this.consumableIsThrowable = false;
+      this.selectedConsumableTarget = this.combatService.party.members[index];
+      return;
+    }
+    
     this.memberIndex = index;
     if (this.previousPartyMember !== null){ this.previousPartyMember.classList.remove('memberSelected'); }
     this.selectedPartyMember = this.combatService.party.members[index];

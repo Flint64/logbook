@@ -347,7 +347,7 @@ progress, progress::-webkit-progress-value {
     height: 100%;
 }
 
-#playerMainOptions, #playerMagicOptions, #playerInventoryOptions{
+#playerMainOptions, #playerMagicOptions, #playerInventoryOptions, #selectingTargetText{
     p{
         width: max-content;
         padding-left: 5px;
@@ -376,6 +376,7 @@ progress, progress::-webkit-progress-value {
 .lightBlueText{ color: skyblue !important; }
 .playerText{ color: #4caf50 !important; }
 .crimsonText{ color: crimson !important; }
+.goldText{ color: gold !important; }
 .underline{ text-decoration: underline !important; }
 
 .playerHealthBarPoison::-webkit-progress-value{ background: green !important; }

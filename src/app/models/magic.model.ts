@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Effect } from "./effect.model";
 import _ from 'lodash';
+import { Enemy } from './enemy.model';
+import { Player } from './player.model';
 
 @Injectable()
 export class Magic {
@@ -25,7 +27,7 @@ export class Magic {
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
      ******************************************************************************************************/
-    private removeDuplicateEffects(target: any, spell: any){
+    private removeDuplicateEffects(target: Player | Enemy, spell: Magic){
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -43,7 +45,7 @@ export class Magic {
     /******************************************************************************************************
      * Add Spell Effect - Add the spell effect
      ******************************************************************************************************/
-    private addSpellEffect(target: any, effect: Effect){
+    private addSpellEffect(target: Player | Enemy, effect: Effect){
         //If we have more than one effect in the players list with the same name,
         //increase duration instead of having a duplicate effect
         if (target.effects.length > 0){
@@ -95,20 +97,20 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances and spell scaling
-    castSpell(playerTarget, numSelected, enemyTarget, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
-        let spell: Magic = playerTarget.magic[numSelected - 1];
+        let spell: Magic = player.magic[numSelected - 1];
         let spellDamage = null;
 
         //Regardless of hit/miss, the spell costs mana
-        playerTarget.mana -= spell.manaCost;
+        player.mana -= spell.manaCost;
                 
         //If the spell hits
         if ((_.random(1, 100)) < spell.accuracy){
             
             //If the spell has a damage value, apply it before the effect(s)
         if (spell.power){
-            spellDamage = ((playerTarget.intelligence / 2.5) * spell.power)
+            spellDamage = ((player.intelligence / 2.5) * spell.power)
 
             //Damage variance equal  to a range between 1 and the spell's power
             let variance = _.random(1, spell.variance);
@@ -117,7 +119,7 @@ export class Magic {
             variance *= Math.round(Math.random()) ? 1 : -1; 
 
             spellDamage += variance;
-            enemyTarget.health -= Math.round(spellDamage);
+            spellTarget.health -= Math.round(spellDamage);
         }
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
@@ -125,19 +127,19 @@ export class Magic {
                       
             if (effect.duration){
                 if (effect.self){
-                    this.addSpellEffect(playerTarget, effect);
+                    this.addSpellEffect(player, effect);
                 } else {
-                    this.addSpellEffect(enemyTarget, effect);
+                    this.addSpellEffect(spellTarget, effect);
                 }
             }
         });
 
-        this.removeDuplicateEffects(playerTarget, spell);
-        this.removeDuplicateEffects(enemyTarget, spell);
+        this.removeDuplicateEffects(player, spell);
+        this.removeDuplicateEffects(spellTarget, spell);
         
         if (spell.self){
             appendText('*', true);
-            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText(player.name, false, 'underline', 'playerText');
             appendText('casts', false);
             appendText(spell.name, false, spell.textColor);
 
@@ -149,11 +151,11 @@ export class Magic {
             
         } else {
             appendText('*', true);
-            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText(player.name, false, 'underline', 'playerText');
             appendText('casts', false);
             appendText(spell.name, false, spell.textColor);
             appendText('and hits', false,);
-            appendText(enemyTarget.name, false);
+            appendText(spellTarget.name, false);
             appendText('for', false);
             appendText(Math.round(spellDamage).toString(), false, spell.textColor);
             appendText('damage!', false);
@@ -163,11 +165,11 @@ export class Magic {
         //If the spell misses
         } else {
             appendText('*', true);
-            appendText(playerTarget.name, false, 'underline', 'playerText');
+            appendText(player.name, false, 'underline', 'playerText');
             appendText('casts', false, 'greyText');
             appendText(spell.name, false, spell.textColor);
             appendText('and misses', false, 'greyText');
-            appendText(enemyTarget.name + '!', false, 'greyText');
+            appendText(spellTarget.name + '!', false, 'greyText');
         }
     }
 }
