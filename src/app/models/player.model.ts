@@ -61,7 +61,7 @@ export class Player {
     }
 
     calcBaseAttackDamage(){
-    //Damage is a random number between player min attack and attack
+      //Damage is a random number between player min attack and attack
       let dam = (this.strength / 2) + 5 //TODO: 5 is your equipped weapon damage stat, not implemented yet
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1

@@ -174,3 +174,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+#Damage Calculator
+Logbook_Damage_Calculator.xlsx
