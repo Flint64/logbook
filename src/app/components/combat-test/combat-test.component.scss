@@ -75,7 +75,6 @@ button{
 
 .memberBox {
     border: 1px solid white;
-    // height: 5em;
     min-height: 85px;
     max-height: 93px;
     width: 30%; //TODO: Dynamic width for 2 or 1 party member
@@ -99,50 +98,7 @@ button{
     display: grid;
     grid-template-rows: 2fr 1fr 1fr;
     text-align: center;
-    // height: 100%;
-    // width: 100%;
-    // display: flex;
-    // flex-direction: column;
-    // text-align: center;
-    // justify-content: space-between;
-    // div:first-child{
-    //     display: flex;
-    //     flex-direction: column;
-    //     text-align: center;
-    //     justify-content: flex-start;
-    // }
-
-    // div:last-child{
-    //     align-content: flex-end; //FIXME: Fix this CSS
-    // }
 }
-
-// .playerOptions{
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: space-between;
-// }
-
-// #playerProgressDiv{
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-// }
-
-// .playerBars{
-//     // width: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     div:first-of-type{
-//         width: 100%;
-//     }
-//     div:last-of-type{
-//         progress{ 
-//             width: 40vw;
-//         }
-//     }
-// }
 
 .playerOptions{
     padding: 5px;
@@ -217,7 +173,6 @@ button{
     padding: 5px;
     min-height: 6em;
     span{
-        // width: max-content;
         display: inline-block;
         padding: 0;
         padding-right: 2.5px;
@@ -258,15 +213,6 @@ button{
     display: none;
 }
 
-mat-progress-bar{
-    &.enemyATB{
-        width: 100%;
-        height: .5em;
-        border-radius: 0;
-        // display: none;
-    }
-}
-
 .none{
     // display: none;
 }
@@ -282,42 +228,26 @@ mat-progress-bar{
 progress{
     height: 10px;
     width: 100%;
-    // max-width: 20.2em;
     text-align: center;
 }
 
-#manaBar:after {
-    counter-reset: variable var(--manaValue);
-    content: counter(variable);
-}
+// #manaBar:after {
+//     counter-reset: variable var(--manaValue);
+//     content: counter(variable);
+// }
 
-#playerHealthBar:after {
-    counter-reset: variable var(--healthValue);
-    content: counter(variable);
-}
+// #playerHealthBar:after {
+//     counter-reset: variable var(--healthValue);
+//     content: counter(variable);
+// }
 
-progress, progress::-webkit-progress-value {
-    // background: rgb(89,159,201);
-    background: #4caf50;
+progress.playerATB, progress.playerATB::-webkit-progress-value{
     border: 1px solid rgba(69, 69, 69, 0.764);
+    background: #4caf50;
 }
 
-#manaBar::-webkit-progress-value{
-    background: purple;
-    display: block;
-    float: right;
-}
-
-#playerHealthBar::-webkit-progress-value{
-    background: crimson;
-}
-
-#manaBar{
-    margin-left: 3px;
-}
-
-#playerHealthBar{
-    margin-left: -3px;
+progress.enemyATB, progress.enemyATB::-webkit-progress-value{
+    background: darkred;
 }
 
 #statusEffects{
@@ -379,7 +309,7 @@ progress, progress::-webkit-progress-value {
 .goldText{ color: gold !important; }
 .underline{ text-decoration: underline !important; }
 
-.playerHealthBarPoison::-webkit-progress-value{ background: green !important; }
+// .playerHealthBarPoison::-webkit-progress-value{ background: green !important; }
 
 .enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%) !important; } //DarkRed/Crimson
 .whiteFilter { filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%) !important; } //White

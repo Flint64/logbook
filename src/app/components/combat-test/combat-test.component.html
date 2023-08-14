@@ -7,7 +7,7 @@
                 <p>{{enemy.health}}</p>
                 <img #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">
                 <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                <mat-progress-bar class="enemyATB none" mode="determinate" [value]="combatService.enemyList[i].ATB" color="accent"></mat-progress-bar>
+                <progress class="enemyATB none" max="100" [value]="combatService.enemyList[i].ATB"></progress>
             </div>
         </form>
     </div>
@@ -62,7 +62,7 @@
                     </div>
                     
                     <div style="width: 100%;">
-                        <progress class="enemyATB" max="100" [value]="member.ATB"></progress>
+                        <progress class="playerATB" max="100" [value]="member.ATB"></progress>
                         <input type="radio" [formControlName]="'memberSelected'" [value]="i" class="hidden">
                     </div>
                 </div>
