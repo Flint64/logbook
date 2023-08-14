@@ -9,7 +9,7 @@ interface MagicData {
   targets: number;
   self: boolean;
   textColor: string;
-  effect: Partial<Effect>[];
+  effects: Partial<Effect>[];
 }
 
 export const spells: MagicData[] = [
@@ -22,7 +22,7 @@ export const spells: MagicData[] = [
     targets: 2,
     self: false,
     textColor: 'redText',
-    effect: [
+    effects: [
       {
         name: 'burn',
         duration: 4,
@@ -42,7 +42,7 @@ export const spells: MagicData[] = [
     targets: 1,
     self: false,
     textColor: 'lightBlueText',
-    effect: [],
+    effects: [],
   },
 
   {
@@ -54,7 +54,7 @@ export const spells: MagicData[] = [
     targets: 1,
     self: false,
     textColor: 'greenText',
-    effect: [
+    effects: [
       {
         name: 'poison',
         duration: 4,
@@ -74,7 +74,7 @@ export const spells: MagicData[] = [
     targets: 0,
     self: true,
     textColor: 'redText',
-    effect: [
+    effects: [
       {
         name: 'rage',
         duration: 4,
@@ -101,7 +101,7 @@ export const spells: MagicData[] = [
     targets: 0,
     self: false,
     textColor: 'redText',
-    effect: [
+    effects: [
       {
         name: 'health',
         duration: 0,

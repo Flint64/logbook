@@ -109,10 +109,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let convertedSpells: Magic[] = spells.map(spellData => {
       // Create instances of Effect for the effect property inside the nested map
-      const effects = (spellData.effect || []).map(effectData => new Effect(effectData));
+      const effects = (spellData.effects || []).map(effectData => new Effect(effectData));
       
       // Create a new ConsumableItem instance with the updated effect property
-      return new Magic({ ...spellData, effect: effects });
+      return new Magic({ ...spellData, effects: effects });
     });
 
     //To start, give each party member one of the spells from the spell list

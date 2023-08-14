@@ -11,7 +11,7 @@ export class Magic {
         Object.assign(this, data);
         
         // Create instances of Effect for the effect property
-        this.effect = (data.effect || []).map(effectData => new Effect(effectData));
+        this.effects = (data.effects || []).map(effectData => new Effect(effectData));
       }
     
       name: string
@@ -22,7 +22,7 @@ export class Magic {
       targets: number
       self: boolean
       textColor: string
-      effect: Effect[]
+      effects: Effect[]
 
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
@@ -56,25 +56,8 @@ export class Magic {
         target.effects.push({...effect});
     }
 
-    /******************************************************************************************************
-     * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
-     * well as the player
-     ******************************************************************************************************/
-    //TODO: Add spell resistances and spell scaling
-    //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
-    //TODO: Magic needs a rework, the self targeting might be finnicky. Doing the above like the consumables might be the best fix for it.
-    castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
-        
-        let spell: Magic = player.magic[numSelected - 1];
-        let spellDamage = null;
-
-        //Regardless of hit/miss, the spell costs mana
-        player.mana -= spell.manaCost;
-                
-        //If the spell hits
-        if ((_.random(1, 100)) < spell.accuracy){
-            
-            //If the spell has a damage value, apply it before the effect(s)
+    private calcSpellDamage(spell: Magic, player: Player): number{
+        let spellDamage = 0;
         if (spell.power){
             spellDamage = ((player.calcTotalStatValue('intelligence') / 2.5) * spell.power);
 
@@ -85,11 +68,34 @@ export class Magic {
             variance *= Math.round(Math.random()) ? 1 : -1; 
 
             spellDamage += variance;
-            spellTarget.health -= Math.round(spellDamage);
+            return spellDamage;
         }
+        return spellDamage;
+    }
+
+    /******************************************************************************************************
+     * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
+     * well as the player
+     ******************************************************************************************************/
+    //TODO: Add spell resistances and spell scaling
+    //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
+    //TODO: Magic needs a rework, the self targeting might be finnicky. Doing the above like the consumables might be the best fix for it.
+    castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+        
+        let spell: Magic = player.magic[numSelected - 1];
+        let spellDamage = this.calcSpellDamage(spell, player);
+
+        //Regardless of hit/miss, the spell costs mana
+        player.mana -= spell.manaCost;
+                
+        //If the spell hits
+        if ((_.random(1, 100)) < spell.accuracy){
+            
+        //If the spell has a damage value, apply it before the effect(s)
+        spellTarget.health -= Math.round(spellDamage);
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
-        spell.effect.forEach((effect) => {
+        spell.effects.forEach((effect) => {
                       
             if (effect.self){
                 this.addSpellEffect(player, effect);
