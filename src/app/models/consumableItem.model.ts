@@ -19,24 +19,27 @@ export class ConsumableItem {
         amount: number
         thrown: boolean
         textColor: string
-        effect: Effect[]
+        effect: Effect[] //TODO: Change this to effects plural
 
-    useItem(player: Player, target: Player | Enemy, numSelected, consumables, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    /******************************************************************************************************
+     * Add Consumable Effect - Add the consumable effect
+     ******************************************************************************************************/
+    private addConsumableEffect(target: Player | Enemy, effect: Effect){
+        //If we have more than one effect in the players list with the same name,
+        //increase duration instead of having a duplicate effect
+        if (target.effects.length > 0){
+            let index = target.effects.findIndex(obj => obj.name === effect.name);
+            if (index !== -1){ target.effects[index].duration += effect.duration; }
+        }
         
-        //Add all effects from the item used if they have a duration
-        consumables[numSelected - 1].effect.forEach((effect) => {
-                //If we have more than one effect in the players list with the same name,
-                //increase duration instead of having a duplicate effect
-                if (target.effects.length > 0){
-                    let index = target.effects.findIndex(obj => obj.name === effect.name);
-                    if (index !== -1){ target.effects[index].duration += effect.duration; }
-                }
-                
-                //Push a copy of the effect to prevent pass by reference from changing the values in the consumableItem object
-                target.effects.push({...effect});
-        });
+        //Push a copy of the effect to prevent pass by reference from changing the values in the consumableItem object
+        target.effects.push({...effect});
+    }
 
-        // Remove duplicate effects (removing the one with the lower duration)
+    /******************************************************************************************************
+     * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
+     ******************************************************************************************************/
+    private removeDuplicateEffects(target: Player | Enemy){
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -48,19 +51,30 @@ export class ConsumableItem {
                 }
             }
         }
+    }
+        
+    useItem(player: Player, target: Player | Enemy, numSelected, consumables, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+        let consumable: ConsumableItem = consumables[numSelected - 1];
+
+        //Add all effects from the item used if they have a duration
+        consumable.effect.forEach((effect) => {
+            this.addConsumableEffect(target, effect);
+        });
+        
+        this.removeDuplicateEffects(target);
 
         //For using healing/mana potions that have an instant affect
-        consumables[numSelected - 1].effect.forEach((effect) => {
+        consumable.effect.forEach((effect) => {
             if (effect.name === 'health' || effect.name === 'mana'){
                 target[effect.name] = target.calcTotalStatValue(effect.name);
             }
         });
         
-        consumables[numSelected - 1].amount -= 1;
+        consumable.amount -= 1;
         appendText('*', true);
         appendText(player.name, false, 'playerText', 'underline');
         appendText('uses', false);
-        appendText(consumables[numSelected - 1].name, false, consumables[numSelected - 1].textColor);
+        appendText(consumable.name, false, consumable.textColor);
 
         if (target instanceof Enemy){
             appendText(`on ${target.name}`, false);

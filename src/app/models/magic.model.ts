@@ -27,7 +27,7 @@ export class Magic {
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
      ******************************************************************************************************/
-    private removeDuplicateEffects(target: Player | Enemy, spell: Magic){
+    private removeDuplicateEffects(target: Player | Enemy){
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -84,13 +84,13 @@ export class Magic {
     //TODO: Add spell resistances and spell scaling
     //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
     //TODO: Magic needs a rework, the self targeting might be finnicky. Doing the above like the consumables might be the best fix for it.
-    castSpell(player: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    castSpell(caster: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
-        let spell: Magic = player.magic[numSelected - 1];
-        let spellDamage = this.calcSpellDamage(spell, player);
+        let spell: Magic = caster.magic[numSelected - 1];
+        let spellDamage = this.calcSpellDamage(spell, caster);
 
         //Regardless of hit/miss, the spell costs mana
-        player.mana -= spell.manaCost;
+        caster.mana -= spell.manaCost;
                 
         //If the spell hits
         if ((_.random(1, 100)) < spell.accuracy){
@@ -102,37 +102,39 @@ export class Magic {
         spell.effects.forEach((effect) => {
                       
             if (effect.self){
-                this.addSpellEffect(player, effect);
+                this.addSpellEffect(caster, effect);
             } else {
                 this.addSpellEffect(spellTarget, effect);
             }
 
             //For using healing/mana magic that have an instant affect
+            //Can check both caster & target safely, as this will only
+            //affect them if the effect is present in their list.
             if (effect.name === 'health' || effect.name === 'mana'){
                 spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name);
-                player[effect.name] = player.calcTotalStatValue(effect.name);
+                caster[effect.name] = caster.calcTotalStatValue(effect.name);
             }
             
         });
 
-        this.removeDuplicateEffects(player, spell);
-        this.removeDuplicateEffects(spellTarget, spell);
+        this.removeDuplicateEffects(caster);
+        this.removeDuplicateEffects(spellTarget);
 
         if (spell.self){
             appendText('*', true);
-            appendText(player.name, false, 'underline', 'playerText');
+            appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false);
             appendText(spell.name, false, spell.textColor);
 
             switch(spell.name){
                 case 'Enrage':
-                    appendText('and goes berserk!', false);
+                    appendText('and goes berserk!', false); //TODO: Add spell appendText prompt to simplify this and allow it to pull from the spell itself instead of doing a switch here. If spell.appendText exists then pull from it
                 break;
             }
             
         } else {
             appendText('*', true);
-            appendText(player.name, false, 'underline', 'playerText');
+            appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false);
             appendText(spell.name, false, spell.textColor);
             appendText('and hits', false,);
@@ -146,7 +148,7 @@ export class Magic {
         //If the spell misses
         } else {
             appendText('*', true);
-            appendText(player.name, false, 'underline', 'playerText');
+            appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false, 'greyText');
             appendText(spell.name, false, spell.textColor);
             appendText('and misses', false, 'greyText');
