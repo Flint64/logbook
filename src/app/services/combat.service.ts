@@ -47,9 +47,9 @@ export class CombatService {
 
     this.decrementEffects(member);
     
-    this.party.members[0].effects.forEach((e, index) => {
-      console.log(e);
-    });
+    // this.party.members[0].effects.forEach((e, index) => {
+    //   console.log(e);
+    // });
     
   }
 
