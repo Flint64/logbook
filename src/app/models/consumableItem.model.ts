@@ -14,6 +14,7 @@ export class ConsumableItem {
       //Consumables are assumed to be able to be used on any party member,
       //but not every item can be thrown in combat. If thrown is true,
       //then an enemy can be selected as a target in lieu of a Player
+      //TODO: Accuracy for thrown items?
         name: string
         amount: number
         thrown: boolean

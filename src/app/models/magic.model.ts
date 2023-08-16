@@ -56,6 +56,10 @@ export class Magic {
         target.effects.push({...effect});
     }
 
+    /******************************************************************************************************
+     * Calculate Spell Damage - Returns the damage a given spell will deal, accounting for player's
+     * intelligence stat, spell power, and damage variance.
+    ******************************************************************************************************/
     private calcSpellDamage(spell: Magic, player: Player): number{
         let spellDamage = 0;
         if (spell.power){
