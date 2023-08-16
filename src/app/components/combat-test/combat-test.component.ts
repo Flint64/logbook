@@ -52,6 +52,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   helpText_inventory: string = 'Not sure what an item does? You can long press any item to view its details.';
   helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details.'
 
+  showEnemyATB: boolean = true;
+
 
   //These items in this list HAVE to match those in the switch
   //in the optionSelected function or else they are inaccessible.

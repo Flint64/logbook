@@ -7,7 +7,7 @@
                 <p>{{enemy.health}}</p>
                 <img #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">
                 <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                <progress class="enemyATB none" max="100" [value]="combatService.enemyList[i].ATB"></progress>
+                <progress class="enemyATB" *ngIf="showEnemyATB" max="100" [value]="combatService.enemyList[i].ATB"></progress>
             </div>
         </form>
     </div>
