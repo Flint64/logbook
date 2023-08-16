@@ -8,7 +8,7 @@ interface ConsumableItemData {
     amount: number;
     thrown: boolean;
     textColor: string;
-    effect: Partial<Effect>[];
+    effects: Partial<Effect>[];
   }
     
   export const potions: ConsumableItemData[] = [
@@ -17,7 +17,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: 'crimsonText',
-    effect: [
+    effects: [
       {
         name: 'health',
         duration: null,
@@ -33,7 +33,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: 'orchidText',
-    effect: [
+    effects: [
       {
         name: 'mana',
         duration: null,
@@ -49,7 +49,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: 'goldText',
-    effect: [
+    effects: [
       {
         name: 'speed',
         duration: 4,
@@ -64,7 +64,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: true,
     textColor: 'greenText',
-    effect: [
+    effects: [
       {
         name: 'poison',
         duration: 4,
@@ -87,7 +87,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: null,
-    effect: [
+    effects: [
       {
         name: 'rage',
         duration: 4,
@@ -124,7 +124,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: 'crimsonText',
-    effect: [
+    effects: [
         {
             name: 'rage',
             duration: 4,
@@ -140,7 +140,7 @@ interface ConsumableItemData {
     amount: 3,
     thrown: false,
     textColor: 'crimsonText',
-    effect: [
+    effects: [
       {
         name: 'strength',
         duration: 4,

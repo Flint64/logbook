@@ -8,7 +8,7 @@ export class ConsumableItem {
         Object.assign(this, data);
         
         // Create instances of Effect for the effect property
-        this.effect = (data.effect || []).map(effectData => new Effect(effectData));
+        this.effects = (data.effects || []).map(effectData => new Effect(effectData));
       }
         
       //Consumables are assumed to be able to be used on any party member,
@@ -19,7 +19,7 @@ export class ConsumableItem {
         amount: number
         thrown: boolean
         textColor: string
-        effect: Effect[] //TODO: Change this to effects plural
+        effects: Effect[] //TODO: Change this to effects plural
 
     /******************************************************************************************************
      * Add Consumable Effect - Add the consumable effect
@@ -57,14 +57,14 @@ export class ConsumableItem {
         let consumable: ConsumableItem = consumables[numSelected - 1];
 
         //Add all effects from the item used if they have a duration
-        consumable.effect.forEach((effect) => {
+        consumable.effects.forEach((effect) => {
             this.addConsumableEffect(target, effect);
         });
         
         this.removeDuplicateEffects(target);
 
         //For using healing/mana potions that have an instant affect
-        consumable.effect.forEach((effect) => {
+        consumable.effects.forEach((effect) => {
             if (effect.name === 'health' || effect.name === 'mana'){
                 target[effect.name] = target.calcTotalStatValue(effect.name);
             }

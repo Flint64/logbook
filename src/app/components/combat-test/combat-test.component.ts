@@ -98,10 +98,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let convertedPotions: ConsumableItem[] = potions.map(potionData => {
       // Create instances of Effect for the effect property inside the nested map
-      const effects = (potionData.effect || []).map(effectData => new Effect(effectData));
+      const effects = (potionData.effects || []).map(effectData => new Effect(effectData));
       
       // Create a new ConsumableItem instance with the updated effect property
-      return new ConsumableItem({ ...potionData, effect: effects });
+      return new ConsumableItem({ ...potionData, effects: effects });
     });
 
     //Populate your potions list from those in the potionList file. Currently adds all potions in the file to your inventory
