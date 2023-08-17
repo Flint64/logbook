@@ -36,7 +36,7 @@
         </div>
         
         <div id="selectingTargetText" *ngIf="selectingConsumableTarget">
-            <p>Select a <span class="underline playerText">party member</span> <span *ngIf="consumableIsThrowable">or an <span class="redText">enemy</span></span> to use <span [class]="selectedConsumableItem.textColor">{{selectedConsumableItem.name}}</span> on.</p>
+            <p class="noHighlight">Select a <span class="underline playerText">party member</span> <span *ngIf="consumableIsThrowable">or an <span class="redText">enemy</span></span> to use <span [class]="selectedConsumableItem.textColor">{{selectedConsumableItem.name}}</span> on.</p>
             <p (click)="menuBack('inventory')">1. Cancel</p>
         </div>
         

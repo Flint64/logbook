@@ -131,7 +131,13 @@ button{
     background-color: white;
     cursor: pointer;
     }
-  }
+
+    .playerOptions p.noHighlight:hover{
+            color: white;
+            background-color: black;
+            cursor: default;
+    }
+}
 
 .enemyForm{
     display: flex;
@@ -303,6 +309,7 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
 .playerText{ color: #4caf50 !important; }
 .crimsonText{ color: crimson !important; }
 .goldText{ color: gold !important; }
+.pinkText{ color: rgb(247, 158, 173) };
 .underline{ text-decoration: underline !important; }
 
 // .playerHealthBarPoison::-webkit-progress-value{ background: green !important; }

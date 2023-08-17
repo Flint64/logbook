@@ -16,7 +16,7 @@ interface ConsumableItemData {
     name: 'Healing Potion',
     amount: 3,
     thrown: false,
-    textColor: 'crimsonText',
+    textColor: 'pinkText',
     effects: [
       {
         name: 'health',
