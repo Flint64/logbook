@@ -43,7 +43,7 @@
                 <span *ngIf="selectedSpell.canTargetParty && !selectedSpell.canTargetEnemies">a <span class="underline playerText">party member</span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}} on.</span></span> 
                 <span *ngIf="selectedSpell.canTargetParty && selectedSpell.canTargetEnemies">a <span class="underline playerText">party member</span> or <span class="redText"> enemy</span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}}</span> on.</span> 
             </p>
-            <p (click)="menuBack('inventory')">1. Cancel</p>
+            <p (click)="optionSelected(1)">1. Cancel</p>
         </div>
         
     </div>
