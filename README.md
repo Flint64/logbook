@@ -27,7 +27,7 @@ you navigate to [the home page](https://flint64.github.io/logbook/) you
 can get a bit of a preview of what is to come in later versions, starting
 with the Path of the Sacrifice.
 
-## Changelog v0.2.1
+## Changelog v0.2.1 - 8/18/23
 
 ### Added
 - Spells now have an accuracy rating, and can miss
