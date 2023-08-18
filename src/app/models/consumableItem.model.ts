@@ -71,7 +71,7 @@ export class ConsumableItem {
         });
         
         consumable.amount -= 1;
-        appendText('*', true);
+        appendText('*', true, 'playerText');
         appendText(player.name, false, 'playerText', 'underline');
         appendText('uses', false);
         appendText(consumable.name, false, consumable.textColor);

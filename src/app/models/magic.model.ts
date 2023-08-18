@@ -20,7 +20,8 @@ export class Magic {
       accuracy: number
       variance: number
       targets: number
-      self: boolean
+      canTargetParty: boolean
+      canTargetEnemies: boolean
       textColor: string
       effects: Effect[]
 
@@ -120,29 +121,50 @@ export class Magic {
         this.removeDuplicateEffects(caster);
         this.removeDuplicateEffects(spellTarget);
 
-        if (spell.self){
-            appendText('*', true);
+        // if (spell.self){
+            // appendText('*', true);
+            // appendText(caster.name, false, 'underline', 'playerText');
+            // appendText('casts', false);
+            // appendText(spell.name, false, spell.textColor);
+
+            // switch(spell.name){
+            //     case 'Enrage':
+            //         appendText('and goes berserk!', false); 
+            //     break;
+            // }
+            // } else {
+        // }
+
+        //TODO: Add spell appendText prompt to simplify this and allow it to pull from the spell itself instead of doing a switch here. If spell.appendText exists then pull from it?
+        let healthEffect = spellTarget.effects.find(({ name }) => name === 'health');
+        let enrageEffect = spellTarget.effects.find(({ name }) => name === 'rage');
+            
+            appendText('*', true, 'playerText');
             appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false);
             appendText(spell.name, false, spell.textColor);
 
-            switch(spell.name){
-                case 'Enrage':
-                    appendText('and goes berserk!', false); //TODO: Add spell appendText prompt to simplify this and allow it to pull from the spell itself instead of doing a switch here. If spell.appendText exists then pull from it
-                break;
+            if (healthEffect) {
+                appendText('on', false);
+                appendText(spellTarget.name + ',', false, 'playerText', 'underline');
+                appendText('restoring', false);
+                appendText(healthEffect.modifier.toString(), false, 'playerText');
+                appendText('health!', false);
+            } else if (enrageEffect) {
+                appendText('on', false);
+                appendText(spellTarget.name + ',', false, 'playerText', 'underline');
+                appendText('sending them into', false);
+                appendText('an uncontrollable ', false);
+                appendText('rage', false, spell.textColor);
+                appendText(' for ' + (enrageEffect.duration - 1) + ' turns!', false);
+            } else {
+              appendText('and hits', false);
+              appendText(spellTarget.name, false);
+              appendText('for', false);
+              appendText(Math.round(spellDamage).toString(), false, spell.textColor);
+              appendText('damage!', false);
             }
             
-        } else {
-            appendText('*', true);
-            appendText(caster.name, false, 'underline', 'playerText');
-            appendText('casts', false);
-            appendText(spell.name, false, spell.textColor);
-            appendText('and hits', false,);
-            appendText(spellTarget.name, false);
-            appendText('for', false);
-            appendText(Math.round(spellDamage).toString(), false, spell.textColor);
-            appendText('damage!', false);
-        }
 
 
         //If the spell misses

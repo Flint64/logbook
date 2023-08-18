@@ -7,7 +7,8 @@ interface MagicData {
   accuracy: number;
   variance: number;
   targets: number;
-  self: boolean;
+  canTargetParty: boolean;
+  canTargetEnemies: boolean;
   textColor: string;
   effects: Partial<Effect>[];
 }
@@ -20,7 +21,8 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 6,
     targets: 2,
-    self: false,
+    canTargetParty: false,
+    canTargetEnemies: true,
     textColor: 'redText',
     effects: [
       {
@@ -40,7 +42,8 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 2,
     targets: 1,
-    self: false,
+    canTargetParty: false,
+    canTargetEnemies: true,
     textColor: 'lightBlueText',
     effects: [],
   },
@@ -52,7 +55,8 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 2,
     targets: 1,
-    self: false,
+    canTargetParty: false,
+    canTargetEnemies: true,
     textColor: 'greenText',
     effects: [
       {
@@ -72,21 +76,22 @@ export const spells: MagicData[] = [
     accuracy: 100,
     variance: 0,
     targets: 0,
-    self: true,
+    canTargetParty: true,
+    canTargetEnemies: false,
     textColor: 'redText',
     effects: [
       {
         name: 'rage',
         duration: 4,
         modifier: null,
-        self: true,
+        self: false,
         helpDescription: 'Attack randomly, unable to choose a target or special ability',
       },
       {
         name: 'strength',
         duration: 4,
         modifier: 5,
-        self: true,
+        self: false,
         helpDescription: 'Increase attack power',
       },
     ],
@@ -96,11 +101,12 @@ export const spells: MagicData[] = [
     name: 'Healing Wave',
     manaCost: 12,
     power: 0,
-    accuracy: 90,
+    accuracy: 100,
     variance: 0,
     targets: 0,
-    self: false,
-    textColor: 'redText',
+    canTargetParty: true,
+    canTargetEnemies: false,
+    textColor: 'pinkText',
     effects: [
       {
         name: 'health',

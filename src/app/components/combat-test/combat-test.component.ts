@@ -34,10 +34,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedEnemy: Enemy = null;
   selectedPartyMember: Player = null;
 
-  selectingConsumableTarget: boolean = false;
-  selectedConsumableTarget: Player | Enemy = null;
+  selectingSpellOrConsumableTarget: boolean = false;
+  selectedSpellOrConsumableTarget: Player | Enemy = null;
   consumableIsThrowable: boolean = false;
+  spellCanTargetEnemies: boolean = false;
   selectedConsumableItem: ConsumableItem = null;
+  selectedSpell: Magic = null;
 
   enemyIndex: number = null;
   memberIndex: number = null;
@@ -224,8 +226,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           this.useConsumable(numSelected); 
         }
-      } else if (this.selectingConsumableTarget && numSelected === 1){
+      } else if (this.selectedConsumableItem && numSelected === 1){
         this.menuBack('inventory');
+      } else if (this.selectedSpell && numSelected === 1){
+        this.menuBack('magic');
       }
 
 
@@ -442,22 +446,22 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     You've chosen to use a consumable item, which means we now wait for a target
     to be selected before moving on and ending your turn.
   */
-  this.selectingConsumableTarget = true;
+  this.selectingSpellOrConsumableTarget = true;
   if (this.combatService.party.consumables[numSelected - 1].thrown){ this.consumableIsThrowable = true; }
   this.viewingInventoryOptions = false;
   this.selectedConsumableItem = this.combatService.party.consumables[numSelected - 1];
 
-  // Wait until this.selectedConsumableTarget is assigned a value
-  while (!this.selectedConsumableTarget && this.selectingConsumableTarget) {
+  // Wait until this.selectedSpellOrConsumableTarget is assigned a value
+  while (!this.selectedSpellOrConsumableTarget && this.selectingSpellOrConsumableTarget) {
     await new Promise(resolve => setTimeout(resolve, 100)); // Delay before checking again
   }
   
   //Prevent this from firing if we cancel out of selecting a target for an item by using the back button
-  if (this.selectedConsumableTarget){
+  if (this.selectedSpellOrConsumableTarget){
     this.menuBack('main');
-    this.combatService.party.consumables[numSelected - 1].useItem(this.selectedPartyMember, this.selectedConsumableTarget, numSelected, this.combatService.party.consumables, this.appendText.bind(this));
+    this.combatService.party.consumables[numSelected - 1].useItem(this.selectedPartyMember, this.selectedSpellOrConsumableTarget, numSelected, this.combatService.party.consumables, this.appendText.bind(this));
     this.combatService.endTurn(this.selectedPartyMember);
-    this.selectedConsumableTarget = null;
+    this.selectedSpellOrConsumableTarget = null;
     this.selectedConsumableItem = null;
   }
     
@@ -507,21 +511,37 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 /****************************************************************************************
  * Use Spell - Allows usage of a spell item from the magic menu
  ****************************************************************************************/
-  useSpell(numSelected){
+  async useSpell(numSelected){
+    
+    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) && (this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
+      return;
+    }
+
+  /*
+    You've chosen to use a consumable item, which means we now wait for a target
+    to be selected before moving on and ending your turn.
+  */
+  this.selectingSpellOrConsumableTarget = true;
+  if (this.combatService.party.members[this.memberIndex].magic[numSelected - 1].canTargetEnemies){ this.spellCanTargetEnemies = true; }
+  this.viewingMagicOptions = false;
+  this.selectedSpell = this.combatService.party.members[this.memberIndex].magic[numSelected - 1];
+
+  // Wait until this.selectedSpellOrConsumableTarget is assigned a value
+  while (!this.selectedSpellOrConsumableTarget && this.selectingSpellOrConsumableTarget) {
+    await new Promise(resolve => setTimeout(resolve, 100)); // Delay before checking again
+  }
+  
+  //Prevent this from firing if we cancel out of selecting a target for an item by using the back button
+  if (this.selectedSpellOrConsumableTarget){
+    this.menuBack('main');
+
+
     let playerTarget = this.combatService.party.members[this.memberIndex];
-
-    if (playerTarget.ATB < 100 || this.intervalID === null){ return; }
-
-    //Only reset the menu if we have enough mana to cast the spell
-    if ((playerTarget.mana - playerTarget.magic[numSelected - 1].manaCost) >= 0){
-
-      //Cast the spell, and pass in appendText so that we can directly display the results instead of returning data here and using it
-      playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.selectedEnemy, this.appendText.bind(this));
-      
-      this.menuBack('main');
-      this.combatService.endTurn(this.selectedPartyMember);
-
-
+    playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.selectedSpellOrConsumableTarget, this.appendText.bind(this));
+    this.combatService.endTurn(this.selectedPartyMember);
+    this.selectedSpellOrConsumableTarget = null;
+    this.selectedConsumableItem = null;
+  }
       
       // Display what was used and the effect it has based on the type
       // for (const [key, value] of Object.entries(this.combatService.player.magic[numSelected - 1].effect)) {
@@ -559,7 +579,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       //   }
         // console.log(`${key}: ${value}`);
       // }
-    }
   }
   
 
@@ -594,7 +613,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   menuBack(ref){
     //If we were selecting a target for a consumable item and go back a menu to
     //cancel it, prevent using the item
-    if (this.selectingConsumableTarget){ this.selectingConsumableTarget = false; this.selectedConsumableTarget = null; this.consumableIsThrowable = false; this.selectedConsumableItem = null;}
+    if (this.selectingSpellOrConsumableTarget){ this.selectingSpellOrConsumableTarget = false; this.selectedSpellOrConsumableTarget = null; this.consumableIsThrowable = false; this.selectedConsumableItem = null; this.spellCanTargetEnemies = false; this.selectedSpell = null;}
     
     switch(ref){
       case "main":
@@ -690,10 +709,15 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //Disallow selecting an enemy if we're currently picking a party member to use a consumable item on
     //Selected consumable has to have the 'thrown' property or else it can't be used on an enemy
-    if (this.selectingConsumableTarget && this.consumableIsThrowable){
-      this.selectingConsumableTarget = false;
+    if ((this.selectingSpellOrConsumableTarget && this.consumableIsThrowable) || (this.selectingSpellOrConsumableTarget && this.spellCanTargetEnemies)){
+      if (this.selectedSpell && !this?.selectedSpell.canTargetEnemies){
+        return;
+      }
+      
+      this.selectingSpellOrConsumableTarget = false;
       this.consumableIsThrowable = false;
-      this.selectedConsumableTarget = this.combatService.enemyList[index];
+      this.spellCanTargetEnemies = false;
+      this.selectedSpellOrConsumableTarget = this.combatService.enemyList[index];
       return;
     }
     
@@ -712,10 +736,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   selectPartyMember(index){
 
     //Disallow selecting party members if we're currently picking a party member to use a consumable item on
-    if (this.selectingConsumableTarget){
-      this.selectingConsumableTarget = false;
+    if (this.selectingSpellOrConsumableTarget){
+      if (this.selectedSpell && !this?.selectedSpell.canTargetParty){
+        return;
+      }
+      this.selectingSpellOrConsumableTarget = false;
       this.consumableIsThrowable = false;
-      this.selectedConsumableTarget = this.combatService.party.members[index];
+      this.spellCanTargetEnemies = false;
+      this.selectedSpellOrConsumableTarget = this.combatService.party.members[index];
       return;
     }
     

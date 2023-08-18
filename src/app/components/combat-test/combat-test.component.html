@@ -35,8 +35,14 @@
             <p (click)="openHelpWindow(helpText_inventory)">?</p>
         </div>
         
-        <div id="selectingTargetText" *ngIf="selectingConsumableTarget">
-            <p class="noHighlight">Select a <span class="underline playerText">party member</span> <span *ngIf="consumableIsThrowable">or an <span class="redText">enemy</span></span> to use <span [class]="selectedConsumableItem.textColor">{{selectedConsumableItem.name}}</span> on.</p>
+        <div id="selectingTargetText" *ngIf="selectingSpellOrConsumableTarget">
+            <p *ngIf="selectedConsumableItem" class="noHighlight">Select a <span class="underline playerText">party member</span> <span *ngIf="consumableIsThrowable">or an <span class="redText">enemy</span></span> to use <span [class]="selectedConsumableItem.textColor">{{selectedConsumableItem.name}}</span> on.</p>
+            <!-- <p *ngIf="selectedSpell" class="noHighlight">Select a <span class="underline playerText">party member</span> <span *ngIf="selectedSpell.canTargetEnemies">or an <span class="redText">enemy</span></span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}}</span> on.</p> -->
+            <p *ngIf="selectedSpell" class="noHighlight"> Select 
+                <span *ngIf="selectedSpell.canTargetEnemies && !selectedSpell.canTargetParty">an <span class="redText">enemy</span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}} on.</span></span> 
+                <span *ngIf="selectedSpell.canTargetParty && !selectedSpell.canTargetEnemies">a <span class="underline playerText">party member</span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}} on.</span></span> 
+                <span *ngIf="selectedSpell.canTargetParty && selectedSpell.canTargetEnemies">a <span class="underline playerText">party member</span> or <span class="redText"> enemy</span> to cast <span [class]="selectedSpell.textColor">{{selectedSpell.name}}</span> on.</span> 
+            </p>
             <p (click)="menuBack('inventory')">1. Cancel</p>
         </div>
         
