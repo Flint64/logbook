@@ -279,9 +279,18 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
     height: 100%;
 }
 
-#playerMainOptions, #playerMagicOptions, #playerInventoryOptions, #selectingTargetText{
+#playerMainOptions, #playerMagicOptions, #playerInventoryOptions{
     p{
         width: max-content;
+        padding-left: 5px;
+        &:first-of-type{
+            padding-top: 5px;
+        }
+    }
+}
+
+#selectingTargetText{
+    p{
         padding-left: 5px;
         &:first-of-type{
             padding-top: 5px;
