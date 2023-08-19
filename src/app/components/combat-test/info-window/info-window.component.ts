@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Magic } from 'src/app/models/magic.model';
 
 @Component({
   selector: 'app-info-window',
@@ -10,10 +11,14 @@ export class InfoWindowComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<InfoWindowComponent>) { }
 
+  dataIsMagic: boolean = false;
+  
   ngOnInit(): void {
+    console.log(this.data);
+    this.dataIsMagic = this.data instanceof Magic;
   }
 
-  onCancel(){
+  onClose(){
       this.dialogRef.close();
   }
 

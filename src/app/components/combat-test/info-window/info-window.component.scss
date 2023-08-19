@@ -8,8 +8,11 @@ body{
         height: 100%;
         overflow-y: scroll;
         font-size: 18px;
-        .bold{
-            font-weight: bold;
+        .underline{
+            text-decoration: underline;
+        }
+        .lg{
+            font-size: larger;
         }
     }
     
@@ -24,6 +27,12 @@ body{
 p{
  padding: 10px;
  margin: 0;
+}
+
+.noPadding{
+    padding: 0;
+    padding-left: 10px;
+    padding-bottom: 3px;
 }
 
 ul{

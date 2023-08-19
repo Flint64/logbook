@@ -162,14 +162,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  openInfoWindow(data: any): void {
+  openInfoWindow(data: ConsumableItem | Magic): void {
     if (this.intervalID !== null){ this.stopATB(); }
 
       const dialogRef = this.dialog.open(InfoWindowComponent, {
         panelClass: 'custom-dialog-container',
         width: '30rem',
         height: '20rem',
-        data: {itemDetails: data},
+        data: data,
         backdropClass: 'backdropBackground',
         disableClose: true,
       });
@@ -211,6 +211,11 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           break;
         }
       } else if (this.viewingMagicOptions){
+        
+        //Prevent keyboard selection breaking due to missing index
+        if (numSelected > this.combatService.party.members[this.memberIndex].magic.length + 1){
+          return;
+        }
         if (this.viewingMagicOptions && numSelected === this.combatService.party.members[this.memberIndex].magic.length + 1){
           // Go back to main menu
           this.menuBack('main');

@@ -98,7 +98,7 @@ export const spells: MagicData[] = [
   },
 
   {
-    name: 'Healing Wave',
+    name: 'Gift of Life',
     manaCost: 12,
     power: 0,
     accuracy: 100,
@@ -113,7 +113,14 @@ export const spells: MagicData[] = [
         duration: 0,
         modifier: 25,
         self: false,
-        helpDescription: 'Restore health',
+        helpDescription: 'Restores 25 health',
+      },
+      {
+        name: 'health',
+        duration: 0,
+        modifier: -15,
+        self: true,
+        helpDescription: 'Removes 15 health',
       },
     ],
   },
