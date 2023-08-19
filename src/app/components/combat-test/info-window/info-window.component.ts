@@ -14,7 +14,6 @@ export class InfoWindowComponent implements OnInit {
   dataIsMagic: boolean = false;
   
   ngOnInit(): void {
-    console.log(this.data);
     this.dataIsMagic = this.data instanceof Magic;
   }
 

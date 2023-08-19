@@ -2,7 +2,6 @@
     <div class="infoBox">
         <p *ngIf="data.helpText">{{data.helpText}}</p>
 
-        <!-- //FIXME: Figure out a better way to display the detail text on the items so that the description doesn't have to be repeated for effects sharing the same name -->
         <section *ngIf="data">
             <p class="underline lg">{{data.name}}</p>
             <p class="noPadding" *ngIf="data.amount">Number Held: {{data.amount}}</p>
@@ -14,18 +13,13 @@
             <ul style="padding-left: 15px;" *ngFor="let effect of data.effects">
                 <li style="list-style-type: none;" class="underline lg">{{effect.name.charAt(0).toUpperCase() + effect.name.slice(1)}}</li>
                 <ul>
-                    <li *ngIf="effect.helpDescription">{{effect.helpDescription}} <!--<span *ngIf="effect.modifier">by {{effect.modifier}}</span> --> </li>
-                    
-                    <!-- <li *ngIf="effect.modifier > 0 && (effect.name === 'health' || effect.name === 'mana')">+{{effect.modifier + ' ' + effect.name}}</li> -->
-                    <!-- <li *ngIf="effect.modifier < 0 && (effect.name === 'health' || effect.name === 'mana')">{{effect.modifier + ' ' + effect.name}}</li> -->
+                    <li *ngIf="effect.helpDescription">{{effect.helpDescription}}</li>
                     
                     <li *ngIf="effect.duration">Duration: {{(effect.duration - 1)}} turns</li>
                     <li *ngIf="!effect.duration">Duration: Instant</li>
                     
                     <li *ngIf="dataIsMagic && effect.self">Applied to self</li>
                     <li *ngIf="dataIsMagic && !effect.self">Applied to target</li>
-                    <!-- <li *ngIf="effect.self">Target: Self</li> -->
-                    <!-- <li *ngIf="!effect.self">Target: Enemy</li> -->
     
                 </ul>
             </ul>
