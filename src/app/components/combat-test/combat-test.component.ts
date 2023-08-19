@@ -614,36 +614,36 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Player Takes Damage - Makes the game window flash red if the player is hit. Stays red
    * if player is dead
    ****************************************************************************************/
-  colorGameBox(playerTakesDamage: boolean = true, useItem: boolean = false, className: string = null){
+  // colorGameBox(playerTakesDamage: boolean = true, useItem: boolean = false, className: string = null){
 
-    if (playerTakesDamage){
-      this.gameBox.forEach((e) => {
-        e.nativeElement.classList.add('playerHit');
-      });
+  //   if (playerTakesDamage){
+  //     this.gameBox.forEach((e) => {
+  //       e.nativeElement.classList.add('playerHit');
+  //     });
       
-      //If you are not dead, flash red to show damage was taken
-      if (this.combatService.party.members[this.memberIndex].health > 0){ //TODO: Make this check each member, not just the currently selected one
-      setTimeout(() => {
-          this.gameBox.forEach((e) => {
-            e.nativeElement.classList.remove('playerHit');
-          });
-        }, 225);
-      }
-    }
+  //     //If you are not dead, flash red to show damage was taken
+  //     if (this.combatService.party.members[this.memberIndex].health > 0){ //Make this check each member, not just the currently selected one
+  //     setTimeout(() => {
+  //         this.gameBox.forEach((e) => {
+  //           e.nativeElement.classList.remove('playerHit');
+  //         });
+  //       }, 225);
+  //     }
+  //   }
 
-    if (useItem){
-      this.gameBox.forEach((e) => {
-        e.nativeElement.classList.add(className);
-      });
+  //   if (useItem){
+  //     this.gameBox.forEach((e) => {
+  //       e.nativeElement.classList.add(className);
+  //     });
       
-      //If you are not dead, flash red to show damage was taken
-      setTimeout(() => {
-          this.gameBox.forEach((e) => {
-            e.nativeElement.classList.remove(className);
-          });
-        }, 225);
-    }
-  }
+  //     //If you are not dead, flash red to show damage was taken
+  //     setTimeout(() => {
+  //         this.gameBox.forEach((e) => {
+  //           e.nativeElement.classList.remove(className);
+  //         });
+  //       }, 225);
+  //   }
+  // }
 
   /****************************************************************************************
    * Color Enemy Box - Makes enemy box flash if the player is hit. Stays red
