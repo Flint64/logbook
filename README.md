@@ -11,8 +11,8 @@ This is very much a work in progress.
 
 ## Playing the game
 You can play The Logbook [here](https://flint64.github.io/logbook/combat-test).
-The current version allows you to fight in a simple combat with 3 random enemies.
-You have to 7 different potions and 2 spells, some of which have lingering
+The current version allows you to fight in a simple combat with 3 random enemies, with access to 
+7 different potions and 5 spells, some of which have lingering
 effects such as poison or burn damage. Once the battle is over, win or lose,
 if you wish to play again, simply refresh the page and 3 new enemies will
 be picked at random, and your stats/items will be refreshed.
@@ -26,6 +26,12 @@ There is currently no formal story in this version of The Logbook, but if
 you navigate to [the home page](https://flint64.github.io/logbook/) you
 can get a bit of a preview of what is to come in later versions, starting
 with the Path of the Sacrifice.
+
+## Hotfix v0.2.2 - 8/19/23
+- Fixed prompt text when selecting a target for a spell/consumable not wrapping on smaller screens
+- Fixed keyboard navigation of game breaking in magic menu when selecting an option not listed
+- Fixed help info window not displaying data
+- Changed what data is displayed and reworked styling of display
 
 ## Changelog v0.2.1 - 8/18/23
 
