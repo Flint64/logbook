@@ -24,7 +24,6 @@ import { Player } from 'src/app/models/player.model';
 export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   
   @ViewChild('story', {static: false}) story: ElementRef;
-  // @ViewChild('playerHealthBar', {static: false}) playerHealthBar: ElementRef;
   @ViewChildren('memberBoxes') memberBoxes: QueryList<ElementRef>;
   @ViewChildren('enemyBoxes') enemyBoxes: QueryList<ElementRef>;
   @ViewChildren('enemyIcons') enemyIcons: QueryList<ElementRef>;
@@ -350,34 +349,6 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-    
-
-  //TODO:: Rework effect display, current version won't work with more than one party member
-/****************************************************************************************
- * This is here to check the player effects list to remove any classes that may be adding
- * styles such as changing the player's health bar to green when they are poisoned.
- * 
- * When the effect is removed, if the styling class is present, it gets removed to reset
- * the view
- ****************************************************************************************/
-    // let effectNames = [];
-    // let classListArr = []
-    // // classListArr = Array.from(this.playerHealthBar.nativeElement.classList);
-
-    // this.combatService.party.members.forEach(member => {
-    //   member.effects.forEach((efffect) => {
-
-    //   });
-    // });
-    // // for (let i = 0; i < this.combatService.player.effects.length; i++){
-    // //   effectNames.push(this.combatService.player.effects[i].name);
-    // // }
-
-    // if (!effectNames.includes('poison')){
-    //   if (classListArr.includes('playerHealthBarPoison')){
-    //     // this.playerHealthBar.nativeElement.classList.remove('playerHealthBarPoison');
-    //   }
-    // }
 
 /****************************************************************************************
  * This section here handles a party member with the rage status effect. It prevents
