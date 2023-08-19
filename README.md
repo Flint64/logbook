@@ -27,6 +27,10 @@ you navigate to [the home page](https://flint64.github.io/logbook/) you
 can get a bit of a preview of what is to come in later versions, starting
 with the Path of the Sacrifice.
 
+<br>
+
+## Changelog
+
 ### Hotfix v0.2.2 - 8/19/23
 - Fixed prompt text when selecting a target for a spell/consumable not wrapping on smaller screens
 - Fixed keyboard navigation of game breaking in magic menu when selecting an option not listed
