@@ -27,26 +27,26 @@ you navigate to [the home page](https://flint64.github.io/logbook/) you
 can get a bit of a preview of what is to come in later versions, starting
 with the Path of the Sacrifice.
 
-## Hotfix v0.2.2 - 8/19/23
+### Hotfix v0.2.2 - 8/19/23
 - Fixed prompt text when selecting a target for a spell/consumable not wrapping on smaller screens
 - Fixed keyboard navigation of game breaking in magic menu when selecting an option not listed
 - Fixed help info window not displaying data
 - Changed what data is displayed and reworked styling of display
 
-## Changelog v0.2.1 - 8/18/23
+### Changelog v0.2.1 - 8/18/23
 
-### Added
+#### Added
 - Spells now have an accuracy rating, and can miss
 - Any effects active on a party member are now displayed above their ATB gauge
 - Both spells & potions now have the ability (depending on the spell/item) to target your own party, enemies, or both
 
-### Changed
+#### Changed
 - Reworked CSS for whole page, now limited to a smaller size and looks better on mobile screens with less empty space at screen edge
 - Removed min/max damage on spells; they now scale based on intelligence & spell power
 - Reworked how effects are calculated and applied to enemies/party members
 - Enemy ATB now uses the same base as party member ATB
 
-### Fixed
+#### Fixed
 - Fixed poison damage not applying correctly
 - Fixed poison damage minimum to 1
 - Fixed strength effect not applying due to wrong name reference
