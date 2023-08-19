@@ -83,8 +83,6 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances and spell scaling
-    //TODO: Allow selecting of a party member for spells as well instead of defaulting to enemies. Do it the same as consumableItem handles it.
-    //TODO: Magic needs a rework, the self targeting might be finnicky. Doing the above like the consumables might be the best fix for it.
     castSpell(caster: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         
         let spell: Magic = caster.magic[numSelected - 1];
@@ -121,21 +119,6 @@ export class Magic {
         this.removeDuplicateEffects(caster);
         this.removeDuplicateEffects(spellTarget);
 
-        // if (spell.self){
-            // appendText('*', true);
-            // appendText(caster.name, false, 'underline', 'playerText');
-            // appendText('casts', false);
-            // appendText(spell.name, false, spell.textColor);
-
-            // switch(spell.name){
-            //     case 'Enrage':
-            //         appendText('and goes berserk!', false); 
-            //     break;
-            // }
-            // } else {
-        // }
-
-        //TODO: Add spell appendText prompt to simplify this and allow it to pull from the spell itself instead of doing a switch here. If spell.appendText exists then pull from it?
         let healthEffect = spellTarget.effects.find(({ name }) => name === 'health');
         let enrageEffect = spellTarget.effects.find(({ name }) => name === 'rage');
             

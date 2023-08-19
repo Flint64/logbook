@@ -19,7 +19,7 @@ export class ConsumableItem {
         amount: number
         thrown: boolean
         textColor: string
-        effects: Effect[] //TODO: Change this to effects plural
+        effects: Effect[]
 
     /******************************************************************************************************
      * Add Consumable Effect - Add the consumable effect
