@@ -151,4 +151,27 @@ interface ConsumableItemData {
     ],
   },
 
+  {
+    name: 'Crit+',
+    amount: 3,
+    thrown: false,
+    textColor: 'goldText',
+    effects: [
+      {
+        name: 'crit',
+        duration: 4,
+        modifier: 200,
+        self: true,
+        helpDescription: 'Increase critical chance',
+      },
+      {
+        name: 'luck',
+        duration: 4,
+        modifier: 200,
+        self: true,
+        helpDescription: 'Increase critical chance',
+      },
+    ],
+  },
+
 ];

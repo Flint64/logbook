@@ -54,7 +54,7 @@ export class CombatService {
   }
 
   /****************************************************************************************
-   * End Turn - Ends the enemies turn in combat. Resets the enemies ATB gauge and
+   * End Enemy Turn - Ends the enemies turn in combat. Resets the enemies ATB gauge and
    * decrements any active effects on them
    ****************************************************************************************/
   endEnemyTurn(index: number){
@@ -69,6 +69,11 @@ export class CombatService {
       
   }
 
+  /****************************************************************************************
+   * Decrement Effects - Handles decrementing any active effects on players or enemies
+   * and removes them once their duration has reached 0. Also handles application of 
+   * DoT effects such as poison and burn.
+   ****************************************************************************************/
   decrementEffects(target: Enemy | Player){
     //If the target is at 0 hp or less, don't decrement the effects and instead let them die
     if (target.health <= 0){ return; }

@@ -11,7 +11,22 @@ import { InfoWindowComponent } from './info-window/info-window.component';
 import { enemies } from './enemyList';
 import { potions } from './potionList';
 import { spells } from './spellList';
+import { helms } from './equipmentList';
+import { chestplates } from './equipmentList';
+import { pants } from './equipmentList';
+import { bracers } from './equipmentList';
+import { greaves } from './equipmentList';
+import { weapons } from './equipmentList';
+import { trinkets } from './equipmentList';
 import { Player } from 'src/app/models/player.model';
+import { EquippableItem } from 'src/app/models/equipment/equippableItem.model';
+import { Helm } from 'src/app/models/equipment/helmModel';
+import { Chestplate } from 'src/app/models/equipment/chestplateModel';
+import { Pants } from 'src/app/models/equipment/pantsModel';
+import { Bracer } from 'src/app/models/equipment/bracerModel';
+import { Greaves } from 'src/app/models/equipment/greavesModel';
+import { Weapon } from 'src/app/models/equipment/weaponModel';
+import { Trinket } from 'src/app/models/equipment/trinketModel';
 //ng deploy --base-href=https://flint64.github.io/logbook/
 
 @Component({
@@ -87,7 +102,43 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
       let clone = _.cloneDeep(new Enemy(enemy));
       this.combatService.enemyList.push(clone);
-    }    
+    }
+
+    // trinkets
+
+    //Converts the equipment list into actual EquippableItem objects
+    let convertedHelms: EquippableItem[] = helms.map(helmData => new Helm(helmData));
+    convertedHelms.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Helm(e))); });
+    
+    let convertedChestplates: EquippableItem[] = chestplates.map(chestplateData => new Chestplate(chestplateData));
+    this.combatService.party.inventory.push(_.cloneDeep(new Chestplate(convertedChestplates[0]))); //Push a copy of chainmail to have 2
+    convertedChestplates.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Chestplate(e))); });
+
+    let convertedPants: EquippableItem[] = pants.map(pantsData => new Pants(pantsData));
+    convertedPants.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Pants(e))); });
+
+    let convertedBracers: EquippableItem[] = bracers.map(bracerData => new Bracer(bracerData));
+    convertedBracers.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Bracer(e))); });
+    
+    let convertedGreaves: EquippableItem[] = greaves.map(greaveData => new Greaves(greaveData));
+    convertedGreaves.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Greaves(e))); });
+
+    let convertedWeapons: EquippableItem[] = weapons.map(weaponData => new Weapon(weaponData));
+    convertedWeapons.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Weapon(e))); });
+
+    let convertedTrinkets: EquippableItem[] = trinkets.map(weaponData => new Trinket(weaponData));
+    convertedTrinkets.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Trinket(e))); });
+    
+    //Auto-equip items here for testing purposes
+    this.combatService.party.inventory[0].equippedBy = this.combatService.party.members[2]; //Max, Helmet
+    this.combatService.party.inventory[1].equippedBy = this.combatService.party.members[1]; //Luke, Chainmail
+    this.combatService.party.inventory[2].equippedBy = this.combatService.party.members[2]; //Max, Chainmail
+    this.combatService.party.inventory[3].equippedBy = this.combatService.party.members[0]; //Gort, Apprentice Robes
+    this.combatService.party.inventory[4].equippedBy = this.combatService.party.members[0]; //Gort, Critical Bracer
+    this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Oak Staff
+    this.combatService.party.inventory[6].equippedBy = this.combatService.party.members[1]; //Luke, Shortsword
+    this.combatService.party.inventory[7].equippedBy = this.combatService.party.members[2]; //Max, Simple Mace
+    console.log(this.combatService.party.inventory);
 
     this.enemyForm = new FormGroup({
       'enemySelected': new FormControl(null)
@@ -195,7 +246,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
             if (this.selectedPartyMember.ATB < 100 || this.intervalID === null){ return; }
 
             //true if the attack hits, false if it was a miss
-            if (this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID, this.appendText.bind(this))){
+            if (this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
               this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
             }
             this.combatService.endTurn(this.selectedPartyMember);
@@ -327,7 +378,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (member.ATB > 100){
           //Do nothing if ATB is greater than 100 to prevent the numbers from overflowing
         } else {
-          member.ATB += (member.calcTotalStatValue('speed')/100);
+          member.ATB += (member.calcTotalStatValue('speed', this.combatService.party.inventory)/100);
         }
       } else {
         //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
@@ -366,7 +417,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           //Keep selecting a random enemy until one is selected that isn't dead
           while(this.combatService.enemyList[rand].health < 0){ rand = _.random(0, (this.combatService.enemyList.length - 1)); }
 
-          if (member.playerAttack(member, this.combatService.enemyList[rand], this.intervalID, this.appendText.bind(this))){
+          if (member.playerAttack(member, this.combatService.enemyList[rand], this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
             this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
           }
           this.combatService.endTurn(member);
@@ -514,7 +565,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     let playerTarget = this.combatService.party.members[this.memberIndex];
-    playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.selectedSpellOrConsumableTarget, this.appendText.bind(this));
+    playerTarget.magic[numSelected - 1].castSpell(playerTarget, numSelected, this.selectedSpellOrConsumableTarget, this.appendText.bind(this), this.combatService.party.inventory);
     this.combatService.endTurn(this.selectedPartyMember);
     this.selectedSpellOrConsumableTarget = null;
     this.selectedConsumableItem = null;

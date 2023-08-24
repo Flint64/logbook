@@ -1,5 +1,5 @@
 import { ConsumableItem } from "./consumableItem.model";
-import { EquippableItem } from "./equippableItem.model";
+import { EquippableItem } from "./equipment/equippableItem.model";
 import { Player } from "./player.model";
 
 export class Party {

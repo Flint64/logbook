@@ -1,5 +1,5 @@
 import { ConsumableItem } from "./consumableItem.model";
-import { EquippableItem } from "./equippableItem.model";
+import { EquippableItem } from "./equipment/equippableItem.model";
 import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
 import _ from 'lodash';
@@ -34,17 +34,17 @@ export class Player {
     ATB: number = 100;
     turnCount: number = 0;
     
-    equippedItems: EquippableItem[] = [];
     magic: Magic[] = [];
     effects: Effect[] = [];
 
     //TODO: Player weaknesses & resistances
 
-    //TODO: This will have to be modified when equipment comes in to play to correctly add up those values.
     //Effects are one unique effect per party member, so checking once is fine. But equipment would have to
     //search through all equipped items to see if there are any that match the search term and add them all up.
-    calcTotalStatValue(statName: string){
+    calcTotalStatValue(statName: string, inventory?: EquippableItem[]){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
+      let totalStatValue = 0;
+      
       if (effect){
         let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
         if (statName === 'health' || statName === 'mana'){
@@ -64,12 +64,32 @@ export class Player {
           }
         }
         
-        //If we have an effect matching the specified name, return the total value. 
-        //Otherwise, return the base value.
-        return this[`${statName}`] + effect.modifier;
-      } else {
-        return this[`${statName}`];
+        //If we have an effect matching the specified name, add the modifier
+        totalStatValue += effect.modifier;
       }
+
+      //Now that we've checked any active effects, check all equipped equipment
+      //Regardless of if totalStatValue has a value at this point, += the checked for value to get a baseline
+
+      //If we're checking for something like crit or attack, which don't exist on the player object,
+      //don't try to add that value here
+      if (this[`${statName}`]){
+        totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
+      }
+
+      //check for equipment stats
+      //If the equipped item is equipped to the right character,
+      //and if it has the stat we're looking for, add it to the total
+      inventory.forEach((equipment) => {
+        if (equipment.equippedBy.name === this.name){
+          if (equipment[`${statName}`]){
+            totalStatValue += equipment[`${statName}`];
+          }
+        }
+      });
+
+      // console.log(statName + ' ' + totalStatValue);
+      return totalStatValue;
     }
 
     //Resets any modified player values after combat excluding health and mana
@@ -79,9 +99,8 @@ export class Player {
         this.effects = [];
     }
 
-    private calcBaseAttackDamage(){
-      //TODO: 5 is your equipped weapon damage stat, not implemented yet
-      let dam = (this.calcTotalStatValue('strength') / 2) + 5;
+    private calcBaseAttackDamage(inventory: EquippableItem[]){
+      let dam = (this.calcTotalStatValue('strength', inventory) / 2) + this.calcTotalStatValue('attack', inventory);
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
       let variance = _.random(1, 7);
@@ -98,10 +117,9 @@ export class Player {
       return dam;
     }
 
-    private isCriticalHit(playerTarget: Player){
-      //(Luck + Weapon Crit + accessory)/2 out of 255
-      //TODO: weaponCrit & accessory/armor bonuses need to be added here
-      let critChance = Math.round((((playerTarget.luck + 5 + 5) /2) / 255) * 100);
+    private isCriticalHit(playerTarget: Player, inventory: EquippableItem[]){
+      //(Luck + Weapon Crit/accessory/armor)/2 out of 255
+      let critChance = Math.round((((this.calcTotalStatValue('luck', inventory) + this.calcTotalStatValue('crit', inventory)) / 2) / 255) * 100);
       if (_.random(1, 100) < critChance){
         return true;
       }
@@ -119,7 +137,7 @@ export class Player {
    * Damage is based on attack power.
    * //TODO: Defense stat
    ****************************************************************************************/
-  playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+  playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
     
     //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
     let attackHits = null;
@@ -129,11 +147,11 @@ export class Player {
     // Returns a random integer from 1-100:
     if ((_.random(1, 100)) < playerTarget.accuracy){
       
-      let damage = playerTarget.calcBaseAttackDamage();
+      let damage = playerTarget.calcBaseAttackDamage(inventory);
       attackHits = true;
       
       //If the attack is a crit, print the correct messages
-      if (this.isCriticalHit(playerTarget)){
+      if (this.isCriticalHit(playerTarget, inventory)){
 
         //2x crit damage
         damage *= 2;

@@ -3,6 +3,7 @@ import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from './enemy.model';
 import { Player } from './player.model';
+import { EquippableItem } from './equipment/equippableItem.model';
 
 @Injectable()
 export class Magic {
@@ -61,10 +62,10 @@ export class Magic {
      * Calculate Spell Damage - Returns the damage a given spell will deal, accounting for player's
      * intelligence stat, spell power, and damage variance.
     ******************************************************************************************************/
-    private calcSpellDamage(spell: Magic, player: Player): number{
+    private calcSpellDamage(spell: Magic, player: Player, inventory: EquippableItem[]): number{
         let spellDamage = 0;
         if (spell.power){
-            spellDamage = ((player.calcTotalStatValue('intelligence') / 2.5) * spell.power);
+            spellDamage = ((player.calcTotalStatValue('intelligence', inventory) / 2.5) * spell.power);
 
             //Damage variance equal  to a range between 1 and the spell's power
             let variance = _.random(1, spell.variance);
@@ -82,11 +83,11 @@ export class Magic {
      * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
      * well as the player
      ******************************************************************************************************/
-    //TODO: Add spell resistances and spell scaling
-    castSpell(caster: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    //TODO: Add spell resistances
+    castSpell(caster: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
         
         let spell: Magic = caster.magic[numSelected - 1];
-        let spellDamage = this.calcSpellDamage(spell, caster);
+        let spellDamage = this.calcSpellDamage(spell, caster, inventory);
 
         //Regardless of hit/miss, the spell costs mana
         caster.mana -= spell.manaCost;
