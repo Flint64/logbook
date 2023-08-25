@@ -125,4 +125,25 @@ export const spells: MagicData[] = [
     ],
   },
 
+  {
+    name: 'Regeneration Burst',
+    manaCost: 12,
+    power: 0,
+    accuracy: 100,
+    variance: 0,
+    targets: 0,
+    canTargetParty: true,
+    canTargetEnemies: false,
+    textColor: 'pinkText',
+    effects: [
+      {
+        name: 'health',
+        duration: 4,
+        modifier: 8,
+        self: false,
+        helpDescription: 'Restores 8 health for 4 turns',
+      },
+    ],
+  },
+
 ];

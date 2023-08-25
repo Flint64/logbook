@@ -110,7 +110,7 @@ export class Magic {
             //For using healing/mana magic that have an instant affect
             //Can check both caster & target safely, as this will only
             //affect them if the effect is present in their list.
-            if (effect.name === 'health' || effect.name === 'mana'){
+            if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
                 spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name);
                 caster[effect.name] = caster.calcTotalStatValue(effect.name);
             }

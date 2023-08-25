@@ -29,6 +29,22 @@ interface ConsumableItemData {
   },
 
   {
+    name: 'Regenerative Potion',
+    amount: 3,
+    thrown: false,
+    textColor: 'pinkText',
+    effects: [
+      {
+        name: 'health',
+        duration: 4,
+        modifier: 5,
+        self: true,
+        helpDescription: 'Restores 5 health per turn for 4 turns',
+      }
+    ],
+  },
+
+  {
     name: 'Mana Potion',
     amount: 3,
     thrown: false,

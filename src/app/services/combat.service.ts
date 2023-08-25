@@ -100,6 +100,12 @@ export class CombatService {
         case 'burn':
           target.health -= (target.effects[i].modifier);
         break;
+        case 'health':
+          target.health = target.calcTotalStatValue('health');
+        break;
+        case 'mana':
+          target.health = target.calcTotalStatValue('mana');
+        break;
       }
       
       //If duration has gone down to 0, remove it from the list and reset player values

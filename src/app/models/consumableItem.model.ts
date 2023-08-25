@@ -52,7 +52,10 @@ export class ConsumableItem {
             }
         }
     }
-        
+       
+    /******************************************************************************************************
+     * Use Item - Uses the selected item, adds any effects to the selected target, and prints the result
+     ******************************************************************************************************/
     useItem(player: Player, target: Player | Enemy, numSelected, consumables, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
         let consumable: ConsumableItem = consumables[numSelected - 1];
 
@@ -65,7 +68,7 @@ export class ConsumableItem {
 
         //For using healing/mana potions that have an instant affect
         consumable.effects.forEach((effect) => {
-            if (effect.name === 'health' || effect.name === 'mana'){
+            if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
                 target[effect.name] = target.calcTotalStatValue(effect.name);
             }
         });

@@ -1,4 +1,4 @@
-// //TODO: Allow health/mana effects to give buffs to the max amount of health/mana
+// //TODO: Allow health/mana effects to give buffs to the max amount of health/mana?
 
 export const helms = [
     {

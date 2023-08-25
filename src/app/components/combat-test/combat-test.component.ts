@@ -173,6 +173,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.party.members[0].magic.push(convertedSpells[0])
     this.combatService.party.members[0].magic.push(convertedSpells[3])
     this.combatService.party.members[0].magic.push(convertedSpells[4])
+    this.combatService.party.members[0].magic.push(convertedSpells[5])
     this.combatService.party.members[1].magic.push(convertedSpells[1])
     this.combatService.party.members[2].magic.push(convertedSpells[2])
     
