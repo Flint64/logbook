@@ -39,8 +39,14 @@ export class Player {
 
     //TODO: Player weaknesses & resistances
 
-    //Effects are one unique effect per party member, so checking once is fine. But equipment would have to
-    //search through all equipped items to see if there are any that match the search term and add them all up.
+  /****************************************************************************************
+   * Calculate Total Stat Value - Provides on-demand total stat values for the player for
+   * use anywhere stats come in to play. Tallies up total defense/attack from any equipped
+   * items/effects and returns the total value.
+   * Effects are one unique effect per party member, so checking once is fine. 
+   * But equipment would have to search through all equipped items to see if there are any 
+   * that match the search term and add them all up.
+   ****************************************************************************************/
     calcTotalStatValue(statName: string, inventory?: EquippableItem[]){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
       let totalStatValue = 0;
@@ -99,6 +105,10 @@ export class Player {
         this.effects = [];
     }
 
+   /****************************************************************************************
+   * Calculate Base Attack Damage - Calculates the base attack damage including variance
+   * //TODO: Move variance from here to the weapon stat. Unless 7 is a good overall factor?
+   ****************************************************************************************/
     private calcBaseAttackDamage(inventory: EquippableItem[]){
       let dam = (this.calcTotalStatValue('strength', inventory) / 2) + this.calcTotalStatValue('attack', inventory);
 
@@ -117,6 +127,9 @@ export class Player {
       return dam;
     }
 
+   /****************************************************************************************
+   * Is Critical Hit - Calculates whether or not the hit is a crit or not
+   ****************************************************************************************/
     private isCriticalHit(playerTarget: Player, inventory: EquippableItem[]){
       //(Luck + Weapon Crit/accessory/armor)/2 out of 255
       let critChance = Math.round((((this.calcTotalStatValue('luck', inventory) + this.calcTotalStatValue('crit', inventory)) / 2) / 255) * 100);
