@@ -1,5 +1,3 @@
-// //TODO: Allow health/mana effects to give buffs to the max amount of health/mana?
-
 export const helms = [
     {
         name: 'Steel Helm',
