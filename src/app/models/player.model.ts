@@ -20,7 +20,7 @@ export class Player {
     
     //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
     intelligence: number = 5;
-    defense: number = 30; 
+    defense: number = 0; 
 
     //Speed = (Character's speed) + Accessory Bonuses
     speed: number = 200;
@@ -145,7 +145,7 @@ export class Player {
         // (this.accuracy / 2) + (5 + 5) - 3;
     // }
     
-    /****************************************************************************************
+  /****************************************************************************************
    * Player Attack - Handles basic player attacks.
    * Damage is based on attack power.
    * //TODO: Defense stat

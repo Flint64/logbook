@@ -1,5 +1,6 @@
 import { Effect } from "./effect.model";
 import _ from 'lodash';
+import { Player } from "./player.model";
 
 export class Enemy {
     
@@ -88,7 +89,11 @@ calcTotalStatValue(statName: string){
   }
 }
 
-    calcBaseAttackDamage(){
+  /****************************************************************************************
+   * Calculate Base Attack Damage - Calculates the base attack damage based on the enemy's
+   * strength stat
+   ****************************************************************************************/
+    calcBaseAttackDamage(): number{
       //Damage is a random number between player min attack and attack
       let dam = (this.calcTotalStatValue('strength') / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
@@ -106,17 +111,34 @@ calcTotalStatValue(statName: string){
 
       return dam;
     }
+
+  /****************************************************************************************
+   * Calculate Damage Reduction - Takes the base damage calculated and then further
+   * calculates in the target's defense stat(s) to determine how much the defense stat
+   * lowers the base damage. Variance is not included in the damage reduction.
+   ****************************************************************************************/
+    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
+      let targetDefense = playerTarget.calcTotalStatValue('defense', inventory);
+      let reductionPercent = targetDefense/(targetDefense + 3 * damage);
+      let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));
+      if (damageAfterReduction <= 0){
+        damageAfterReduction = 1;
+      }
+      
+      return damageAfterReduction;
+    }
     
     /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
    * //TODO: Defense stat
+   * //TODO: Enemy Crits
    ****************************************************************************************/
-  enemyAttack(enemy, party, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+  enemyAttack(enemy, party, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory){
     
     //Select a random party member to attack & calculate damage
     let rand = _.random(0, (party.length - 1));
     
-    let playerTarget = party[rand];
+    let playerTarget: Player = party[rand];
     
     //Only target players that are alive
     while(playerTarget.health < 0){
@@ -130,9 +152,10 @@ calcTotalStatValue(statName: string){
           playerTargetIndex: rand
         }
 
-    if ((Math.floor(Math.random() * 100) + 1) < enemy.accuracy){
+    if ((_.random(1, 100)) < enemy.accuracy){
 
       let damage = enemy.calcBaseAttackDamage();
+      damage = enemy.calcDamageReduction(damage, playerTarget, inventory);
       result.attackHits = true;
 
       //If the enemy has more than 0 hp allow the hit
