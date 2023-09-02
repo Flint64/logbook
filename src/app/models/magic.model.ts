@@ -84,35 +84,50 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances
-    castSpell(caster: Player, numSelected, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
+    castSpell(caster: Player, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
         
-        let spell: Magic = caster.magic[numSelected - 1];
-        let spellDamage = this.calcSpellDamage(spell, caster, inventory);
+        let spellDamage = this.calcSpellDamage(this, caster, inventory);
+        let effectWasResisted: boolean = false;
+        let resistedEffect: Effect = null;
 
         //Regardless of hit/miss, the spell costs mana
-        caster.mana -= spell.manaCost;
+        caster.mana -= this.manaCost;
                 
         //If the spell hits
-        if ((_.random(1, 100)) < spell.accuracy){
+        if ((_.random(1, 100)) < this.accuracy){
             
         //If the spell has a damage value, apply it before the effect(s)
         spellTarget.health -= Math.round(spellDamage);
         
         //If the spell has a duration and is targeted to yourself, add it to your effects list
-        spell.effects.forEach((effect) => {
-                      
-            if (effect.self){
-                this.addSpellEffect(caster, effect);
+        this.effects.forEach((effect) => {
+
+            if (effect.canBeResisted){
+                if (!spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resist', inventory))){
+                    if (effect.self){
+                        this.addSpellEffect(caster, effect);
+                    } else {
+                        this.addSpellEffect(spellTarget, effect);
+                    }
+                } else {
+                    effectWasResisted = true;
+                    resistedEffect = effect;
+                }
             } else {
-                this.addSpellEffect(spellTarget, effect);
+                //Add all effects from the item used if they have a duration && can't be resisted
+                    if (effect.self){
+                        this.addSpellEffect(caster, effect);
+                    } else {
+                        this.addSpellEffect(spellTarget, effect);
+                    }
             }
 
             //For using healing/mana magic that have an instant affect
             //Can check both caster & target safely, as this will only
             //affect them if the effect is present in their list.
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name);
-                caster[effect.name] = caster.calcTotalStatValue(effect.name);
+                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name, inventory);
+                caster[effect.name] = caster.calcTotalStatValue(effect.name, inventory);
             }
             
         });
@@ -126,27 +141,60 @@ export class Magic {
             appendText('*', true, 'playerText');
             appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false);
-            appendText(spell.name, false, spell.textColor);
+            appendText(this.name, false, this.textColor);
 
             if (healthEffect) {
-                appendText('on', false);
-                appendText(spellTarget.name + ',', false, 'playerText', 'underline');
-                appendText('restoring', false);
-                appendText(healthEffect.modifier.toString(), false, 'playerText');
-                appendText('health!', false);
+              appendText('on', false);
+              appendText(spellTarget.name + ',',false,'playerText','underline');
+              appendText('restoring', false);
+              appendText(healthEffect.modifier.toString(), false, 'playerText');
+              appendText('health!', false);
             } else if (enrageEffect) {
-                appendText('on', false);
-                appendText(spellTarget.name + ',', false, 'playerText', 'underline');
-                appendText('sending them into', false);
-                appendText('an uncontrollable ', false);
-                appendText('rage', false, spell.textColor);
-                appendText(' for ' + (enrageEffect.duration - 1) + ' turns!', false);
+              appendText('on', false);
+              appendText(spellTarget.name + ',', false, 'playerText', 'underline');
+              appendText('sending them into', false);
+              appendText('an uncontrollable ', false);
+              appendText('rage', false, this.textColor);
+              appendText(' for ' + (enrageEffect.duration - 1) + ' turns!',false);
+
             } else {
-              appendText('and hits', false);
-              appendText(spellTarget.name, false);
-              appendText('for', false);
-              appendText(Math.round(spellDamage).toString(), false, spell.textColor);
-              appendText('damage!', false);
+
+              if (spellTarget instanceof Enemy) {
+                if (spellDamage){
+                  appendText('and hits', false);
+                  appendText(spellTarget.name, false, 'crimsonText');
+                  appendText('for', false);
+                  appendText(Math.round(spellDamage).toString(), false, this.textColor);
+                  appendText('damage!', false);
+                } else {
+                    appendText('on', false);
+                    appendText(spellTarget.name + '!',false,'crimsonText');
+                }
+                if (effectWasResisted) {
+                  appendText(`${spellTarget.name}`, true, 'crimsonText');
+                  appendText('resisted the', false);
+                  appendText(`${resistedEffect.name}`, false, this.textColor);
+                  appendText('effect!', false);
+                }
+              } else if (spellTarget instanceof Player) {
+                if (spellDamage){
+                  appendText('and hits', false);
+                  appendText(spellTarget.name, false, 'playerText', 'underline');
+                  appendText('for', false);
+                  appendText(Math.round(spellDamage).toString(), false, this.textColor);
+                  appendText('damage!', false);
+                } else {
+                    appendText('on', false);
+                    appendText(spellTarget.name + '!',false,'playerText','underline');
+                }
+                if (effectWasResisted) {
+                  appendText('*', true, 'playerText');
+                  appendText(`${spellTarget.name}`, false, 'underline', 'playerText');
+                  appendText('resisted the', false);
+                  appendText(`${resistedEffect.name}`, false, this.textColor);
+                  appendText('effect!', false);
+                }
+              }
             }
             
 
@@ -156,7 +204,7 @@ export class Magic {
             appendText('*', true);
             appendText(caster.name, false, 'underline', 'playerText');
             appendText('casts', false, 'greyText');
-            appendText(spell.name, false, spell.textColor);
+            appendText(this.name, false, this.textColor);
             appendText('and misses', false, 'greyText');
             appendText(spellTarget.name + '!', false, 'greyText');
         }

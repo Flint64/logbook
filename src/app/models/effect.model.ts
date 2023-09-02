@@ -6,6 +6,7 @@ export class Effect {
     name: string
     duration: number
     modifier: number
+    canBeResisted: boolean
     self: boolean
-    helpDescription: string    
+    helpDescription: string
 }

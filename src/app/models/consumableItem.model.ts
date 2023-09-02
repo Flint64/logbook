@@ -54,35 +54,70 @@ export class ConsumableItem {
        
     /******************************************************************************************************
      * Use Item - Uses the selected item, adds any effects to the selected target, and prints the result
+     * 'this' refers to the selected consumable. No need to pass in the party.consumables and numSelected.
+     * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
-    useItem(player: Player, target: Player | Enemy, numSelected, consumables, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
-        let consumable: ConsumableItem = consumables[numSelected - 1];
+    useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
 
-        //Add all effects from the item used if they have a duration
-        consumable.effects.forEach((effect) => {
-            this.addConsumableEffect(target, effect);
+        let effectWasResisted: boolean = false;
+        let resistedEffect: Effect = null;
+
+        //If the effect can be resisted, such as poison, burn, etc. then
+        //grab the name + Resist to get poisonResist, burnResist, etc.
+        //which are the names on equipment so that we can caluclate
+        //the correct resistance values.
+        this.effects.forEach((effect) => {
+            if (effect.canBeResisted){
+                if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resist', inventory))){
+                    this.addConsumableEffect(target, effect);
+                } else {
+                    effectWasResisted = true;
+                    resistedEffect = effect;
+                }
+            } else {
+                //Add all effects from the item used if they have a duration && can't be resisted
+                this.addConsumableEffect(target, effect);
+            }
         });
-        
+
         this.removeDuplicateEffects(target);
 
         //For using healing/mana potions that have an instant affect
-        consumable.effects.forEach((effect) => {
+        this.effects.forEach((effect) => {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                target[effect.name] = target.calcTotalStatValue(effect.name);
+                target[effect.name] = target.calcTotalStatValue(effect.name, inventory);
             }
         });
         
-        consumable.amount -= 1;
+        this.amount -= 1;
         appendText('*', true, 'playerText');
         appendText(player.name, false, 'playerText', 'underline');
         appendText('uses', false);
-        appendText(consumable.name, false, consumable.textColor);
+        appendText(this.name, false, this.textColor);
 
         if (target instanceof Enemy){
             appendText(`on ${target.name}`, false);
         } else if (target instanceof Player){
             appendText('on', false)
             appendText(target.name, false, 'underline', 'playerText');
+        }
+
+        //If the effect was resisted, display that in the story text
+        if (effectWasResisted){
+            if (target instanceof Enemy){
+                appendText(`${target.name}`, true, 'crimsonText');
+                appendText('resisted the', false);
+                appendText(`${resistedEffect.name}`, false, this.textColor);
+                appendText('effect!', false);
+                
+            } else if (target instanceof Player){
+                appendText('*', true, 'playerText');
+                appendText(`${target.name}`, false, 'underline', 'playerText');
+                appendText('resisted the', false);
+                appendText(`${resistedEffect.name}`, false, this.textColor);
+                appendText('effect!', false);
+    
+            }
         }
         
     }

@@ -93,7 +93,10 @@ export class CombatService {
         case 'poison':
             target.health -= Math.round((target.effects[i].modifier / 100) * target.maxHealth);
             if (Math.round((target.effects[i].modifier / 100) * target.maxHealth) <= 0){
-              target.health -= 1;
+              //Updated to prevent poison from killing
+              if (target.health - 1 != 0){
+                target.health -= 1;
+              }
             }
         break;
         //Currently does flat damage equal to the modifier
@@ -101,10 +104,10 @@ export class CombatService {
           target.health -= (target.effects[i].modifier);
         break;
         case 'health':
-          target.health = target.calcTotalStatValue('health');
+          target.health = target.calcTotalStatValue('health', this.party.inventory);
         break;
         case 'mana':
-          target.health = target.calcTotalStatValue('mana');
+          target.health = target.calcTotalStatValue('mana', this.party.inventory);
         break;
       }
       

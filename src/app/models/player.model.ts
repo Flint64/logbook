@@ -28,6 +28,7 @@ export class Player {
     accuracy: number = 90;
     luck: number = 5;
     canSelectEnemy: boolean = true;
+    resistance: number = 10;
 
     //TODO: Evade? dodge? Evade Rate = (Character's Evade% / 4) + Accessory Bonuses
     
@@ -47,7 +48,7 @@ export class Player {
    * But equipment would have to search through all equipped items to see if there are any 
    * that match the search term and add them all up.
    ****************************************************************************************/
-    calcTotalStatValue(statName: string, inventory?: EquippableItem[]){
+    calcTotalStatValue(statName: string, inventory: EquippableItem[]){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
       let totalStatValue = 0;
       
@@ -83,6 +84,11 @@ export class Player {
         totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
       }
 
+      //If we're checking for resistances on equipment, make sure we include the base player resistance stat
+      if (statName.includes('Resist')){
+        totalStatValue += this.resistance;
+      }
+
       //check for equipment stats
       //If the equipped item is equipped to the right character,
       //and if it has the stat we're looking for, add it to the total
@@ -91,6 +97,14 @@ export class Player {
           if (equipment[`${statName}`]){
             totalStatValue += equipment[`${statName}`];
           }
+
+          if (statName.includes('Resist')){
+            equipment.resistances.forEach((resistance) => {
+              if (resistance.name === statName){
+                totalStatValue += resistance.modifier;
+              }
+            });
+          }
         }
       });
 
@@ -98,7 +112,22 @@ export class Player {
       return totalStatValue;
     }
 
-    //Resets any modified player values after combat excluding health and mana
+  /****************************************************************************************
+   * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
+   * and calculates to see if that effect has been resisted or not. Returns true for effect
+   * was resisted, false for not
+   ****************************************************************************************/
+    calcEffectResistance(resistance: number): boolean{
+      let val = ((resistance / 2) / 150) * 100;
+      if (_.random(1, 100) < val){
+        return true;
+      }
+      return false;
+    }
+
+   /****************************************************************************************
+   * Reset - resets any modified player values after combat excluding health and mana
+   ****************************************************************************************/
     reset(){
         this.ATB = 100;
         this.turnCount = 0;

@@ -11,6 +11,7 @@ export const enemies = [
       maxMana: 0,
       accuracy: 60,
       luck: 2,
+      resistance: 10,
       effects: [],
       turnCount: 0,
       ATB: 0
@@ -26,6 +27,7 @@ export const enemies = [
       maxMana: 0,
       accuracy: 60,
       luck: 2,
+      resistance: 10,
       effects: [],
       turnCount: 0,
       ATB: 0
@@ -41,6 +43,7 @@ export const enemies = [
       maxMana: 0,
       accuracy: 50,
       luck: 2,
+      resistance: 10,
       effects: [],
       turnCount: 0,
       ATB: 0
@@ -56,6 +59,7 @@ export const enemies = [
       maxMana: 0,
       accuracy: 60,
       luck: 2,
+      resistance: 10,
       effects: [],
       turnCount: 0,
       ATB: 0
@@ -71,6 +75,7 @@ export const enemies = [
       maxMana: 0,
       accuracy: 50,
       luck: 2,
+      resistance: 10,
       effects: [],
       turnCount: 0,
       ATB: 0

@@ -20,6 +20,7 @@ export class Enemy {
         maxMana: number = null;
         accuracy: number = null;
         luck: number = null;
+        resistance: number = 10;
         effects: Array<Effect> = [];
         turnCount: number = null;
         ATB: number = 0;
@@ -56,12 +57,19 @@ split.forEach((e, index) => {
     if (rand > split[index-1] && rand <= e){console.log(abilities[index])}
   }
 });
-     
     */
 
-//TODO: KEEP THIS UP TO DATE WITH THE ONE IN THE PLAYER MODEL CLASS
+
+/****************************************************************************************
+   * Calculate Total Stat Value - Provides on-demand total stat values for the enemy for
+   * use anywhere stats come in to play. Tallies up total defense/attack from any effects
+   * and returns the total value.
+   * Effects are one unique effect per enemy, so checking once is fine. 
+   ****************************************************************************************/
 calcTotalStatValue(statName: string){
   let effect: Effect = this.effects.find(({ name }) => name === statName);
+  let totalStatValue = 0;
+  
   if (effect){
     let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
     if (statName === 'health' || statName === 'mana'){
@@ -81,13 +89,35 @@ calcTotalStatValue(statName: string){
       }
     }
     
-    //If we have an effect matching the specified name, return the total value. 
-    //Otherwise, return the base value.
-    return this[`${statName}`] + effect.modifier;
-  } else {
-    return this[`${statName}`];
+    //If we have an effect matching the specified name, add the modifier
+    totalStatValue += effect.modifier;
   }
+
+  //Only try adding the value if it exists in the enemy object
+  if (this[`${statName}`]){
+    totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
+  }
+
+  //If we're checking for resistances on equipment, make sure we include the base enemy resistance stat
+  if (statName.includes('Resist')){
+    totalStatValue += this.resistance;
+  }
+
+  // console.log(statName + ' ' + totalStatValue);
+  return totalStatValue;
 }
+
+  /****************************************************************************************
+   * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
+   * and calculates to see if that effect has been resisted or not. Returns true/false
+   ****************************************************************************************/
+  calcEffectResistance(resistance: number): boolean{
+    let val = ((resistance / 2) / 150) * 100;
+    if (_.random(1, 100) < val){
+      return true;
+    }
+    return false;
+  }
 
   /****************************************************************************************
    * Calculate Base Attack Damage - Calculates the base attack damage based on the enemy's
