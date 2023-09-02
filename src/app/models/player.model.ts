@@ -18,7 +18,6 @@ export class Player {
     //basic attack damage = (Character's Strength / 2) + Weapon Attack
     strength: number = 10;
     
-    //TODO: Defender's Defense / (Defender's Defense + Attacker's Attack)  // Damage Reduction = 50 / (50 + 100) = 0.33
     intelligence: number = 5;
     defense: number = 0; 
 
@@ -125,6 +124,22 @@ export class Player {
       return false;
     }
 
+    /****************************************************************************************
+   * Calculate Damage Reduction - Takes the base damage calculated and then further
+   * calculates in the target's defense stat(s) to determine how much the defense stat
+   * lowers the base damage. Variance is not included in the damage reduction.
+   ****************************************************************************************/
+    calcDamageReduction(damage: number, enemyTarget: Enemy): number{
+      let targetDefense = enemyTarget.calcTotalStatValue('defense');
+      let reductionPercent = targetDefense/(targetDefense + 3 * damage);
+      let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));
+      if (damageAfterReduction <= 0){
+        damageAfterReduction = 1;
+      }
+      
+      return damageAfterReduction;
+    }
+
    /****************************************************************************************
    * Reset - resets any modified player values after combat excluding health and mana
    ****************************************************************************************/
@@ -177,7 +192,6 @@ export class Player {
   /****************************************************************************************
    * Player Attack - Handles basic player attacks.
    * Damage is based on attack power.
-   * //TODO: Defense stat
    ****************************************************************************************/
   playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
     
@@ -190,6 +204,7 @@ export class Player {
     if ((_.random(1, 100)) < playerTarget.accuracy){
       
       let damage = playerTarget.calcBaseAttackDamage(inventory);
+      damage = playerTarget.calcDamageReduction(damage, enemyTarget);
       attackHits = true;
       
       //If the attack is a crit, print the correct messages
