@@ -274,6 +274,8 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
 .speedStatus, .strengthStatus{background: rgb(150, 110, 9);}
 .freezeStatus{background: rgb(20, 20, 151);}
 .rageStatus, .burnStatus{background: rgb(138, 12, 38);}
+.healthStatus { background: crimson; }
+.manaStatus { background: orchid; }
 
 #playerInventoryOptions{
     height: 100%;
