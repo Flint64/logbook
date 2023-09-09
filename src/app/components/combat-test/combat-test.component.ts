@@ -83,9 +83,17 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.keyListener){
       this.keyListener = renderer.listen('document', 'keypress', (e) => {
         if (parseInt(e.key) >= 0 || parseInt(e.key) >= 9 ){
-          
           let numSelected = parseInt(e.key);
           this.optionSelected(numSelected);
+        }
+
+        //If spacebar is pressed, allow pausing if viewingMainOptions as if you had pressed 4 / clicked pause
+        if (e.key === ' '){
+          if (this.intervalID && this.viewingMainOptions){
+            this.stopATB();
+          } else if (!this.intervalID && this.viewingMainOptions){
+            this.startCombat();
+          }
         }
 
       });
