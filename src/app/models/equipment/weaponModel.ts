@@ -1,4 +1,7 @@
+import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
+import { StatusEffectResistance, BurnResistance, PoisonResistance, FreezeResistance, ShockResistance } from "src/app/models/statusEffectResistanceModel";
 import { EquippableItem } from "./equippableItem.model";
+
 
 export class Weapon extends EquippableItem{
     constructor(data: Partial<Weapon>) {
@@ -14,4 +17,6 @@ export class Weapon extends EquippableItem{
       luck: number
       attack: number
       crit: number
+      statusEffectResistances: StatusEffectResistance[];
+      damageTypes: DamageTypes[];
 }

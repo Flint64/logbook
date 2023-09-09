@@ -1,9 +1,11 @@
+import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
 import { ConsumableItem } from "./consumableItem.model";
 import { EquippableItem } from "./equipment/equippableItem.model";
 import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from "./enemy.model";
+import { Weapon } from "./equipment/weaponModel";
 
 export class Player {
     constructor(){}
@@ -19,7 +21,7 @@ export class Player {
     strength: number = 10;
     
     intelligence: number = 5;
-    defense: number = 0; 
+    defense: number = 0;
 
     //Speed = (Character's speed) + Accessory Bonuses
     speed: number = 200;
@@ -36,8 +38,6 @@ export class Player {
     
     magic: Magic[] = [];
     effects: Effect[] = [];
-
-    //TODO: Player weaknesses & resistances
 
   /****************************************************************************************
    * Calculate Total Stat Value - Provides on-demand total stat values for the player for
@@ -92,15 +92,23 @@ export class Player {
       //If the equipped item is equipped to the right character,
       //and if it has the stat we're looking for, add it to the total
       inventory.forEach((equipment) => {
-        if (equipment.equippedBy.name === this.name){
+        if (equipment.equippedBy?.name === this.name){
           if (equipment[`${statName}`]){
             totalStatValue += equipment[`${statName}`];
           }
 
-          if (statName.includes('Resist')){
-            equipment.resistances.forEach((resistance) => {
-              if (resistance.name === statName){
-                totalStatValue += resistance.modifier;
+          if (statName.includes('Resist')){ //FIXME: This? Will resistance.constructor.name match and work?
+            equipment.statusEffectResistances.forEach((resistance) => {
+              if (resistance.constructor.name === statName){
+                totalStatValue += resistance.resistance;
+              }
+            });
+          }
+
+          if (statName.includes('Damage')){
+            equipment.damageResistances.forEach((resistance) => {
+              if (resistance.constructor.name === statName){
+                totalStatValue += resistance.resistance;
               }
             });
           }
@@ -124,18 +132,104 @@ export class Player {
       return false;
     }
 
-    /****************************************************************************************
+  /****************************************************************************************
    * Calculate Damage Reduction - Takes the base damage calculated and then further
    * calculates in the target's defense stat(s) to determine how much the defense stat
-   * lowers the base damage. Variance is not included in the damage reduction.
+   * lowers the base damage.
+   * 
+   * Weapons can deal multiple damage types. If there is one, it's 100%. If two, it can be
+   * any combination that equals 100. Same for multiples. Physical damage (bludgeoning,
+   * slashing, piercing) are deducted based on your base defense stat + any damage reduction
+   * for that specific damage type using the defense reduction diminishing returns
+   * calculation. Any elemental damage is handled solely on the damage resistance stat + 
+   * enemy base resistance. The calculation for that is the same as determining whether or
+   * not a status effect is applied, except the % chance is damage reduction instead of
+   * status resist percent.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, enemyTarget: Enemy): number{
-      let targetDefense = enemyTarget.calcTotalStatValue('defense');
-      let reductionPercent = targetDefense/(targetDefense + 3 * damage);
-      let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));
-      if (damageAfterReduction <= 0){
-        damageAfterReduction = 1;
-      }
+    calcDamageReduction(damage: number, enemyTarget: Enemy, inventory: EquippableItem[]): number{
+      let physicalDamageAfterReduction = 0;
+      let elementalDamageAfterReduction = 0;
+      let noMatchingPhysicalReduction = 0;
+      let noMatchingElementalReduction = 0;
+          
+      let playerDamageTypes = [];
+      inventory.forEach((item) => {
+        if (item instanceof Weapon && item.equippedBy?.name === this.name){
+            item.damageTypes.forEach((damageType) => {
+              let copy = _.cloneDeep(damageType);
+              copy.damage = Math.round((damageType.percent / 100) * damage);
+              playerDamageTypes.push(copy);
+            });
+        }
+      });
+
+      //For each damage type we hit the enemy with, check the enemy resistances to see if any match
+      //and if they do, calculate the damage reduction accordingly
+      playerDamageTypes.forEach((e) => {
+        let enemyResistance = enemyTarget.damageResistances.find(resistance => resistance.constructor.name === e.constructor.name + 'Resistance');
+        if (enemyResistance){
+          let totalEnemyDamageResistance = 0;
+
+          let damageTypeName = enemyResistance.constructor.name.split(/(?=[A-Z])/)[0];
+          //Elemental damage reduction
+          if (damageTypeName !== 'Bludgeoning' && damageTypeName !== 'Slashing' && damageTypeName !== 'Piercing'){
+            totalEnemyDamageResistance += enemyResistance.resistance;
+            totalEnemyDamageResistance += enemyTarget.calcTotalStatValue('resistance');
+            let reductionPercent = (((totalEnemyDamageResistance)/2)/150);
+            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+            elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+            // console.log(totalEnemyDamageResistance + ' Total Enemy elemental resistance')
+            // console.log(reductionPercent*100 + '% elem reduction');
+            // console.log(e.damage+ ' elem damage before reduction')
+
+          //Physical damage reduction
+          } else {
+            totalEnemyDamageResistance += enemyResistance.resistance;
+            totalEnemyDamageResistance += enemyTarget.calcTotalStatValue('defense');
+
+            //standard defense damage reduction calculation
+            let reductionPercent = totalEnemyDamageResistance / (totalEnemyDamageResistance + e.damage * 3);
+            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
+            physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+            // console.log(totalEnemyDamageResistance + ' Total enemy Physical armor')
+            // console.log(reductionPercent * 100 + '% phys reduction');
+            // console.log(e.damage+ ' phys damage before reduction')
+          }
+
+        } else {
+          //Handles no matching ELEMENTAL resistances, so base resistances is all we use
+          if (e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Bludgeoning' && e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Slashing' && e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Piercing'){
+            let baseResistance = enemyTarget.calcTotalStatValue('resistance');
+            let reductionPercent = (((baseResistance)/2)/150);
+            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+            noMatchingElementalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+            // console.log(baseResistance + ' BASE enemy elemental resistance')
+            // console.log(reductionPercent*100 + '% BASE elem reduction');
+            // console.log(e.damage + ' BASE elem damage before reduction')
+
+          //Handles no matching PHYSICAL resistances, so base armor is all we use
+          } else {
+            let baseDefense = enemyTarget.calcTotalStatValue('defense');
+            let reductionPercent = baseDefense / (baseDefense + e.damage * 3);
+              reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
+              noMatchingPhysicalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+              // console.log(baseDefense + ' Base enemy armor')
+              // console.log(reductionPercent * 100 + '% other reduction');
+              // console.log(e.damage+ ' Other damage before reduction')
+          }
+        }
+      });
+
+      let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction + noMatchingPhysicalReduction + noMatchingElementalReduction;
+
+      //Prevent attacks from doing 0 damage, limiting it to at least 1
+      if (damageAfterReduction <= 0){damageAfterReduction = 1;}
+      
+      // console.log(damage + ' damage before reduction')
+      // console.log(physicalDamageAfterReduction + ' phys after reduction');
+      // console.log(elementalDamageAfterReduction + ' elem after reduction');
+      // console.log(noMatchingPhysicalReduction + ' Other damage after reduction');
+      // console.log(damageAfterReduction + ' total after reduction');
       
       return damageAfterReduction;
     }
@@ -182,13 +276,7 @@ export class Player {
       }
       return false;
     }
-    
-    //Hit Rate = (Character's Hit% / 2) + (Weapon Hit% + Accessory Bonuses) - Enemy Evade%
-    // checkIfHit(){
-        // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
-        // (this.accuracy / 2) + (5 + 5) - 3;
-    // }
-    
+        
   /****************************************************************************************
    * Player Attack - Handles basic player attacks.
    * Damage is based on attack power.
@@ -202,16 +290,28 @@ export class Player {
     
     // Returns a random integer from 1-100:
     if ((_.random(1, 100)) < playerTarget.accuracy){
+
+      //If we hit, check if the enemy evades the attack
+      //TODO: Enemy evasion
+      //Hit Rate = (Character's Hit% / 2) + (Weapon Hit% + Accessory Bonuses) - Enemy Evade%
+    // checkIfHit(){
+        // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
+        // (this.accuracy / 2) + (5 + 5) - 3;
+    // }
       
+      //If we don't evade, calculate damage done
       let damage = playerTarget.calcBaseAttackDamage(inventory);
-      damage = playerTarget.calcDamageReduction(damage, enemyTarget);
+      damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
       attackHits = true;
       
       //If the attack is a crit, print the correct messages
       if (this.isCriticalHit(playerTarget, inventory)){
 
-        //2x crit damage
+        //2x crit damage. If we don't recalculate here, crit damage is doubled after reduction;
+        //this way, if we score a critical hit, the damage is recalculated to be double and then reduced by armor
+        damage = playerTarget.calcBaseAttackDamage(inventory);
         damage *= 2;
+        damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
         
         if (playerTarget.health !== 0){
           appendText('*', true, 'playerText');

@@ -27,7 +27,6 @@ import { Bracer } from 'src/app/models/equipment/bracerModel';
 import { Greaves } from 'src/app/models/equipment/greavesModel';
 import { Weapon } from 'src/app/models/equipment/weaponModel';
 import { Trinket } from 'src/app/models/equipment/trinketModel';
-import { Resistance } from 'src/app/models/resistanceModel';
 //ng deploy --base-href=https://flint64.github.io/logbook/
 
 @Component({
@@ -93,9 +92,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    }   
   }
   
-  ngOnInit(): void {
+  ngOnInit(): void {    
     //Converts the enemy list into actual Enemy objects
     let convertedEnemyList: Enemy[] = enemies.map(enemyData => new Enemy(enemyData));
+    console.log(convertedEnemyList);
     
     //i is less than the number of enemies we want displayed
     for (let i = 0; i < 3; i++){
@@ -106,47 +106,26 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     //Converts the equipment list into actual EquippableItem objects
-    let convertedHelms: EquippableItem[] = helms.map(helmData => {
-      const resistances = (helmData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...helmData, resistances: resistances });
-    });
+    let convertedHelms: EquippableItem[] = helms.map(helmData => new Helm(helmData));
     convertedHelms.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Helm(e))); });
-    
-    let convertedChestplates: EquippableItem[] = chestplates.map(chestplateData => {
-      const resistances = (chestplateData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...chestplateData, resistances: resistances });
-    });
+
+    let convertedChestplates: EquippableItem[] = chestplates.map(chestplateData => new Chestplate(chestplateData));
     convertedChestplates.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Chestplate(e))); });
     this.combatService.party.inventory.push(_.cloneDeep(new Chestplate(convertedChestplates[0]))); //Push a copy of chainmail to have 2
     
-    let convertedPants: EquippableItem[] = pants.map(pantsData => {
-      const resistances = (pantsData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...pantsData, resistances: resistances });
-    });
+    let convertedPants: EquippableItem[] = pants.map(pantsData => new Pants(pantsData));
     convertedPants.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Pants(e))); });
 
-    let convertedBracers: EquippableItem[] = bracers.map(bracerData => {
-      const resistances = (bracerData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...bracerData, resistances: resistances });
-    });
+    let convertedBracers: EquippableItem[] = bracers.map(bracerData => new Bracer(bracerData));
     convertedBracers.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Bracer(e))); });
-    
-    let convertedGreaves: EquippableItem[] = greaves.map(greaveData => {
-      const resistances = (greaveData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...greaveData, resistances: resistances });
-    });
+
+    let convertedGreaves: EquippableItem[] = greaves.map(greaveData => new Greaves(greaveData));
     convertedGreaves.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Greaves(e))); });
-    
-    let convertedWeapons: EquippableItem[] = weapons.map(weaponData => {
-      const resistances = (weaponData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...weaponData, resistances: resistances });
-    });
+
+    let convertedWeapons: EquippableItem[] = weapons.map(weaponData => new Weapon(weaponData));
     convertedWeapons.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Weapon(e))); });
-    
-    let convertedTrinkets: EquippableItem[] = trinkets.map(trinketData => {
-      const resistances = (trinketData.resistances || []).map(resistanceData => new Resistance(resistanceData));
-      return new EquippableItem({ ...trinketData, resistances: resistances });
-    });
+
+    let convertedTrinkets: EquippableItem[] = trinkets.map(trinketData => new Trinket(trinketData));
     convertedTrinkets.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Trinket(e))); });
     
     //Auto-equip items here for testing purposes
@@ -155,9 +134,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.party.inventory[3].equippedBy = this.combatService.party.members[2]; //Max, Chainmail
     this.combatService.party.inventory[2].equippedBy = this.combatService.party.members[0]; //Gort, Apprentice Robes
     this.combatService.party.inventory[4].equippedBy = this.combatService.party.members[0]; //Gort, Critical Bracer
-    this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Oak Staff
+    // this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Oak Staff
     this.combatService.party.inventory[6].equippedBy = this.combatService.party.members[1]; //Luke, Shortsword
     this.combatService.party.inventory[7].equippedBy = this.combatService.party.members[2]; //Max, Simple Mace
+    this.combatService.party.inventory[8].equippedBy = this.combatService.party.members[0]; //Gort, Bone Phoenix
     console.log(this.combatService.party.inventory);
     
     this.enemyForm = new FormGroup({

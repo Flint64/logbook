@@ -1,6 +1,9 @@
+import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
+import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
 import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Player } from "./player.model";
+import { StatusEffectResistance } from "./statusEffectResistanceModel";
 
 export class Enemy {
     
@@ -21,11 +24,13 @@ export class Enemy {
         accuracy: number = null;
         luck: number = null;
         resistance: number = 10;
+        damageTypes: Array<DamageTypes> = [];
+        damageResistances: Array<DamageResistance> = [];
+        statusEffectResistances: Array<StatusEffectResistance> = [];
         effects: Array<Effect> = [];
         turnCount: number = null;
         ATB: number = 0;
     
-    //TODO: Enemy weaknesses & resistances
     /*
       TODO: Add special abilities/attacks to enemy model. Have it be a % like accuracy to see
       if the attack is a regular attack or special attack. If an enemy has more than one special
@@ -66,7 +71,7 @@ split.forEach((e, index) => {
    * and returns the total value.
    * Effects are one unique effect per enemy, so checking once is fine. 
    ****************************************************************************************/
-calcTotalStatValue(statName: string){
+calcTotalStatValue(statName: string){ //FIXME: Fix this with the new resistances and damage reductions
   let effect: Effect = this.effects.find(({ name }) => name === statName);
   let totalStatValue = 0;
   
@@ -111,7 +116,7 @@ calcTotalStatValue(statName: string){
    * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
    * and calculates to see if that effect has been resisted or not. Returns true/false
    ****************************************************************************************/
-  calcEffectResistance(resistance: number): boolean{
+  calcEffectResistance(resistance: number): boolean{ //TODO: Next up, Effect resistance, and resistances in general simply prevent status ailments and do nothing for damage reduction for specific elements. Maybe use this same calculation for damage reduction as well? Use the % like armor does instead of the rand number to see if it gets applied or not like we're currently doing (but keep the random number because it's still a good way of prevention)
     let val = ((resistance / 2) / 150) * 100;
     if (_.random(1, 100) < val){
       return true;
@@ -147,6 +152,7 @@ calcTotalStatValue(statName: string){
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
+    //TODO: Make this work like the playerModel version, to calculate split damages and reductions based on defense/elemental resistances
     calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
       let targetDefense = playerTarget.calcTotalStatValue('defense', inventory);
       let reductionPercent = targetDefense/(targetDefense + 3 * damage);

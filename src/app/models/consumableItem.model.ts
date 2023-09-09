@@ -57,6 +57,9 @@ export class ConsumableItem {
      * 'this' refers to the selected consumable. No need to pass in the party.consumables and numSelected.
      * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
+    //TODO: Anywhere effects are added (currently here and in the magic model) take in to account effect resistances, and allow them to be resisted
+    //TODO: Elemental damage resistance from any thrown vials
+    //TODO: Vial accuracy. Because yes
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
 
         let effectWasResisted: boolean = false;

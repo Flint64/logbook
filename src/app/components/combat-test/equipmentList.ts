@@ -1,22 +1,21 @@
+import { BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
 import { Player } from "src/app/models/player.model";
-import { Resistance } from "src/app/models/resistanceModel";
+import { StatusEffectResistance, BurnResistance, PoisonResistance, FreezeResistance, ShockResistance } from "src/app/models/statusEffectResistanceModel";
+import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
+import { Weapon } from "src/app/models/equipment/weaponModel";
+import { Bracer } from "src/app/models/equipment/bracerModel";
+import { Chestplate } from "src/app/models/equipment/chestplateModel";
+import { Pants } from "src/app/models/equipment/pantsModel";
+import { Greaves } from "src/app/models/equipment/greavesModel";
+import { Trinket } from "src/app/models/equipment/trinketModel";
+import { Helm } from "src/app/models/equipment/helmModel";
+
+//TODO: The health/mana stats on equipment don't do anything 
 
 /****************************************************************************************
  * Helms
  ****************************************************************************************/
-interface HelmsData {
-    name: string;
-    equippedBy: Player;
-    description: string;
-    health: number;
-    defense: number;
-    mana: number;
-    intelligence: number;
-    accuracy: number;
-    resistances: Partial<Resistance>[];
-  }
-
-export const helms: HelmsData[] = [
+export const helms: Helm[] = [
     {
         name: 'Steel Helm',
         equippedBy: null,
@@ -26,30 +25,16 @@ export const helms: HelmsData[] = [
         mana: 0,
         intelligence: 0,
         accuracy: 0,
-        resistances: [{
-            name: 'shockResist',
-            modifier: -5
-        }]
+        statusEffectResistances: [],
+        damageResistances: [],
+        damageTypes: []
     }
 ];
 
 /****************************************************************************************
  * Chestplates
  ****************************************************************************************/
-interface ChestplateData {
-    name: string
-    equippedBy: Player
-    description: string
-    health: number
-    strength: number
-    defense: number
-    speed: number
-    mana: number
-    intelligence: number
-    resistances: Partial<Resistance>[];
-}
-
-export const chestplates: ChestplateData[] = [
+export const chestplates: Chestplate[] = [
     {
         name: 'Chainmail',
         equippedBy: null,
@@ -60,11 +45,11 @@ export const chestplates: ChestplateData[] = [
         speed: 0,
         mana: 0,
         intelligence: 0,
-        resistances: [{
-            name: 'shockResist',
-            modifier: -5
-        }]
+        statusEffectResistances: [],        
+        damageResistances: [],
+        damageTypes: []
     },
+
     {
         name: 'Apprentice Robes',
         equippedBy: null,
@@ -75,56 +60,22 @@ export const chestplates: ChestplateData[] = [
         speed: 10,
         mana: 0,
         intelligence: 3,
-        resistances: [
-            {
-            name: 'shockResist',
-            modifier: 5
-        },
-        {
-            name: 'burnResist',
-            modifier: 5
-        }
-    ]
+        statusEffectResistances: [],        
+        damageResistances: [],
+        damageTypes: []
     }
 ];
 
 /****************************************************************************************
  * Pants
  ****************************************************************************************/
-interface PantsData {
-    name: string
-    equippedBy: Player
-    description: string
-    health: number
-    defense: number
-    speed: number
-    mana: number
-    intelligence: number
-    resistances: Partial<Resistance>[];
-}
-
-export const pants: PantsData[] = [
+export const pants: Pants[] = [
 ];
 
 /****************************************************************************************
  * Bracers
  ****************************************************************************************/
-interface BracerData {
-    name: string
-    equippedBy: Player;
-    description: string;
-    health: number;
-    strength: number;
-    defense: number;
-    speed: number;
-    mana: number;
-    accuracy: number;
-    luck: number;
-    crit: number;
-    resistances: Partial<Resistance>[];
-}
-
-export const bracers: BracerData[] = [
+export const bracers: Bracer[] = [
     {
         name: 'Critical Bracers',
         equippedBy: null,
@@ -137,49 +88,22 @@ export const bracers: BracerData[] = [
         accuracy: 0,
         luck: 0,
         crit: 8,
-        resistances: [{
-            name: 'burnResist',
-            modifier: 5
-        }]
+        statusEffectResistances: [],
+        damageResistances: [],
+        damageTypes: []
     }
 ];
 
 /****************************************************************************************
  * Greaves
  ****************************************************************************************/
-interface GreaveData {
-    name: string
-    equippedBy: Player;
-    description: string;
-    health: number;
-    strength: number;
-    defense: number;
-    luck: number;
-    resistances: Partial<Resistance>[];
-}
-
-export const greaves: GreaveData[] = [
+export const greaves: Greaves[] = [
 ];
 
 /****************************************************************************************
  * Weapons
  ****************************************************************************************/
-interface WeaponData {
-    name: string
-    equippedBy: Player;
-    description: string;
-    strength: number;
-    speed: number;
-    mana: number;
-    intelligence: number;
-    accuracy: number;
-    luck: number;
-    attack: number;
-    crit: number;
-    resistances: Partial<Resistance>[];
-}
-
-export const weapons: WeaponData[] = [
+export const weapons: Weapon[] = [
     {
         name: 'Oak Staff',
         equippedBy: null,
@@ -192,11 +116,13 @@ export const weapons: WeaponData[] = [
         luck: 0,
         attack: 2,
         crit: 3,
-        resistances: [{
-            name: 'burnResist',
-            modifier: 5
-        }]
+        statusEffectResistances: [],
+        damageTypes: [
+            new BludgeoningDamage({percent: 100})
+        ],
+        damageResistances: []
     },
+
     {
         name: 'Shortsword',
         equippedBy: null,
@@ -209,11 +135,14 @@ export const weapons: WeaponData[] = [
         luck: 0,
         attack: 4,
         crit: 5,
-        resistances: [{
-            name: 'shockResist',
-            modifier: -5
-        }]
+        statusEffectResistances: [],
+        damageTypes: [
+            new SlashingDamage({percent: 80}),
+            new PiercingDamage({percent: 20})
+        ],
+        damageResistances: []
     },
+
     {
         name: 'Simple Mace',
         equippedBy: null,
@@ -226,31 +155,43 @@ export const weapons: WeaponData[] = [
         luck: 0,
         attack: 6,
         crit: 3,
-        resistances: [{
-            name: 'poisonResist',
-            modifier: 5
-        }]
+        statusEffectResistances: [
+            new PoisonResistance({resistance: 5})
+        ],
+        damageTypes: [
+            new BludgeoningDamage({percent: 100})
+        ],
+        damageResistances: []
+    },
+
+    {
+        name: 'Bone Phoenix',
+        equippedBy: null,
+        description: 'An enchanted fiery morning star',
+        strength: 0,
+        speed: 0,
+        mana: 0,
+        intelligence: 0,
+        accuracy: 5,
+        luck: 0,
+        attack: 6,
+        crit: 3,
+        statusEffectResistances: [
+            new BurnResistance({resistance: 30})
+        ],
+
+        damageTypes: [
+            new FireDamage({percent: 60}),
+            new BludgeoningDamage({percent: 40})
+        ],
+        damageResistances: [
+            new FireDamageResistance({resistance: 30})
+        ]
     }
 ];
 
 /****************************************************************************************
  * Trinkets
  ****************************************************************************************/
-interface TrinketData {
-    name: string
-    equippedBy: Player;
-    description: string;
-    health: number;
-    defense: number;
-    speed: number;
-    mana: number;
-    intelligence: number;
-    strength: number;
-    accuracy: number;
-    luck: number;
-    crit: number;
-    resistances: Partial<Resistance>[];
-}
-
-export const trinkets: TrinketData[] = [
+export const trinkets: Trinket[] = [
 ];

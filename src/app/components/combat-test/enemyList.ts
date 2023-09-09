@@ -1,4 +1,13 @@
+import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
+import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
+import { BurnResistance } from "src/app/models/statusEffectResistanceModel";
+
 // TODO: Will need different lists of enemies and bosses, probably separated by level or something
+
+//Enemies with physical damage resistances need to be managed carefully, as that essentially adds to their armor, which
+//has more drastic damage reduction effects whenever player attack is under their total defense; there is a bit more
+//leeway when it comes to elemental resistances, as those can scale up to 300 before there is 100% reduction.
+//Physical defense is calculated with the attack damage in mind, which is why the values are prone to swinging
 export const enemies = [
     {
       name: 'Goblin',
@@ -12,10 +21,15 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      damageTypes: [
+        new SlashingDamage({percent: 80}),
+        new PiercingDamage({percent: 20})
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0
     },
+
     {
       name: 'Green Slime',
       health: 3,
@@ -28,10 +42,14 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      damageTypes: [
+        new BludgeoningDamage({percent: 100})
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0
     },
+
     {
       name: 'Red Slime',
       health: 6,
@@ -44,10 +62,14 @@ export const enemies = [
       accuracy: 50,
       luck: 2,
       resistance: 10,
+      damageTypes: [
+        new BludgeoningDamage({percent: 100})
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0
     },
+
     {
       name: 'Kobold',
       health: 4,
@@ -60,10 +82,18 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      damageTypes: [
+        new SlashingDamage({percent: 80}),
+        new PiercingDamage({percent: 20})
+      ],
+      damageResistances: [
+        new SlashingDamageResistance({resistance: 2})
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0
     },
+
     {
       name: 'Giant',
       health: 35,
@@ -76,6 +106,40 @@ export const enemies = [
       accuracy: 50,
       luck: 2,
       resistance: 10,
+      damageTypes: [
+        new BludgeoningDamage({percent: 100})
+      ],
+      damageResistances: [
+        new BludgeoningDamageResistance({resistance: 10}),
+      ],
+      effects: [],
+      turnCount: 0,
+      ATB: 0
+    },
+    
+    {
+      name: 'Imp',
+      health: 25,
+      maxHealth: 25,
+      strength: 4,
+      defense: 4,
+      speed: 80,
+      mana: 20,
+      maxMana: 20,
+      accuracy: 65,
+      luck: 5,
+      resistance: 40,
+      damageTypes: [
+        new SlashingDamage({percent: 40}),
+        new FireDamage({percent: 60})
+      ],
+      damageResistances: [
+        new FireDamageResistance({resistance: 50}),
+        new BludgeoningDamageResistance({resistance: 6})
+      ],
+      statusEffectResistances: [
+        new BurnResistance({resistance: 50})
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0

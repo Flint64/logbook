@@ -5,6 +5,8 @@ import { Enemy } from './enemy.model';
 import { Player } from './player.model';
 import { EquippableItem } from './equipment/equippableItem.model';
 
+//TODO: Spells need damage types & damage reduction
+
 @Injectable()
 export class Magic {
 
@@ -84,6 +86,9 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Add spell resistances
+    //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
+    //TODO: Anywhere effects are added (currently here and in the consumableItem model) take in to account effect resistances, and allow them to be resisted
+    //TODO: Elemental damage resistance from spells
     castSpell(caster: Player, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
         
         let spellDamage = this.calcSpellDamage(this, caster, inventory);

@@ -1,5 +1,7 @@
+import { DamageResistance } from "../damageResistanceModel";
+import { DamageTypes } from "../damageTypes.model";
 import { Player } from "../player.model";
-import { Resistance } from "../resistanceModel";
+import { StatusEffectResistance } from "../statusEffectResistanceModel";
 
 export class EquippableItem {
     constructor(data: Partial<EquippableItem>) {
@@ -9,5 +11,7 @@ export class EquippableItem {
     name: string
     equippedBy: Player
     description: string
-    resistances: Resistance[]
+    statusEffectResistances: StatusEffectResistance[]
+    damageTypes: DamageTypes[]
+    damageResistances: DamageResistance[]
 }
