@@ -94,7 +94,7 @@ export class Player {
           if (statName !== 'BludgeoningDamageResistance' && statName !== 'SlashingDamageResistance' && statName !== 'PiercingDamageResistance'){
             equipment.statusEffectResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
-                totalStatValue += resistance.resistance;                
+                totalStatValue += resistance.resistance;
               }
             });
             totalStatValue += this.resistance;
