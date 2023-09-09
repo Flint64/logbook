@@ -177,7 +177,7 @@ export const weapons: Weapon[] = [
         attack: 6,
         crit: 3,
         statusEffectResistances: [
-            new BurnResistance({resistance: 30})
+            new BurnResistance({resistance: 30}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
         ],
 
         damageTypes: [
@@ -185,7 +185,7 @@ export const weapons: Weapon[] = [
             new BludgeoningDamage({percent: 40})
         ],
         damageResistances: [
-            new FireDamageResistance({resistance: 30})
+            new FireDamageResistance({resistance: 30}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
         ]
     }
 ];

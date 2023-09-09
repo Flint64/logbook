@@ -71,7 +71,7 @@ split.forEach((e, index) => {
    * and returns the total value.
    * Effects are one unique effect per enemy, so checking once is fine. 
    ****************************************************************************************/
-calcTotalStatValue(statName: string){ //FIXME: Fix this with the new resistances and damage reductions
+calcTotalStatValue(statName: string){
   let effect: Effect = this.effects.find(({ name }) => name === statName);
   let totalStatValue = 0;
   
@@ -102,12 +102,25 @@ calcTotalStatValue(statName: string){ //FIXME: Fix this with the new resistances
   if (this[`${statName}`]){
     totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
   }
-
-  //If we're checking for resistances on equipment, make sure we include the base enemy resistance stat
-  if (statName.includes('Resist')){
+  
+  //If we're checking for resistances, make sure we include the base resistance stat for elemental resist
+  if (statName !== 'BludgeoningDamageResistance' && statName !== 'SlashingDamageResistance' && statName !== 'PiercingDamageResistance'){
+    this.statusEffectResistances.forEach((resistance) => {
+      if (resistance.constructor.name === statName){
+        totalStatValue += resistance.resistance;
+      }
+    });
     totalStatValue += this.resistance;
+  } else {
+    //For calculating damageResistance and not elemental, add in the base defense stat
+      this.damageResistances.forEach((resistance) => {
+        if (resistance.constructor.name === statName){
+          totalStatValue += resistance.resistance;
+        }
+      });
+      totalStatValue += this.defense;
   }
-
+  
   // console.log(statName + ' ' + totalStatValue);
   return totalStatValue;
 }
@@ -116,7 +129,7 @@ calcTotalStatValue(statName: string){ //FIXME: Fix this with the new resistances
    * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
    * and calculates to see if that effect has been resisted or not. Returns true/false
    ****************************************************************************************/
-  calcEffectResistance(resistance: number): boolean{ //TODO: Next up, Effect resistance, and resistances in general simply prevent status ailments and do nothing for damage reduction for specific elements. Maybe use this same calculation for damage reduction as well? Use the % like armor does instead of the rand number to see if it gets applied or not like we're currently doing (but keep the random number because it's still a good way of prevention)
+  calcEffectResistance(resistance: number): boolean{
     let val = ((resistance / 2) / 150) * 100;
     if (_.random(1, 100) < val){
       return true;
@@ -128,7 +141,7 @@ calcTotalStatValue(statName: string){ //FIXME: Fix this with the new resistances
    * Calculate Base Attack Damage - Calculates the base attack damage based on the enemy's
    * strength stat
    ****************************************************************************************/
-    calcBaseAttackDamage(): number{
+    calcBaseAttackDamage(): number{ //TODO: Next up2, also make this work with damage reductions from player equipment like the player model
       //Damage is a random number between player min attack and attack
       let dam = (this.calcTotalStatValue('strength') / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 

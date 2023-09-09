@@ -80,12 +80,7 @@ export class Player {
       if (this[`${statName}`]){
         totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
       }
-
-      //If we're checking for resistances on equipment, make sure we include the base player resistance stat
-      if (statName.includes('Resist')){
-        totalStatValue += this.resistance;
-      }
-
+      
       //check for equipment stats
       //If the equipped item is equipped to the right character,
       //and if it has the stat we're looking for, add it to the total
@@ -95,25 +90,31 @@ export class Player {
             totalStatValue += equipment[`${statName}`];
           }
 
-          if (statName.includes('Resistance')){
+
+          if (statName !== 'BludgeoningDamageResistance' && statName !== 'SlashingDamageResistance' && statName !== 'PiercingDamageResistance'){
             equipment.statusEffectResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
-                totalStatValue += resistance.resistance;
+                totalStatValue += resistance.resistance;                
               }
             });
-          }
-
-          if (statName.includes('DamageResistance')){
+            totalStatValue += this.resistance;
+          } else {
             equipment.damageResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
                 totalStatValue += resistance.resistance;
               }
             });
+            //If we're looking for any non-elemental damage resistance and don't have any specific resistances,
+            //tally up any defense from equipment and use that
+            totalStatValue += this.defense;
+            if (equipment['defense']){
+              totalStatValue += equipment['defense'];
+            }
           }
         }
       });
 
-      console.log(statName + ' ' + totalStatValue);
+      // console.log(statName + ' ' + totalStatValue);
       return totalStatValue;
     }
 
