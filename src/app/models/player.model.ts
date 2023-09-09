@@ -95,7 +95,7 @@ export class Player {
             totalStatValue += equipment[`${statName}`];
           }
 
-          if (statName.includes('Resist')){ //FIXME: This? Will resistance.constructor.name match and work?
+          if (statName.includes('Resistance')){
             equipment.statusEffectResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
                 totalStatValue += resistance.resistance;
@@ -103,7 +103,7 @@ export class Player {
             });
           }
 
-          if (statName.includes('Damage')){
+          if (statName.includes('DamageResistance')){
             equipment.damageResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
                 totalStatValue += resistance.resistance;
@@ -113,7 +113,7 @@ export class Player {
         }
       });
 
-      // console.log(statName + ' ' + totalStatValue);
+      console.log(statName + ' ' + totalStatValue);
       return totalStatValue;
     }
 
@@ -210,7 +210,7 @@ export class Player {
 
       //Prevent attacks from doing 0 damage, limiting it to at least 1
       if (damageAfterReduction <= 0){damageAfterReduction = 1;}
-            
+
       return damageAfterReduction;
     }
 

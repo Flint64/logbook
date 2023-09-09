@@ -100,7 +100,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    }   
   }
   
-  ngOnInit(): void {    
+  ngOnInit(): void {
     //Converts the enemy list into actual Enemy objects
     let convertedEnemyList: Enemy[] = enemies.map(enemyData => new Enemy(enemyData));
     console.log(convertedEnemyList);
