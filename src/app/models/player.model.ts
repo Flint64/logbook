@@ -1,5 +1,3 @@
-import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
-import { ConsumableItem } from "./consumableItem.model";
 import { EquippableItem } from "./equipment/equippableItem.model";
 import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
@@ -178,9 +176,6 @@ export class Player {
             let reductionPercent = (((totalEnemyDamageResistance)/2)/150);
             reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
             elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-            // console.log(totalEnemyDamageResistance + ' Total Enemy elemental resistance')
-            // console.log(reductionPercent*100 + '% elem reduction');
-            // console.log(e.damage+ ' elem damage before reduction')
 
           //Physical damage reduction
           } else {
@@ -191,9 +186,6 @@ export class Player {
             let reductionPercent = totalEnemyDamageResistance / (totalEnemyDamageResistance + e.damage * 3);
             reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
             physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-            // console.log(totalEnemyDamageResistance + ' Total enemy Physical armor')
-            // console.log(reductionPercent * 100 + '% phys reduction');
-            // console.log(e.damage+ ' phys damage before reduction')
           }
 
         } else {
@@ -203,9 +195,6 @@ export class Player {
             let reductionPercent = (((baseResistance)/2)/150);
             reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
             noMatchingElementalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-            // console.log(baseResistance + ' BASE enemy elemental resistance')
-            // console.log(reductionPercent*100 + '% BASE elem reduction');
-            // console.log(e.damage + ' BASE elem damage before reduction')
 
           //Handles no matching PHYSICAL resistances, so base armor is all we use
           } else {
@@ -213,9 +202,6 @@ export class Player {
             let reductionPercent = baseDefense / (baseDefense + e.damage * 3);
               reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
               noMatchingPhysicalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-              // console.log(baseDefense + ' Base enemy armor')
-              // console.log(reductionPercent * 100 + '% other reduction');
-              // console.log(e.damage+ ' Other damage before reduction')
           }
         }
       });
@@ -224,13 +210,7 @@ export class Player {
 
       //Prevent attacks from doing 0 damage, limiting it to at least 1
       if (damageAfterReduction <= 0){damageAfterReduction = 1;}
-      
-      // console.log(damage + ' damage before reduction')
-      // console.log(physicalDamageAfterReduction + ' phys after reduction');
-      // console.log(elementalDamageAfterReduction + ' elem after reduction');
-      // console.log(noMatchingPhysicalReduction + ' Other damage after reduction');
-      // console.log(damageAfterReduction + ' total after reduction');
-      
+            
       return damageAfterReduction;
     }
 
