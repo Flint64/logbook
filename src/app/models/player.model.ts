@@ -95,9 +95,9 @@ export class Player {
             equipment.statusEffectResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){
                 totalStatValue += resistance.resistance;
+                totalStatValue += this.resistance;
               }
             });
-            totalStatValue += this.resistance;
           } else {
             equipment.damageResistances.forEach((resistance) => {
               if (resistance.constructor.name === statName){

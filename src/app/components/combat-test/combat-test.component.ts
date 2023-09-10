@@ -188,11 +188,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
     this.startCombat(true);
-    this.stopATB();
+    this.stopATB();    
 
-    // console.log(convertedEnemyList[5].calcTotalStatValue('BludgeoningDamageResistance'));
-    console.log(this.combatService.party.members[0].calcTotalStatValue('BludgeoningDamageResistance', this.combatService.party.inventory));
-    
+    console.log(this.combatService.party.members[0].calcTotalStatValue('defense', this.combatService.party.inventory));
+    // console.log(this.combatService.party.members[0]);
   }
 
   ngAfterViewInit(): void {

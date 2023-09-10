@@ -108,9 +108,9 @@ calcTotalStatValue(statName: string){
     this.statusEffectResistances.forEach((resistance) => {
       if (resistance.constructor.name === statName){
         totalStatValue += resistance.resistance;
+        totalStatValue += this.resistance;
       }
     });
-    totalStatValue += this.resistance;
   } else {
     //For calculating damageResistance and not elemental, add in the base defense stat
       this.damageResistances.forEach((resistance) => {
@@ -141,7 +141,7 @@ calcTotalStatValue(statName: string){
    * Calculate Base Attack Damage - Calculates the base attack damage based on the enemy's
    * strength stat
    ****************************************************************************************/
-    calcBaseAttackDamage(): number{ //TODO: Next up2, also make this work with damage reductions from player equipment like the player model
+    calcBaseAttackDamage(): number{
       //Damage is a random number between player min attack and attack
       let dam = (this.calcTotalStatValue('strength') / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
@@ -165,7 +165,6 @@ calcTotalStatValue(statName: string){
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
-    //TODO: Make this work like the playerModel version, to calculate split damages and reductions based on defense/elemental resistances
     calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
       let targetDefense = playerTarget.calcTotalStatValue('defense', inventory);
       let reductionPercent = targetDefense/(targetDefense + 3 * damage);
