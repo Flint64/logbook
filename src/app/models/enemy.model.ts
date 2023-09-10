@@ -165,7 +165,7 @@ calcTotalStatValue(statName: string){
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
+    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{ //TODO: Make this match the playerModel's version for damage reduction
       let targetDefense = playerTarget.calcTotalStatValue('defense', inventory);
       let reductionPercent = targetDefense/(targetDefense + 3 * damage);
       let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));

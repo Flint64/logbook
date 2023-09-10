@@ -63,6 +63,35 @@ export const chestplates: Chestplate[] = [
         statusEffectResistances: [],        
         damageResistances: [],
         damageTypes: []
+    },
+
+    {
+        name: 'TEST',
+        equippedBy: null,
+        description: null,
+        health: 0,
+        strength: 0,
+        defense: 20,
+        speed: 10,
+        mana: 0,
+        intelligence: 3,
+        statusEffectResistances: [
+            new PoisonResistance({resistance: 25}),
+            new BurnResistance({resistance: 30}),
+            new ShockResistance({resistance: 35})
+        ],
+        damageResistances: [
+            new BludgeoningDamageResistance({resistance: 15, elemental: false}),
+            new FireDamageResistance({resistance: 15, elemental: true}),
+            new SlashingDamageResistance({resistance: 15, elemental: false}),
+            new PoisonDamageResistance({resistance: 15, elemental: true})
+        ],
+        damageTypes: [
+            new FireDamage({percent: 10, elemental: true}),
+            new ShockDamage({percent: 12, elemental: true}),
+            new PoisonDamage({percent: 14, elemental: true}),
+            new PiercingDamage({percent: 64, elemental: false})
+        ]
     }
 ];
 
@@ -70,6 +99,25 @@ export const chestplates: Chestplate[] = [
  * Pants
  ****************************************************************************************/
 export const pants: Pants[] = [
+    {
+        name: 'Fancy Pants',
+        equippedBy: null,
+        description: null,
+        health: 0,
+        defense: 5,
+        speed: 0,
+        mana: 0,
+        intelligence: 0,
+        statusEffectResistances: [
+            new PoisonResistance({resistance: 25}),
+        ],
+        damageResistances: [
+            new SlashingDamageResistance({resistance: 15, elemental: false}),
+        ],
+        damageTypes: [
+            new FireDamage({percent: 10, elemental: true}),
+        ]
+    }
 ];
 
 /****************************************************************************************
@@ -118,7 +166,7 @@ export const weapons: Weapon[] = [
         crit: 3,
         statusEffectResistances: [],
         damageTypes: [
-            new BludgeoningDamage({percent: 100})
+            new BludgeoningDamage({percent: 100, elemental: false})
         ],
         damageResistances: []
     },
@@ -137,8 +185,8 @@ export const weapons: Weapon[] = [
         crit: 5,
         statusEffectResistances: [],
         damageTypes: [
-            new SlashingDamage({percent: 80}),
-            new PiercingDamage({percent: 20})
+            new SlashingDamage({percent: 80, elemental: false}),
+            new PiercingDamage({percent: 20, elemental: false})
         ],
         damageResistances: []
     },
@@ -159,7 +207,7 @@ export const weapons: Weapon[] = [
             new PoisonResistance({resistance: 5})
         ],
         damageTypes: [
-            new BludgeoningDamage({percent: 100})
+            new BludgeoningDamage({percent: 100, elemental: false})
         ],
         damageResistances: []
     },
@@ -181,11 +229,11 @@ export const weapons: Weapon[] = [
         ],
 
         damageTypes: [
-            new FireDamage({percent: 60}),
-            new BludgeoningDamage({percent: 40})
+            new FireDamage({percent: 60, elemental: true}),
+            new BludgeoningDamage({percent: 40, elemental: false})
         ],
         damageResistances: [
-            new FireDamageResistance({resistance: 30}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
+            new FireDamageResistance({resistance: 30, elemental: true}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
         ]
     }
 ];

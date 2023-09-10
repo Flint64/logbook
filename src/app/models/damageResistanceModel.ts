@@ -17,7 +17,8 @@ export class DamageResistance {
     constructor(data: Partial<DamageResistance>) {
         Object.assign(this, data);
       }
-    resistance: number
+    resistance: number;
+    elemental: boolean;
 }
 
 export class BludgeoningDamageResistance extends DamageResistance {

@@ -22,8 +22,8 @@ export const enemies = [
       luck: 2,
       resistance: 10,
       damageTypes: [
-        new SlashingDamage({percent: 80}),
-        new PiercingDamage({percent: 20})
+        new SlashingDamage({percent: 80, elemental: false}),
+        new PiercingDamage({percent: 20, elemental: false})
       ],
       effects: [],
       turnCount: 0,
@@ -43,7 +43,7 @@ export const enemies = [
       luck: 2,
       resistance: 10,
       damageTypes: [
-        new BludgeoningDamage({percent: 100})
+        new BludgeoningDamage({percent: 100, elemental: false})
       ],
       effects: [],
       turnCount: 0,
@@ -63,7 +63,7 @@ export const enemies = [
       luck: 2,
       resistance: 10,
       damageTypes: [
-        new BludgeoningDamage({percent: 100})
+        new BludgeoningDamage({percent: 100, elemental: false})
       ],
       effects: [],
       turnCount: 0,
@@ -83,11 +83,11 @@ export const enemies = [
       luck: 2,
       resistance: 10,
       damageTypes: [
-        new SlashingDamage({percent: 80}),
-        new PiercingDamage({percent: 20})
+        new SlashingDamage({percent: 80, elemental: false}),
+        new PiercingDamage({percent: 20, elemental: false})
       ],
       damageResistances: [
-        new SlashingDamageResistance({resistance: 2})
+        new SlashingDamageResistance({resistance: 2, elemental: false})
       ],
       effects: [],
       turnCount: 0,
@@ -107,10 +107,10 @@ export const enemies = [
       luck: 2,
       resistance: 10,
       damageTypes: [
-        new BludgeoningDamage({percent: 100})
+        new BludgeoningDamage({percent: 100, elemental: false})
       ],
       damageResistances: [
-        new BludgeoningDamageResistance({resistance: 10}),
+        new BludgeoningDamageResistance({resistance: 10, elemental: false}),
       ],
       effects: [],
       turnCount: 0,
@@ -130,12 +130,12 @@ export const enemies = [
       luck: 5,
       resistance: 40,
       damageTypes: [
-        new SlashingDamage({percent: 40}),
-        new FireDamage({percent: 60})
+        new SlashingDamage({percent: 40, elemental: false}),
+        new FireDamage({percent: 60, elemental: true})
       ],
       damageResistances: [
-        new FireDamageResistance({resistance: 50}),
-        new BludgeoningDamageResistance({resistance: 6})
+        new FireDamageResistance({resistance: 50, elemental: true}),
+        new BludgeoningDamageResistance({resistance: 6, elemental: false})
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50})

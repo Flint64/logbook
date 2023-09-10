@@ -146,6 +146,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.party.inventory[6].equippedBy = this.combatService.party.members[1]; //Luke, Shortsword
     this.combatService.party.inventory[7].equippedBy = this.combatService.party.members[2]; //Max, Simple Mace
     this.combatService.party.inventory[8].equippedBy = this.combatService.party.members[0]; //Gort, Bone Phoenix
+    // this.combatService.party.inventory[3].equippedBy = this.combatService.party.members[0]; //Gort, TEST
     console.log(this.combatService.party.inventory);
     
     this.enemyForm = new FormGroup({
@@ -190,7 +191,10 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.startCombat(true);
     this.stopATB();    
 
-    console.log(this.combatService.party.members[0].calcTotalStatValue('defense', this.combatService.party.inventory));
+    // this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Fancy Pants
+    // this.combatService.party.members[0].calcTotalStatValue('health', this.combatService.party.inventory);
+    // this.combatService.party.members[0].calcTotalStatValue('defense', this.combatService.party.inventory);
+    // this.combatService.party.members[0].calcTotalStatValue('resistance', this.combatService.party.inventory);
     // console.log(this.combatService.party.members[0]);
   }
 

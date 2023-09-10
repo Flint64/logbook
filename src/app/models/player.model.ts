@@ -4,6 +4,7 @@ import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from "./enemy.model";
 import { Weapon } from "./equipment/weaponModel";
+import { Trinket } from "./equipment/trinketModel";
 
 export class Player {
     constructor(){}
@@ -45,9 +46,10 @@ export class Player {
    * But equipment would have to search through all equipped items to see if there are any 
    * that match the search term and add them all up.
    ****************************************************************************************/
-    calcTotalStatValue(statName: string, inventory: EquippableItem[]){
+    calcTotalStatValue(statName: string, inventory: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
       let totalStatValue = 0;
+      let counter = count;
       
       if (effect){
         let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
@@ -72,45 +74,51 @@ export class Player {
         totalStatValue += effect.modifier;
       }
 
-      //Now that we've checked any active effects, check all equipped equipment
-      //Regardless of if totalStatValue has a value at this point, += the checked for value to get a baseline
-
-      //If we're checking for something like crit or attack, which don't exist on the player object,
-      //don't try to add that value here
+      //If the stat exists on the player object, like defense or resistance, include it here.
+      //Does NOT handle adding base resisance/defense to something like finding the total BludgeoningDamageResistance
+      //which should be equal to BludgeoningDamageResistance modifier + base defense
       if (this[`${statName}`]){
         totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
       }
-      
-      //check for equipment stats
-      //If the equipped item is equipped to the right character,
-      //and if it has the stat we're looking for, add it to the total
+
+      let equippedEquipment = [];
       inventory.forEach((equipment) => {
         if (equipment.equippedBy?.name === this.name){
+          equippedEquipment.push(equipment);
           if (equipment[`${statName}`]){
             totalStatValue += equipment[`${statName}`];
           }
+        }
+      });
 
+      equippedEquipment.forEach((equippedItem) => {
+        //If we found a matching DR, add it's value to the total
+        let searchDamageResistances = equippedItem.damageResistances.find(resistance => resistance.constructor.name === statName);
+        if (searchDamageResistances){ totalStatValue += searchDamageResistances.resistance; }
+        
+        //If the found damage resistance is elemental, add the player's resistance; otherwise, add defense
+        if (searchDamageResistances && searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
+          totalStatValue += this.calcTotalStatValue('resistance', inventory, true, counter++);
+        } else if (searchDamageResistances && !searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
+          totalStatValue += this.calcTotalStatValue('defense', inventory, true, counter++);
+        }
 
-          if (statName !== 'BludgeoningDamageResistance' && statName !== 'SlashingDamageResistance' && statName !== 'PiercingDamageResistance'){
-            equipment.statusEffectResistances.forEach((resistance) => {
-              if (resistance.constructor.name === statName){
-                totalStatValue += resistance.resistance;
-                totalStatValue += this.resistance;
-              }
-            });
-          } else {
-            equipment.damageResistances.forEach((resistance) => {
-              if (resistance.constructor.name === statName){
-                totalStatValue += resistance.resistance;
-              }
-            });
-            //If we're looking for any non-elemental damage resistance and don't have any specific resistances,
-            //tally up any defense from equipment and use that
-            totalStatValue += this.defense;
-            if (equipment['defense']){
-              totalStatValue += equipment['defense'];
-            }
-          }
+        //Now, search through any equipped item's statusEffectResistances. Any found items have the player's base resistance added
+        let searchStatusResistances = equippedItem.statusEffectResistances.find(statusResist => statusResist.constructor.name === statName);
+        if (searchStatusResistances){ totalStatValue += searchStatusResistances.resistance; }
+        if (searchStatusResistances && stopRecursion === false && counter < 1){
+          totalStatValue += this.calcTotalStatValue('resistance', inventory, true, counter++);
+        }
+        
+        //Finally, search through any equipped item's damageTypes for a total percentage of any given type
+        //Does NOT include any extra Trinket damageType percentages, as those are included as +% damage
+        //added to the split. For example, a trinket with 10% fire damage, after the damage has been calculated
+        //and split between the damage type(s), any matching trinket percentages go to that. So
+        //10 damage 60/40 fire/bludgeoning, +10% trinket fire damage, = 10% of 6 = 0.6 rounded 1 so the end result
+        //is 7/4 fire/bludgeoning damage instead of 6/4.
+        if (!(equippedItem instanceof Trinket)){
+          let searchDamageTypes = equippedItem.damageTypes.find(damageType => damageType.constructor.name === statName);
+          if (searchDamageTypes){ totalStatValue += searchDamageTypes.percent; }
         }
       });
 

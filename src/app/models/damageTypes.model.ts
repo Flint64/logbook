@@ -3,6 +3,7 @@ export class DamageTypes {
         Object.assign(this, data);
       }
     percent: number
+    elemental: boolean
 }
 
 export class BludgeoningDamage extends DamageTypes {
