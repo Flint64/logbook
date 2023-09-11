@@ -173,6 +173,10 @@ export class Player {
    * enemy base resistance. The calculation for that is the same as determining whether or
    * not a status effect is applied, except the % chance is damage reduction instead of
    * status resist percent.
+   * 
+   * Any split physical damage is calculated individually; So 80/20 slashing/piercing damage
+   * for 10 total, so 8/2, is deducted based on slashing/piercing resistance + base defense.
+   * If no specific defense, base defense is instead used.
    ****************************************************************************************/
     calcDamageReduction(damage: number, enemyTarget: Enemy, inventory: EquippableItem[]): number{
       let physicalDamageAfterReduction = 0;
@@ -191,9 +195,7 @@ export class Player {
 
       let enemyPhysDR = null;
       let enemyElemDR = null;
-      let totalDamage = 0;
       playerDamageTypes.forEach((e) => {
-        totalDamage += e.damage;
         if (e.elemental){
           enemyElemDR = enemyTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental);
           let reductionPercent = (((enemyElemDR)/2)/150);
