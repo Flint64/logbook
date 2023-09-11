@@ -90,7 +90,7 @@ export class CombatService {
       switch(target.effects[i].name){
 
         //Currently does x% of health damage based on its modifier. Round to prevent decimals
-        case 'poison':
+        case 'Poison':
             target.health -= Math.round((target.effects[i].modifier / 100) * target.maxHealth);
             if (Math.round((target.effects[i].modifier / 100) * target.maxHealth) <= 0){
               //Updated to prevent poison from killing
@@ -100,7 +100,7 @@ export class CombatService {
             }
         break;
         //Currently does flat damage equal to the modifier
-        case 'burn':
+        case 'Burn':
           target.health -= (target.effects[i].modifier);
         break;
         case 'health':

@@ -4,6 +4,7 @@ import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Player } from "./player.model";
 import { StatusEffectResistance } from "./statusEffectResistanceModel";
+import { EquippableItem } from "./equipment/equippableItem.model";
 
 export class Enemy {
     
@@ -71,9 +72,10 @@ split.forEach((e, index) => {
    * and returns the total value.
    * Effects are one unique effect per enemy, so checking once is fine. 
    ****************************************************************************************/
-calcTotalStatValue(statName: string){
+calcTotalStatValue(statName: string, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
   let effect: Effect = this.effects.find(({ name }) => name === statName);
   let totalStatValue = 0;
+  let counter = count;
   
   if (effect){
     let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
@@ -102,24 +104,27 @@ calcTotalStatValue(statName: string){
   if (this[`${statName}`]){
     totalStatValue += this[`${statName}`]; //equal to base + effect modifier here
   }
-  
-  //If we're checking for resistances, make sure we include the base resistance stat for elemental resist
-  if (statName !== 'BludgeoningDamageResistance' && statName !== 'SlashingDamageResistance' && statName !== 'PiercingDamageResistance'){
-    this.statusEffectResistances.forEach((resistance) => {
-      if (resistance.constructor.name === statName){
-        totalStatValue += resistance.resistance;
-        totalStatValue += this.resistance;
-      }
-    });
-  } else {
-    //For calculating damageResistance and not elemental, add in the base defense stat
-      this.damageResistances.forEach((resistance) => {
-        if (resistance.constructor.name === statName){
-          totalStatValue += resistance.resistance;
-        }
-      });
-      totalStatValue += this.defense;
+
+  //If we found a matching DR, add it's value to the total
+  let searchDamageResistances = this.damageResistances.find(resistance => resistance.constructor.name === statName);
+  if (searchDamageResistances){ totalStatValue += searchDamageResistances.resistance; }
+
+  //If the found damage resistance is elemental, add the player's resistance; otherwise, add defense
+  if (searchDamageResistances && searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
+    totalStatValue += this.calcTotalStatValue('resistance', null, true, counter++);
+  } else if (searchDamageResistances && !searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
+    totalStatValue += this.calcTotalStatValue('defense', null, true, counter++);
   }
+
+  //Now, search through any equipped item's statusEffectResistances. Any found items have the player's base resistance added
+  let searchStatusResistances = this.statusEffectResistances.find(statusResist => statusResist.constructor.name === statName);
+  if (searchStatusResistances){ totalStatValue += searchStatusResistances.resistance; }
+  if (searchStatusResistances && stopRecursion === false && counter < 1){
+    totalStatValue += this.calcTotalStatValue('resistance', null, true, counter++);
+  }
+
+  let searchDamageTypes = this.damageTypes.find(damageType => damageType.constructor.name === statName);
+  if (searchDamageTypes){ totalStatValue += searchDamageTypes.percent; }
   
   // console.log(statName + ' ' + totalStatValue);
   return totalStatValue;
@@ -165,7 +170,7 @@ calcTotalStatValue(statName: string){
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{ //TODO: Make this match the playerModel's version for damage reduction
+    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{ //TODO: Next up, Make this match the playerModel's version for damage reduction
       let targetDefense = playerTarget.calcTotalStatValue('defense', inventory);
       let reductionPercent = targetDefense/(targetDefense + 3 * damage);
       let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));

@@ -116,6 +116,12 @@ export class Player {
         //and split between the damage type(s), any matching trinket percentages go to that. So
         //10 damage 60/40 fire/bludgeoning, +10% trinket fire damage, = 10% of 6 = 0.6 rounded 1 so the end result
         //is 7/4 fire/bludgeoning damage instead of 6/4.
+
+        //TODO: In calcBaseDamage, make sure trinkets are searched through and any extra damage is included
+        //so we can calculate the above correctly
+
+        //TODO: Next up, make the enemyModel calcTotalStatValue function similarly to this minus the equipment portions. Then fix calcDamageReduction for enemies.
+        //And maybe look into modifying the player's current calcDamageReduction; if calcTotalStatValue works as intended, it may be able to be simplified.
         if (!(equippedItem instanceof Trinket)){
           let searchDamageTypes = equippedItem.damageTypes.find(damageType => damageType.constructor.name === statName);
           if (searchDamageTypes){ totalStatValue += searchDamageTypes.percent; }

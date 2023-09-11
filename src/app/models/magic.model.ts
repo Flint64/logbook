@@ -32,6 +32,14 @@ export class Magic {
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
      ******************************************************************************************************/
     private removeDuplicateEffects(target: Player | Enemy){
+
+        //For ANY effect with an instant duration / null, remove it immediately or else it gets duplicated twice
+        for (let i = target.effects.length - 1; i >= 0; i--){
+            if (!target.effects[i].duration){
+                target.effects.splice(i, 1);
+            }
+        }
+        
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -87,7 +95,7 @@ export class Magic {
      ******************************************************************************************************/
     //TODO: Add spell resistances
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
-    //TODO: Anywhere effects are added (currently here and in the consumableItem model) take in to account effect resistances, and allow them to be resisted
+    //TODO: Anywhere effects are added take in to account effect resistances, and allow them to be resisted
     //TODO: Elemental damage resistance from spells
     castSpell(caster: Player, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
         
@@ -133,6 +141,13 @@ export class Magic {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
                 spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name, inventory);
                 caster[effect.name] = caster.calcTotalStatValue(effect.name, inventory);
+            }
+
+            //For ANY effect with an instant duration / null, remove it immediately or else it gets duplicated twice
+            for (let i = spellTarget.effects.length - 1; i >= 0; i--){
+                if (spellTarget.effects[i].duration === null){
+                    spellTarget.effects.splice(i, 1);
+                }
             }
             
         });

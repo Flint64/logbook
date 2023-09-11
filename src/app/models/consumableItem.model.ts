@@ -33,12 +33,21 @@ export class ConsumableItem {
         
         //Push a copy of the effect to prevent pass by reference from changing the values in the consumableItem object
         target.effects.push({...effect});
+        // console.log(target.effects);
     }
 
     /******************************************************************************************************
      * Remove Duplicate Effects - Removes duplicate effects (removing the one with the lower duration)
      ******************************************************************************************************/
     private removeDuplicateEffects(target: Player | Enemy){
+
+        //For ANY effect with an instant duration / null, remove it immediately or else it gets duplicated twice
+        for (let i = target.effects.length - 1; i >= 0; i--){
+            if (!target.effects[i].duration){
+                target.effects.splice(i, 1);
+            }
+        }
+        
         // Compare each item to every other
         for (let i = 0; i < target.effects.length; i++) {
             for (let j = i + 1; j < target.effects.length; j++) {
@@ -57,7 +66,7 @@ export class ConsumableItem {
      * 'this' refers to the selected consumable. No need to pass in the party.consumables and numSelected.
      * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
-    //TODO: Anywhere effects are added (currently here and in the magic model) take in to account effect resistances, and allow them to be resisted
+    //TODO: In the magic model, take in to account effect resistances, and allow them to be resisted
     //TODO: Elemental damage resistance from any thrown vials
     //TODO: Vial accuracy. Because yes
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
@@ -70,8 +79,9 @@ export class ConsumableItem {
         //which are the names on equipment so that we can caluclate
         //the correct resistance values.
         this.effects.forEach((effect) => {
+            console.log(target.calcTotalStatValue(effect.name + 'Resistance', inventory));
             if (effect.canBeResisted){
-                if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resist', inventory))){
+                if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resistance', inventory))){
                     this.addConsumableEffect(target, effect);
                 } else {
                     effectWasResisted = true;
@@ -83,15 +93,16 @@ export class ConsumableItem {
             }
         });
 
-        this.removeDuplicateEffects(target);
-
+        
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect) => {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
                 target[effect.name] = target.calcTotalStatValue(effect.name, inventory);
             }
-        });
+        });        
         
+        this.removeDuplicateEffects(target);
+
         this.amount -= 1;
         appendText('*', true, 'playerText');
         appendText(player.name, false, 'playerText', 'underline');
@@ -122,7 +133,6 @@ export class ConsumableItem {
     
             }
         }
-        
     }
 
         

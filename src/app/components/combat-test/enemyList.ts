@@ -1,6 +1,6 @@
 import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
 import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
-import { BurnResistance } from "src/app/models/statusEffectResistanceModel";
+import { BurnResistance, PoisonResistance } from "src/app/models/statusEffectResistanceModel";
 
 // TODO: Will need different lists of enemies and bosses, probably separated by level or something
 
@@ -138,7 +138,8 @@ export const enemies = [
         new BludgeoningDamageResistance({resistance: 6, elemental: false})
       ],
       statusEffectResistances: [
-        new BurnResistance({resistance: 50})
+        new BurnResistance({resistance: 50}),
+        new PoisonResistance({resistance: 300})
       ],
       effects: [],
       turnCount: 0,

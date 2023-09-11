@@ -61,7 +61,7 @@ export const spells: MagicData[] = [
     textColor: 'greenText',
     effects: [
       {
-        name: 'poison',
+        name: 'Poison',
         duration: 4,
         modifier: 5,
         canBeResisted: true,
@@ -114,7 +114,7 @@ export const spells: MagicData[] = [
     effects: [
       {
         name: 'health',
-        duration: 0,
+        duration: null,
         modifier: 25,
         canBeResisted: false,
         self: false,
@@ -122,7 +122,7 @@ export const spells: MagicData[] = [
       },
       {
         name: 'health',
-        duration: 0,
+        duration: null,
         modifier: -15,
         canBeResisted: false,
         self: true,

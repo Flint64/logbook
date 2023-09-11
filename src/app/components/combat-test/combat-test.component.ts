@@ -191,6 +191,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.startCombat(true);
     this.stopATB();    
 
+    // console.log(convertedEnemyList[5].calcTotalStatValue('PoisonResistance'));
     // this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Fancy Pants
     // this.combatService.party.members[0].calcTotalStatValue('health', this.combatService.party.inventory);
     // this.combatService.party.members[0].calcTotalStatValue('defense', this.combatService.party.inventory);
@@ -491,6 +492,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     to be selected before moving on and ending your turn.
   */
   this.selectingSpellOrConsumableTarget = true;
+  this.selectedSpell = null;
   if (this.combatService.party.consumables[numSelected - 1].thrown){ this.consumableIsThrowable = true; }
   this.viewingInventoryOptions = false;
   this.selectedConsumableItem = this.combatService.party.consumables[numSelected - 1];
@@ -566,6 +568,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     to be selected before moving on and ending your turn.
   */
   this.selectingSpellOrConsumableTarget = true;
+  this.selectedConsumableItem = null;
   if (this.combatService.party.members[this.memberIndex].magic[numSelected - 1].canTargetEnemies){ this.spellCanTargetEnemies = true; }
   this.viewingMagicOptions = false;
   this.selectedSpell = this.combatService.party.members[this.memberIndex].magic[numSelected - 1];

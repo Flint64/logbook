@@ -86,7 +86,7 @@ interface ConsumableItemData {
     textColor: 'greenText',
     effects: [
       {
-        name: 'poison',
+        name: 'Poison',
         duration: 4,
         modifier: 5,
         canBeResisted: true,
@@ -207,11 +207,11 @@ interface ConsumableItemData {
   {
     name: 'Poison Resist',
     amount: 3,
-    thrown: false,
+    thrown: true,
     textColor: 'greenText',
     effects: [
       {
-        name: 'poisonResist',
+        name: 'PoisonResistance',
         duration: 4,
         modifier: 200,
         canBeResisted: false,
