@@ -72,7 +72,7 @@ split.forEach((e, index) => {
    * and returns the total value.
    * Effects are one unique effect per enemy, so checking once is fine. 
    ****************************************************************************************/
-calcTotalStatValue(statName: string, isElemental?: boolean, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
+calcTotalStatValue(statName: string, isElemental: boolean, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
   let effect: Effect = this.effects.find(({ name }) => name === statName);
   let totalStatValue = 0;
   let counter = count;
@@ -163,7 +163,7 @@ calcTotalStatValue(statName: string, isElemental?: boolean, inventory?: Equippab
    ****************************************************************************************/
     calcBaseAttackDamage(): number{
       //Damage is a random number between player min attack and attack
-      let dam = (this.calcTotalStatValue('strength') / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
+      let dam = (this.calcTotalStatValue('strength', null) / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
       //Damage variance, a random number from 1-5 more or less than the calculated value, minimum of 1
       let variance = _.random(1, 5);
@@ -185,20 +185,43 @@ calcTotalStatValue(statName: string, isElemental?: boolean, inventory?: Equippab
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{ //TODO: Next up, Make this match the playerModel's version for damage reduction
-      let targetDefense = playerTarget.calcTotalStatValue('defense', null, inventory);
-      let reductionPercent = targetDefense/(targetDefense + 3 * damage);
-      let damageAfterReduction = Math.floor(damage - (damage * reductionPercent));
-      if (damageAfterReduction <= 0){
-        damageAfterReduction = 1;
-      }
+    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
+      let physicalDamageAfterReduction = 0;
+      let elementalDamageAfterReduction = 0;
+
+      let enemyDamageTypes = [];
+      this.damageTypes.forEach((damageType) => {
+          let copy = _.cloneDeep(damageType);
+          copy.damage = Math.round((damageType.percent / 100) * damage);
+          enemyDamageTypes.push(copy);
+      });
+
+      let playerPhysDR = null;
+      let playerElemDR = null;
+      enemyDamageTypes.forEach((e) => {
+        if (e.elemental){
+          playerElemDR = playerTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental, inventory);
+          let reductionPercent = (((playerElemDR)/2)/150);
+          reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+          elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+        } else {
+          playerPhysDR = playerTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental, inventory);
+          let reductionPercent = playerPhysDR / (playerPhysDR + e.damage * 3);
+          reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
+          physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+        }
+      });
       
+      let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction;
+
+      //Prevent attacks from doing 0 damage, limiting it to at least 1
+      if (damageAfterReduction <= 0){damageAfterReduction = 1;}
+
       return damageAfterReduction;
     }
     
     /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
-   * //TODO: Defense stat
    * //TODO: Enemy Crits
    ****************************************************************************************/
   enemyAttack(enemy, party, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory){

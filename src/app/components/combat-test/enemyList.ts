@@ -112,6 +112,9 @@ export const enemies = [
       damageResistances: [
         new BludgeoningDamageResistance({resistance: 10, elemental: false}),
       ],
+      statusEffectResistances: [
+        new BurnResistance({resistance: 50}),
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0

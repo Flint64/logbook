@@ -46,7 +46,7 @@ export class Player {
    * But equipment would have to search through all equipped items to see if there are any 
    * that match the search term and add them all up.
    ****************************************************************************************/
-    calcTotalStatValue(statName: string, isElemental?, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
+    calcTotalStatValue(statName: string, isElemental, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
       let totalStatValue = 0;
       let counter = count;
@@ -116,11 +116,6 @@ export class Player {
         //and split between the damage type(s), any matching trinket percentages go to that. So
         //10 damage 60/40 fire/bludgeoning, +10% trinket fire damage, = 10% of 6 = 0.6 rounded 1 so the end result
         //is 7/4 fire/bludgeoning damage instead of 6/4.
-
-        //TODO: In calcBaseDamage, make sure trinkets are searched through and any extra damage is included
-        //so we can calculate the above correctly
-
-        //TODO: Fix calcDamageReduction for enemies.
         if (!(equippedItem instanceof Trinket)){
           let searchDamageTypes = equippedItem.damageTypes.find(damageType => damageType.constructor.name === statName);
           if (searchDamageTypes){ totalStatValue += searchDamageTypes.percent; }
@@ -192,7 +187,19 @@ export class Player {
             });
         }
       });
-
+      
+      //Search through any trinkets that have any damage types tied to them, and increase the respective player damage type by that percentage
+      inventory.forEach((item) => {
+        if (item.equippedBy?.name === this.name && (item instanceof Trinket)){
+          item.damageTypes.forEach((damageType) => {
+            let damageTypeMatchIndex = playerDamageTypes.findIndex(playerDamageType => playerDamageType.constructor.name === damageType.constructor.name);
+            if (damageTypeMatchIndex !== null || damageTypeMatchIndex !== undefined){
+              playerDamageTypes[damageTypeMatchIndex].damage = playerDamageTypes[damageTypeMatchIndex].damage = Math.round((playerDamageTypes[damageTypeMatchIndex].damage + (playerDamageTypes[damageTypeMatchIndex].damage * (damageType.percent / 100))));
+            }
+          });
+        }
+      });
+      
       let enemyPhysDR = null;
       let enemyElemDR = null;
       playerDamageTypes.forEach((e) => {

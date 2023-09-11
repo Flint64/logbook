@@ -233,7 +233,7 @@ export const weapons: Weapon[] = [
             new BludgeoningDamage({percent: 40, elemental: false})
         ],
         damageResistances: [
-            new FireDamageResistance({resistance: 30, elemental: true}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
+            new FireDamageResistance({resistance: 30, elemental: true}), //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
         ]
     }
 ];
@@ -242,4 +242,21 @@ export const weapons: Weapon[] = [
  * Trinkets
  ****************************************************************************************/
 export const trinkets: Trinket[] = [
+    {
+        name: 'Trinket',
+        equippedBy: null,
+        description: 'A test trinket',
+        health: null,
+        defense: null,
+        speed: null,
+        mana: null,
+        intelligence: null,
+        strength: null,
+        accuracy: null,
+        luck: null,
+        crit: null,
+        statusEffectResistances: [new BurnResistance({resistance: 30})],
+        damageTypes: [new FireDamage({percent: 10, elemental: true})],
+        damageResistances: [new FireDamageResistance({resistance: 30, elemental: true})]
+    }
 ];
