@@ -65,59 +65,59 @@ export const chestplates: Chestplate[] = [
         damageTypes: []
     },
 
-    {
-        name: 'TEST',
-        equippedBy: null,
-        description: null,
-        health: 0,
-        strength: 0,
-        defense: 20,
-        speed: 10,
-        mana: 0,
-        intelligence: 3,
-        statusEffectResistances: [
-            new PoisonResistance({resistance: 25}),
-            new BurnResistance({resistance: 30}),
-            new ShockResistance({resistance: 35})
-        ],
-        damageResistances: [
-            new BludgeoningDamageResistance({resistance: 15, elemental: false}),
-            new FireDamageResistance({resistance: 15, elemental: true}),
-            new SlashingDamageResistance({resistance: 15, elemental: false}),
-            new PoisonDamageResistance({resistance: 15, elemental: true})
-        ],
-        damageTypes: [
-            new FireDamage({percent: 10, elemental: true}),
-            new ShockDamage({percent: 12, elemental: true}),
-            new PoisonDamage({percent: 14, elemental: true}),
-            new PiercingDamage({percent: 64, elemental: false})
-        ]
-    }
+    // {
+    //     name: 'TEST',
+    //     equippedBy: null,
+    //     description: null,
+    //     health: 0,
+    //     strength: 0,
+    //     defense: 20,
+    //     speed: 10,
+    //     mana: 0,
+    //     intelligence: 3,
+    //     statusEffectResistances: [
+    //         new PoisonResistance({resistance: 25}),
+    //         new BurnResistance({resistance: 30}),
+    //         new ShockResistance({resistance: 35})
+    //     ],
+    //     damageResistances: [
+    //         new BludgeoningDamageResistance({resistance: 15, elemental: false}),
+    //         new FireDamageResistance({resistance: 15, elemental: true}),
+    //         new SlashingDamageResistance({resistance: 15, elemental: false}),
+    //         new PoisonDamageResistance({resistance: 15, elemental: true})
+    //     ],
+    //     damageTypes: [
+    //         new FireDamage({percent: 10, elemental: true}),
+    //         new ShockDamage({percent: 12, elemental: true}),
+    //         new PoisonDamage({percent: 14, elemental: true}),
+    //         new PiercingDamage({percent: 64, elemental: false})
+    //     ]
+    // }
 ];
 
 /****************************************************************************************
  * Pants
  ****************************************************************************************/
 export const pants: Pants[] = [
-    {
-        name: 'Fancy Pants',
-        equippedBy: null,
-        description: null,
-        health: 0,
-        defense: 5,
-        speed: 0,
-        mana: 0,
-        intelligence: 0,
-        statusEffectResistances: [
-            new PoisonResistance({resistance: 25}),
-        ],
-        damageResistances: [
-            new SlashingDamageResistance({resistance: 15, elemental: false}),
-        ],
-        damageTypes: [
-            new FireDamage({percent: 10, elemental: true}),
-        ]
-    }
+    // {
+    //     name: 'Fancy Pants',
+    //     equippedBy: null,
+    //     description: null,
+    //     health: 0,
+    //     defense: 5,
+    //     speed: 0,
+    //     mana: 0,
+    //     intelligence: 0,
+    //     statusEffectResistances: [
+    //         new PoisonResistance({resistance: 25}),
+    //     ],
+    //     damageResistances: [
+    //         new SlashingDamageResistance({resistance: 15, elemental: false}),
+    //     ],
+    //     damageTypes: [
+    //         new FireDamage({percent: 10, elemental: true}),
+    //     ]
+    // }
 ];
 
 /****************************************************************************************

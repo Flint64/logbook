@@ -75,7 +75,7 @@ export class Magic {
     private calcSpellDamage(spell: Magic, player: Player, inventory: EquippableItem[]): number{
         let spellDamage = 0;
         if (spell.power){
-            spellDamage = ((player.calcTotalStatValue('intelligence', inventory) / 2.5) * spell.power);
+            spellDamage = ((player.calcTotalStatValue('intelligence', null, inventory) / 2.5) * spell.power);
 
             //Damage variance equal  to a range between 1 and the spell's power
             let variance = _.random(1, spell.variance);
@@ -116,7 +116,7 @@ export class Magic {
         this.effects.forEach((effect) => {
 
             if (effect.canBeResisted){
-                if (!spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resist', inventory))){
+                if (!spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resist', null, inventory))){
                     if (effect.self){
                         this.addSpellEffect(caster, effect);
                     } else {
@@ -139,8 +139,8 @@ export class Magic {
             //Can check both caster & target safely, as this will only
             //affect them if the effect is present in their list.
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name, inventory);
-                caster[effect.name] = caster.calcTotalStatValue(effect.name, inventory);
+                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name, null, inventory);
+                caster[effect.name] = caster.calcTotalStatValue(effect.name, null, inventory);
             }
 
             //For ANY effect with an instant duration / null, remove it immediately or else it gets duplicated twice

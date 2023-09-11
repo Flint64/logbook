@@ -194,6 +194,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log(convertedEnemyList[5].calcTotalStatValue('PoisonResistance'));
     // this.combatService.party.inventory[5].equippedBy = this.combatService.party.members[0]; //Gort, Fancy Pants
     // this.combatService.party.members[0].calcTotalStatValue('health', this.combatService.party.inventory);
+    // console.log(this.combatService.party.members[0].calcTotalStatValue('strength', null, this.combatService.party.inventory));
     // this.combatService.party.members[0].calcTotalStatValue('defense', this.combatService.party.inventory);
     // this.combatService.party.members[0].calcTotalStatValue('resistance', this.combatService.party.inventory);
     // console.log(this.combatService.party.members[0]);
@@ -395,7 +396,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (member.ATB > 100){
           //Do nothing if ATB is greater than 100 to prevent the numbers from overflowing
         } else {
-          member.ATB += (member.calcTotalStatValue('speed', this.combatService.party.inventory)/100);
+          member.ATB += (member.calcTotalStatValue('speed', null, this.combatService.party.inventory)/100);
         }
       } else {
         //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already

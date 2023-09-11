@@ -104,10 +104,10 @@ export class CombatService {
           target.health -= (target.effects[i].modifier);
         break;
         case 'health':
-          target.health = target.calcTotalStatValue('health', this.party.inventory);
+          target.health = target.calcTotalStatValue('health', null, this.party.inventory);
         break;
         case 'mana':
-          target.health = target.calcTotalStatValue('mana', this.party.inventory);
+          target.health = target.calcTotalStatValue('mana', null, this.party.inventory);
         break;
       }
       

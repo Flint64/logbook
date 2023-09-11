@@ -79,9 +79,8 @@ export class ConsumableItem {
         //which are the names on equipment so that we can caluclate
         //the correct resistance values.
         this.effects.forEach((effect) => {
-            console.log(target.calcTotalStatValue(effect.name + 'Resistance', inventory));
             if (effect.canBeResisted){
-                if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resistance', inventory))){
+                if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resistance', null, inventory))){
                     this.addConsumableEffect(target, effect);
                 } else {
                     effectWasResisted = true;
@@ -97,7 +96,7 @@ export class ConsumableItem {
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect) => {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                target[effect.name] = target.calcTotalStatValue(effect.name, inventory);
+                target[effect.name] = target.calcTotalStatValue(effect.name, null, inventory);
             }
         });        
         

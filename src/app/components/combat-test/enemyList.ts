@@ -55,7 +55,7 @@ export const enemies = [
       health: 6,
       maxHealth: 6,
       strength: 3,
-      defense: 0,
+      defense: 3,
       speed: 70,
       mana: 0,
       maxMana: 0,
@@ -139,7 +139,7 @@ export const enemies = [
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),
-        new PoisonResistance({resistance: 300})
+        // new PoisonResistance({resistance: 300})
       ],
       effects: [],
       turnCount: 0,

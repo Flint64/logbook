@@ -46,7 +46,7 @@ export class Player {
    * But equipment would have to search through all equipped items to see if there are any 
    * that match the search term and add them all up.
    ****************************************************************************************/
-    calcTotalStatValue(statName: string, inventory: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
+    calcTotalStatValue(statName: string, isElemental?, inventory?: EquippableItem[], stopRecursion: boolean = false, count: number = 0){
       let effect: Effect = this.effects.find(({ name }) => name === statName);
       let totalStatValue = 0;
       let counter = count;
@@ -98,16 +98,16 @@ export class Player {
         
         //If the found damage resistance is elemental, add the player's resistance; otherwise, add defense
         if (searchDamageResistances && searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
-          totalStatValue += this.calcTotalStatValue('resistance', inventory, true, counter++);
+          totalStatValue += this.calcTotalStatValue('resistance', null, inventory, true, counter++);
         } else if (searchDamageResistances && !searchDamageResistances?.elemental && stopRecursion === false && counter < 1){
-          totalStatValue += this.calcTotalStatValue('defense', inventory, true, counter++);
+          totalStatValue += this.calcTotalStatValue('defense', null, inventory, true, counter++);
         }
 
         //Now, search through any equipped item's statusEffectResistances. Any found items have the player's base resistance added
         let searchStatusResistances = equippedItem.statusEffectResistances.find(statusResist => statusResist.constructor.name === statName);
         if (searchStatusResistances){ totalStatValue += searchStatusResistances.resistance; }
         if (searchStatusResistances && stopRecursion === false && counter < 1){
-          totalStatValue += this.calcTotalStatValue('resistance', inventory, true, counter++);
+          totalStatValue += this.calcTotalStatValue('resistance', null, inventory, true, counter++);
         }
         
         //Finally, search through any equipped item's damageTypes for a total percentage of any given type
@@ -120,12 +120,27 @@ export class Player {
         //TODO: In calcBaseDamage, make sure trinkets are searched through and any extra damage is included
         //so we can calculate the above correctly
 
-        //TODO: Next up, make the enemyModel calcTotalStatValue function similarly to this minus the equipment portions. Then fix calcDamageReduction for enemies.
-        //And maybe look into modifying the player's current calcDamageReduction; if calcTotalStatValue works as intended, it may be able to be simplified.
+        //TODO: Fix calcDamageReduction for enemies.
         if (!(equippedItem instanceof Trinket)){
           let searchDamageTypes = equippedItem.damageTypes.find(damageType => damageType.constructor.name === statName);
           if (searchDamageTypes){ totalStatValue += searchDamageTypes.percent; }
         }
+
+      if (isElemental !== null){
+        //If we don't have a matching DR, and the damage is physical, return base defense
+        if (!searchDamageResistances && isElemental === true && stopRecursion === false && counter < 1 && !searchStatusResistances){
+          totalStatValue += this.calcTotalStatValue('resistance', null, inventory, true, counter++);
+
+        //If we don't have a matching DR, and the damage is elemental, return base resistance
+        } else if (!searchDamageResistances && isElemental === false && stopRecursion === false && counter < 1 && !searchStatusResistances){
+          totalStatValue += this.calcTotalStatValue('defense', null, inventory, true, counter++);
+
+        //If we don't have a matching StatusResistance, return base resistance
+        } else if (!searchStatusResistances && stopRecursion === false && counter < 1 && !searchDamageResistances){
+          totalStatValue += this.calcTotalStatValue('resistance', null, inventory, true, counter++);
+        }
+      }
+        
       });
 
       // console.log(statName + ' ' + totalStatValue);
@@ -162,8 +177,6 @@ export class Player {
     calcDamageReduction(damage: number, enemyTarget: Enemy, inventory: EquippableItem[]): number{
       let physicalDamageAfterReduction = 0;
       let elementalDamageAfterReduction = 0;
-      let noMatchingPhysicalReduction = 0;
-      let noMatchingElementalReduction = 0;
           
       let playerDamageTypes = [];
       inventory.forEach((item) => {
@@ -176,52 +189,25 @@ export class Player {
         }
       });
 
-      //For each damage type we hit the enemy with, check the enemy resistances to see if any match
-      //and if they do, calculate the damage reduction accordingly
+      let enemyPhysDR = null;
+      let enemyElemDR = null;
+      let totalDamage = 0;
       playerDamageTypes.forEach((e) => {
-        let enemyResistance = enemyTarget.damageResistances.find(resistance => resistance.constructor.name === e.constructor.name + 'Resistance');
-        if (enemyResistance){
-          let totalEnemyDamageResistance = 0;
-
-          let damageTypeName = enemyResistance.constructor.name.split(/(?=[A-Z])/)[0];
-          //Elemental damage reduction
-          if (damageTypeName !== 'Bludgeoning' && damageTypeName !== 'Slashing' && damageTypeName !== 'Piercing'){
-            totalEnemyDamageResistance += enemyResistance.resistance;
-            totalEnemyDamageResistance += enemyTarget.calcTotalStatValue('resistance');
-            let reductionPercent = (((totalEnemyDamageResistance)/2)/150);
-            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
-            elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-
-          //Physical damage reduction
-          } else {
-            totalEnemyDamageResistance += enemyResistance.resistance;
-            totalEnemyDamageResistance += enemyTarget.calcTotalStatValue('defense');
-
-            //standard defense damage reduction calculation
-            let reductionPercent = totalEnemyDamageResistance / (totalEnemyDamageResistance + e.damage * 3);
-            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
-            physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-          }
-
+        totalDamage += e.damage;
+        if (e.elemental){
+          enemyElemDR = enemyTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental);
+          let reductionPercent = (((enemyElemDR)/2)/150);
+          reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+          elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
         } else {
-          //Handles no matching ELEMENTAL resistances, so base resistances is all we use
-          if (e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Bludgeoning' && e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Slashing' && e.constructor.name.split(/(?=[A-Z])/)[0] !== 'Piercing'){
-            let baseResistance = enemyTarget.calcTotalStatValue('resistance');
-            let reductionPercent = (((baseResistance)/2)/150);
-            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
-            noMatchingElementalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-
-          //Handles no matching PHYSICAL resistances, so base armor is all we use
-          } else {
-            let baseDefense = enemyTarget.calcTotalStatValue('defense');
-            let reductionPercent = baseDefense / (baseDefense + e.damage * 3);
-              reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
-              noMatchingPhysicalReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-          }
+          enemyPhysDR = enemyTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental);
+          let reductionPercent = enemyPhysDR / (enemyPhysDR + e.damage * 3);
+          reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
+          physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
         }
       });
 
-      let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction + noMatchingPhysicalReduction + noMatchingElementalReduction;
+      let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction;
 
       //Prevent attacks from doing 0 damage, limiting it to at least 1
       if (damageAfterReduction <= 0){damageAfterReduction = 1;}
@@ -243,7 +229,7 @@ export class Player {
    * //TODO: Move variance from here to the weapon stat. Unless 7 is a good overall factor?
    ****************************************************************************************/
     private calcBaseAttackDamage(inventory: EquippableItem[]){
-      let dam = (this.calcTotalStatValue('strength', inventory) / 2) + this.calcTotalStatValue('attack', inventory);
+      let dam = (this.calcTotalStatValue('strength', null, inventory) / 2) + this.calcTotalStatValue('attack', null, inventory);
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
       let variance = _.random(1, 7);
@@ -265,7 +251,7 @@ export class Player {
    ****************************************************************************************/
     private isCriticalHit(playerTarget: Player, inventory: EquippableItem[]){
       //(Luck + Weapon Crit/accessory/armor)/2 out of 255
-      let critChance = Math.round((((this.calcTotalStatValue('luck', inventory) + this.calcTotalStatValue('crit', inventory)) / 2) / 255) * 100);
+      let critChance = Math.round((((this.calcTotalStatValue('luck', null, inventory) + this.calcTotalStatValue('crit', null, inventory)) / 2) / 255) * 100);
       if (_.random(1, 100) < critChance){
         return true;
       }
