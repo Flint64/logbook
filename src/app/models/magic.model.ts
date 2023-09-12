@@ -7,8 +7,7 @@ import { EquippableItem } from './equipment/equippableItem.model';
 import { DamageTypes } from './damageTypes.model';
 import { Trinket } from './equipment/trinketModel';
 
-//TODO: Spells need damage types & damage reduction
-//Do thrown consumables need this as well?
+//TODO: thrown consumables with elemental damages need damage reduction based on type
 
 @Injectable()
 export class Magic {
@@ -153,7 +152,6 @@ export class Magic {
      * well as the player
      ******************************************************************************************************/
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
-    //TODO: Elemental damage resistance from spells
     castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
         
         let spellDamage = this.calcSpellDamage(this, caster, inventory);
