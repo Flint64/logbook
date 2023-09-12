@@ -7,8 +7,6 @@ import { EquippableItem } from './equipment/equippableItem.model';
 import { DamageTypes } from './damageTypes.model';
 import { Trinket } from './equipment/trinketModel';
 
-//TODO: thrown consumables with elemental damages need damage reduction based on type
-
 @Injectable()
 export class Magic {
 

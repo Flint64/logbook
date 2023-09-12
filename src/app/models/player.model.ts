@@ -25,7 +25,7 @@ export class Player {
     //Speed = (Character's speed) + Accessory Bonuses
     speed: number = 200;
     mana: number = 33;
-    accuracy: number = 90;
+    accuracy: number = 80;
     luck: number = 5;
     canSelectEnemy: boolean = true;
     resistance: number = 10;
@@ -279,7 +279,7 @@ export class Player {
     if (playerTarget.ATB < 100 || intervalID === null){ return; }
     
     // Returns a random integer from 1-100:
-    if ((_.random(1, 100)) < playerTarget.accuracy){
+    if ((_.random(1, 100)) < playerTarget.calcTotalStatValue('accuracy', null, inventory)){
 
       //If we hit, check if the enemy evades the attack
       //TODO: Enemy evasion

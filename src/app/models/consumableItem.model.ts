@@ -1,6 +1,7 @@
 import { Effect } from "./effect.model";
 import { Player } from "./player.model";
 import { Enemy } from "./enemy.model";
+import _ from 'lodash';
 
 export class ConsumableItem {
 
@@ -67,11 +68,32 @@ export class ConsumableItem {
      * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
     //TODO: Elemental damage resistance from any thrown vials
-    //TODO: Vial accuracy. Because yes
+    //TODO: thrown consumables with elemental damages need damage reduction based on type?
+
+    
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+    //TODO: This whole thing needs a rework. Resisting effects should be its own function, accuracy should be outsourced as well, and the
+    //resultant display of what happened needs some work, maybe text stored in the object itself, split on spaces and applied somehow. It just needs to be cleaner.
 
         let effectWasResisted: boolean = false;
         let resistedEffect: Effect = null;
+        let appliedEffect: Effect = null;
+
+        //If we're throwing a vial on an enemy, calculate accuracy to see if the vial finds it's mark
+        //Use base accuracy instead of equipment total so that it's slightly lower
+        //If we miss the attack (greater than instead of less than) stop here and print the result
+        if (this.thrown && (target instanceof Enemy)){
+            if ((_.random(1, 100)) > player.accuracy){
+                this.amount -= 1;
+                appendText('*', true, 'playerText');
+                appendText(player.name, false, 'playerText', 'underline');
+                appendText('throws a', false);
+                appendText(this.name, false, this.textColor);
+                appendText(`at ${target.name}`, false);
+                appendText('and misses!', false)
+                return;
+            }
+        }
 
         //If the effect can be resisted, such as poison, burn, etc. then
         //grab the name + Resistance to get poisonResist, burnResist, etc.
@@ -81,6 +103,7 @@ export class ConsumableItem {
             if (effect.canBeResisted){
                 if (!target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resistance', null, inventory))){
                     this.addConsumableEffect(target, effect);
+                    appliedEffect = effect;
                 } else {
                     effectWasResisted = true;
                     resistedEffect = effect;
@@ -119,7 +142,7 @@ export class ConsumableItem {
             if (target instanceof Enemy){
                 appendText(`${target.name}`, true, 'crimsonText');
                 appendText('resisted the', false);
-                appendText(`${resistedEffect.name}`, false, this.textColor);
+                appendText(`${resistedEffect.name}`, false, this.textColor); //FIXME: If a potion/vial has multiple effects that can be resisted, only the last resisted one will be displayed because this isn't in a loop
                 appendText('effect!', false);
                 
             } else if (target instanceof Player){
@@ -128,6 +151,22 @@ export class ConsumableItem {
                 appendText('resisted the', false);
                 appendText(`${resistedEffect.name}`, false, this.textColor);
                 appendText('effect!', false);
+    
+            }
+        //If the effect is applied, also display the reuslt
+        } else {
+            if (target instanceof Enemy){
+                appendText(`${target.name}`, true, 'crimsonText');
+                appendText('is inflicted with', false);
+                appendText(`${appliedEffect.name}!`, false, this.textColor); //FIXME: If a potion/vial has multiple effects that can be resisted, only the last resisted one will be displayed because this isn't in a loop
+                // appendText('effect!', false);
+                
+            } else if (target instanceof Player){
+                appendText('*', true, 'playerText');
+                appendText(`${target.name}`, false, 'underline', 'playerText');
+                appendText('is inflicted', false);
+                appendText(`${appliedEffect.name}!`, false, this.textColor);
+                // appendText('effect!', false);
     
             }
         }
