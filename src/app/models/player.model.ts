@@ -189,6 +189,7 @@ export class Player {
       });
       
       //Search through any trinkets that have any damage types tied to them, and increase the respective player damage type by that percentage
+      //TODO: This same thing needs to be done for any spells of the correct type by the player to increase their elemental damage
       inventory.forEach((item) => {
         if (item.equippedBy?.name === this.name && (item instanceof Trinket)){
           item.damageTypes.forEach((damageType) => {

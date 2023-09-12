@@ -75,7 +75,7 @@ export class ConsumableItem {
         let resistedEffect: Effect = null;
 
         //If the effect can be resisted, such as poison, burn, etc. then
-        //grab the name + Resist to get poisonResist, burnResist, etc.
+        //grab the name + Resistance to get poisonResist, burnResist, etc.
         //which are the names on equipment so that we can caluclate
         //the correct resistance values.
         this.effects.forEach((effect) => {

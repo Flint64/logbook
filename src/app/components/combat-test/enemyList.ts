@@ -142,7 +142,7 @@ export const enemies = [
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),
-        // new PoisonResistance({resistance: 300})
+        new PoisonResistance({resistance: 300})
       ],
       effects: [],
       turnCount: 0,
