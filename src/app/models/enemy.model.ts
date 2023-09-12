@@ -25,6 +25,7 @@ export class Enemy {
         accuracy: number = null;
         luck: number = null;
         resistance: number = 10;
+        intelligence: number = 0;
         damageTypes: Array<DamageTypes> = [];
         damageResistances: Array<DamageResistance> = [];
         statusEffectResistances: Array<StatusEffectResistance> = [];

@@ -21,6 +21,7 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      intelligence: 0,
       damageTypes: [
         new SlashingDamage({percent: 80, elemental: false}),
         new PiercingDamage({percent: 20, elemental: false})
@@ -42,6 +43,7 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      intelligence: 0,
       damageTypes: [
         new BludgeoningDamage({percent: 100, elemental: false})
       ],
@@ -62,6 +64,7 @@ export const enemies = [
       accuracy: 50,
       luck: 2,
       resistance: 10,
+      intelligence: 0,
       damageTypes: [
         new BludgeoningDamage({percent: 100, elemental: false})
       ],
@@ -82,6 +85,7 @@ export const enemies = [
       accuracy: 60,
       luck: 2,
       resistance: 10,
+      intelligence: 11,
       damageTypes: [
         new SlashingDamage({percent: 80, elemental: false}),
         new PiercingDamage({percent: 20, elemental: false})
@@ -106,6 +110,7 @@ export const enemies = [
       accuracy: 50,
       luck: 2,
       resistance: 10,
+      intelligence: 0,
       damageTypes: [
         new BludgeoningDamage({percent: 100, elemental: false})
       ],
@@ -132,6 +137,7 @@ export const enemies = [
       accuracy: 65,
       luck: 5,
       resistance: 40,
+      intelligence: 10,
       damageTypes: [
         new SlashingDamage({percent: 40, elemental: false}),
         new FireDamage({percent: 60, elemental: true})

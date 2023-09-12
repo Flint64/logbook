@@ -1,3 +1,4 @@
+import { BludgeoningDamage, DamageTypes, FireDamage, IceDamage, PoisonDamage } from 'src/app/models/damageTypes.model';
 import { Effect } from 'src/app/models/effect.model';
 
 interface MagicData {
@@ -10,6 +11,7 @@ interface MagicData {
   canTargetParty: boolean;
   canTargetEnemies: boolean;
   textColor: string;
+  damageTypes: DamageTypes[]
   effects: Partial<Effect>[];
 }
 
@@ -24,9 +26,13 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'redText',
+    damageTypes: [
+      new FireDamage({percent: 80, elemental: true}),
+      new BludgeoningDamage({percent: 20, elemental: false})
+    ],
     effects: [
       {
-        name: 'burn',
+        name: 'Burn',
         duration: 4,
         modifier: 5,
         canBeResisted: true,
@@ -46,6 +52,9 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'lightBlueText',
+    damageTypes: [
+      new IceDamage({percent: 100, elemental: true})
+    ],
     effects: [],
   },
 
@@ -59,6 +68,9 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'greenText',
+    damageTypes: [
+      new PoisonDamage({percent: 100, elemental: true})
+    ],
     effects: [
       {
         name: 'Poison',
@@ -81,6 +93,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'redText',
+    damageTypes: [],
     effects: [
       {
         name: 'rage',
@@ -111,6 +124,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
+    damageTypes: [],
     effects: [
       {
         name: 'health',
@@ -141,6 +155,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
+    damageTypes: [],
     effects: [
       {
         name: 'health',

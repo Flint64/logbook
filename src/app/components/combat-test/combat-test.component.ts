@@ -179,6 +179,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       return new Magic({ ...spellData, effects: effects });
     });
 
+    // console.log(convertedSpells);
+
     //To start, give each party member one of the spells from the spell list
     this.combatService.party.members[0].magic.push(convertedSpells[0])
     this.combatService.party.members[0].magic.push(convertedSpells[3])
