@@ -164,7 +164,7 @@ export class ConsumableItem {
             } else if (target instanceof Player){
                 appendText('*', true, 'playerText');
                 appendText(`${target.name}`, false, 'underline', 'playerText');
-                appendText('is inflicted', false);
+                appendText('is inflicted with', false);
                 appendText(`${appliedEffect.name}!`, false, this.textColor);
                 // appendText('effect!', false);
     
