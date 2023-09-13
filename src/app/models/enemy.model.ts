@@ -82,6 +82,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     let maxValue = this['max' + effect.name.charAt(0).toUpperCase() + effect.name.slice(1)];
     if (statName === 'health' || statName === 'mana'){
       //If the effect is targeting health or mana and adding the value is over the max allowed value, return the max value instead
+
       if (effect.modifier + this[`${statName}`] >= maxValue){
         return maxValue;
       }
