@@ -69,6 +69,7 @@ export class ConsumableItem {
      * If we miss the attack (greater than instead of less than) stop here and print the result
      ******************************************************************************************************/
     calcThrownVialAccuracy(player: Player, target: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void): boolean{
+        //Display text for a thrown item that misses the enemy target.
         if (this.thrown && (target instanceof Enemy)){
             if ((_.random(1, 100)) > player.accuracy){
                 appendText('*', true, 'playerText');
@@ -80,6 +81,8 @@ export class ConsumableItem {
                 return true;
             }
         }
+
+        //Display text for a thrown item that impacts the target, be it player or enemy
         if (this.thrown){
             let isPlayer: boolean = (target instanceof Player);
             appendText('*', true, 'playerText');
