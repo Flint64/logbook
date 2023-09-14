@@ -2,7 +2,7 @@
 
     <div class="elem5 enemyArea" #gameBox>
         <form [formGroup]="enemyForm" class="enemyForm">
-            <div class="enemyBox" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i)">
+            <div class="enemyBox noHover" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i)">
                 <label>{{enemy.name}}</label>
                 <p>{{enemy.health}}</p>
                 <img #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">

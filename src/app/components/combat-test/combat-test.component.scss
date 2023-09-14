@@ -80,12 +80,6 @@ button{
     width: 30%; //TODO: Dynamic width for 2 or 1 party member
     margin-bottom: 5px;
     margin-top: 5px;
-    &:hover{
-        label{ border-bottom: 1px solid black; cursor: pointer; }
-        color: black;
-        background-color: white;
-        cursor: pointer;
-    }
     
     p{
         padding-top: 0px;
@@ -137,6 +131,22 @@ button{
             background-color: black;
             cursor: default;
     }
+
+    .enemyForm div:hover{
+        color: black;
+        background-color: white;
+        cursor: pointer;
+        img{
+            filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
+        }
+    }
+
+    .memberBox:hover{
+        label{ border-bottom: 1px solid black; cursor: pointer; }
+        color: black;
+        background-color: white;
+        cursor: pointer;
+    }
 }
 
 .enemyForm{
@@ -150,15 +160,6 @@ button{
         width: 5em;
         margin-top: 5px;
         margin-bottom: 5px;
-
-        &:hover{
-            color: black;
-            background-color: white;
-            cursor: pointer;
-            img{
-                filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(309deg) brightness(93%) contrast(107%);
-            }
-        }
     }
 }
 
