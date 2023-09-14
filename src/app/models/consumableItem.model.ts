@@ -162,13 +162,8 @@ export class ConsumableItem {
             appendText(player.name, false, 'playerText', 'underline');
             appendText('uses', false);
             appendText(this.name, false, this.textColor);
-
-            if (target instanceof Enemy){
-                appendText(`on ${target.name}`, false);
-            } else if (target instanceof Player){
-                appendText('on', false)
-                appendText(target.name, false, 'underline', 'playerText');
-            }
+            appendText('on', false);
+            appendText(target.name, false, 'playerText', 'underline');
         }
         
         //Check if the effect(s) are resisted or not, and display the correct text accordingly
