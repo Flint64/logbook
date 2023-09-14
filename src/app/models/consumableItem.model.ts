@@ -125,9 +125,9 @@ export class ConsumableItem {
             
             //If the effect isn't resisted, add the effect and display the text
             this.addConsumableEffect(target, effect);
-                appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
-                appendText('is inflicted with', false);
-                appendText(`${effect.name}!`, false, this.textColor);
+            appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
+            appendText('is inflicted with', false);
+            appendText(`${effect.name}!`, false, this.textColor);
         });
     }
 
