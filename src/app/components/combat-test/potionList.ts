@@ -1,3 +1,4 @@
+import { PoisonDamage } from "src/app/models/damageTypes.model";
 import { Effect } from "src/app/models/effect.model";
 
 //TODO: Think about adding an id field to each potion, as well as an amount (separate from the amount currently stored) as if the game is updated when people are playing it if changes are made to the base file those changes won't be reflected and could cause some problems if effects are changed or something. If we have an id field and an amount and that's all we store when saving the game, then we can repopulate it on load with fresh versions of the items and there shouldn't be any issues. And do the same with the magic as well.
@@ -97,6 +98,7 @@ interface ConsumableItemData {
         name: 'health',
         duration: null,
         modifier: -10,
+        damageType: [new PoisonDamage({percent: 100, elemental: true})], //Only allow one damageType for effects on consumables
         canBeResisted: false,
         self: true,
         helpDescription: 'Deals direct health damage',

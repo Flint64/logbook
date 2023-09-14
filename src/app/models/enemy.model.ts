@@ -187,16 +187,27 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    * calculates in the target's defense stat(s) to determine how much the defense stat
    * lowers the base damage. Variance is not included in the damage reduction.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, playerTarget: Player, inventory): number{
+    calcDamageReduction(damage: number, playerTarget: Player, inventory, damageTypes: any[] = null): number{
       let physicalDamageAfterReduction = 0;
       let elementalDamageAfterReduction = 0;
 
       let enemyDamageTypes = [];
       this.damageTypes.forEach((damageType) => {
-          let copy = _.cloneDeep(damageType);
-          copy.damage = Math.round((damageType.percent / 100) * damage);
-          enemyDamageTypes.push(copy);
+        let copy = _.cloneDeep(damageType);
+        copy.damage = Math.round((damageType.percent / 100) * damage);
+        enemyDamageTypes.push(copy);
       });
+      
+        //If we don't pass in damageTypes as an argument, then the damage reduction will be from
+        //either a spell or consumable rather than a base attack done, so don't use base damage types
+        if (damageTypes){
+          enemyDamageTypes = [];
+          damageTypes.forEach((damageType) => {
+            let copy = _.cloneDeep(damageType);
+            copy.damage = Math.round((damageType.percent / 100) * damage);
+            enemyDamageTypes.push(copy);
+          });
+        }
 
       let playerPhysDR = null;
       let playerElemDR = null;

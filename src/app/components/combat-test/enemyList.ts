@@ -144,7 +144,8 @@ export const enemies = [
       ],
       damageResistances: [
         new FireDamageResistance({resistance: 50, elemental: true}),
-        new BludgeoningDamageResistance({resistance: 6, elemental: false})
+        new BludgeoningDamageResistance({resistance: 6, elemental: false}),
+        new PoisonDamageResistance({resistance: 50, elemental: true})
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),

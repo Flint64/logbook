@@ -173,27 +173,38 @@ export class Player {
    * for 10 total, so 8/2, is deducted based on slashing/piercing resistance + base defense.
    * If no specific defense, base defense is instead used.
    ****************************************************************************************/
-    calcDamageReduction(damage: number, enemyTarget: Enemy, inventory: EquippableItem[]): number{
+    calcDamageReduction(damage: number, enemyTarget: Enemy, inventory: EquippableItem[], damageTypes: any[] = null): number{
       let physicalDamageAfterReduction = 0;
       let elementalDamageAfterReduction = 0;
           
       let playerDamageTypes = [];
-      inventory.forEach((item) => {
-        if (item instanceof Weapon && item.equippedBy?.name === this.name){
-            item.damageTypes.forEach((damageType) => {
-              let copy = _.cloneDeep(damageType);
-              copy.damage = Math.round((damageType.percent / 100) * damage);
-              playerDamageTypes.push(copy);
-            });
+        inventory.forEach((item) => {
+          if (item instanceof Weapon && item.equippedBy?.name === this.name){
+              item.damageTypes.forEach((damageType) => {
+                let copy = _.cloneDeep(damageType);
+                copy.damage = Math.round((damageType.percent / 100) * damage);
+                playerDamageTypes.push(copy);
+              });
+          }
+        });
+
+        //If we don't pass in damageTypes as an argument, then the damage reduction will be from
+        //either a spell or consumable rather than a base attack done, so don't use the weapon damage types
+        if (damageTypes){
+          playerDamageTypes = [];
+          damageTypes.forEach((damageType) => {
+            let copy = _.cloneDeep(damageType);
+            copy.damage = Math.round((damageType.percent / 100) * damage);
+            playerDamageTypes.push(copy);
+          });
         }
-      });
       
       //Search through any trinkets that have any damage types tied to them, and increase the respective player damage type by that percentage
       inventory.forEach((item) => {
         if (item.equippedBy?.name === this.name && (item instanceof Trinket)){
           item.damageTypes.forEach((damageType) => {
             let damageTypeMatchIndex = playerDamageTypes.findIndex(playerDamageType => playerDamageType.constructor.name === damageType.constructor.name);
-            if (damageTypeMatchIndex !== null || damageTypeMatchIndex !== undefined){
+            if (damageTypeMatchIndex !== -1){
               playerDamageTypes[damageTypeMatchIndex].damage = playerDamageTypes[damageTypeMatchIndex].damage = Math.round((playerDamageTypes[damageTypeMatchIndex].damage + (playerDamageTypes[damageTypeMatchIndex].damage * (damageType.percent / 100))));
             }
           });
