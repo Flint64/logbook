@@ -85,7 +85,8 @@ export class ConsumableItem {
             appendText('*', true, 'playerText');
             appendText(player.name, false, 'playerText', 'underline');
             appendText('throws a', false);
-            appendText(this.name + ' at', false, this.textColor);
+            appendText(this.name, false, this.textColor);
+            appendText('at', false)
             appendText(`${target.name},`, false, `${ isPlayer ? 'underline' : ''}`, '');
             appendText('and the', false);
             appendText('vial shatters', false);
@@ -102,6 +103,8 @@ export class ConsumableItem {
      ******************************************************************************************************/
     calcResistedEffect(target: Player | Enemy, inventory, appendText){
         this.effects.forEach((effect) => {
+            let isPlayer: boolean = (target instanceof Player);
+            
             //If the effect can't be resisted, add the effect and move on
             if (!effect.canBeResisted){
                 this.addConsumableEffect(target, effect);
@@ -110,36 +113,18 @@ export class ConsumableItem {
 
             //If the effect is resisted, display the text
             if (target.calcEffectResistance(target.calcTotalStatValue(effect.name + 'Resistance', null, inventory))){
-                if (target instanceof Enemy){
-                    appendText(`${target.name}`, true, 'crimsonText'); //TODO: Shorten these like line 89?
-                    appendText('resisted the', false);
-                    appendText(`${effect.name}`, false, this.textColor);
-                    appendText('effect!', false);
-                    
-                } else if (target instanceof Player){
-                    appendText('*', true, 'playerText');
-                    appendText(`${target.name}`, false, 'underline', 'playerText'); //TODO: Shorten these like line 89?
-                    appendText('resisted the', false);
-                    appendText(`${effect.name}`, false, this.textColor);
-                    appendText('effect!', false);
-                }
+                appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
+                appendText('resisted the', false);
+                appendText(`${effect.name}`, false, this.textColor);
+                appendText('effect!', false);
                 return;
             }
             
             //If the effect isn't resisted, add the effect and display the text
             this.addConsumableEffect(target, effect);
-            if (target instanceof Enemy){
-                appendText(`${target.name}`, true, 'crimsonText'); //TODO: Shorten these like line 89?
+                appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
                 appendText('is inflicted with', false);
                 appendText(`${effect.name}!`, false, this.textColor);
-                
-            } else if (target instanceof Player){
-                appendText('*', true, 'playerText');
-                appendText(`${target.name}`, false, 'underline', 'playerText'); //TODO: Shorten these like line 89?
-                appendText('is inflicted with', false);
-                appendText(`${effect.name}!`, false, this.textColor);
-            }
-            
         });
     }
 
