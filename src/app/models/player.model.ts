@@ -277,20 +277,126 @@ export class Player {
       }
       return false;
     }
+
+   /****************************************************************************************
+   * Calculate Attack Accuracy - Determines whether or not an attack hits or not.
+   * If we miss, stop here and print the result.
+   * true === hit
+   * false === miss
+   ****************************************************************************************/
+    calcAttackAccuracy(player: Player, enemyTarget: Enemy, inventory: EquippableItem[], appendText): boolean{
+      if ((_.random(1, 100)) < player.calcTotalStatValue('accuracy', null, inventory)){
+        return true;
+      } else {
+        if (player.health !== 0){
+          appendText('*', true, 'playerText');
+          appendText(player.name, false, 'underline', 'playerText');
+          appendText('misses', false, 'greyText');
+          appendText(enemyTarget.name + '!', false, 'greyText');
+        }
+        if (player.health === 0){
+          appendText('*', true, 'playerText');
+          appendText(player.name, false, 'underline', 'playerText');
+          appendText('at near death attempts', false, 'redText');
+          appendText('one final attack on', false, 'redText');
+          appendText(enemyTarget.name, false, 'redText');
+          appendText('before perishing and misses!', false, 'redText');
+          player.health -= 1;
+        }
+        return false;
+      }
+    }
         
   /****************************************************************************************
    * Player Attack - Handles basic player attacks.
    * Damage is based on attack power.
    ****************************************************************************************/
-  playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
+  playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){    
     
     //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
     let attackHits = null;
 
     if (playerTarget.ATB < 100 || intervalID === null){ return; }
     
+    //Determine whether or not the attack hits
+    attackHits = this.calcAttackAccuracy(playerTarget, enemyTarget, inventory, appendText);
+    if (!attackHits){
+      return attackHits;
+    }
+    
+    //Calculate the attack's damage if we don't miss
+    let damage = playerTarget.calcBaseAttackDamage(inventory);
+    damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
+
+    //If the attack is a crit, double the damage of the attack
+    let attackIsCrit = this.isCriticalHit(playerTarget, inventory);
+    if (attackIsCrit){
+      damage *= 2;
+    }
+
+    //Now that we have the attack's damage, crit or not, reduce it based on the target's DR
+    damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
+    
+    //Display standard attack hits message if not a crit
+    if (!attackIsCrit){
+      //If the player has more than 0 hp allow the hit
+      if (playerTarget.health !== 0){
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('hits', false);
+        appendText(enemyTarget.name, false);
+        appendText('for', false);
+        appendText(damage.toString(), false, 'redText');
+        appendText('damage!', false);
+        enemyTarget.health -= damage;
+      }
+      
+      //Player gets one last attack before dying if it ends up at 0 hp
+      if (playerTarget.health === 0){
+        appendText('*', true, 'playerText');
+        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(enemyTarget.name, false, 'redText');
+        appendText('before perishing and hits for', false, 'redText');
+        appendText(damage.toString(), false, 'crimsonText');
+        appendText('damage!', false, 'redText');
+        enemyTarget.health -= damage;
+        playerTarget.health -= 1;
+    }
+  }
+
+  //If we crit, display a different hit message
+  if (attackIsCrit){
+    if (playerTarget.health !== 0){
+      appendText('*', true, 'playerText');
+      appendText(playerTarget.name + ':', false, 'underline', 'playerText');
+      appendText('CRITICAL HIT! ', false);
+      appendText(enemyTarget.name + ' takes', false);
+      appendText(damage.toString(), false, 'redText');
+      appendText('damage!', false);
+      enemyTarget.health -= damage;
+    }
+    
+    //Player gets one last attack before dying if it ends up at 0 hp
+    if (playerTarget.health === 0){
+      appendText('*', true, 'playerText');
+      appendText(playerTarget.name + ':', false, 'underline', 'playerText');
+      appendText('at near death attempts', false, 'redText');
+      appendText('one final attack on', false, 'redText');
+      appendText(enemyTarget.name, false, 'redText');
+      appendText('before perishing and CRITS for', false, 'redText');
+      appendText(damage.toString(), false, 'crimsonText');
+      appendText('damage!', false, 'redText');
+      enemyTarget.health -= damage;
+      playerTarget.health -= 1;
+    }
+  }
+  
+  return attackHits;
+  
     // Returns a random integer from 1-100:
-    if ((_.random(1, 100)) < playerTarget.calcTotalStatValue('accuracy', null, inventory)){
+    // if ((_.random(1, 100)) < playerTarget.calcTotalStatValue('accuracy', null, inventory)){
 
       //If we hit, check if the enemy evades the attack
       //TODO: Enemy evasion
@@ -299,101 +405,10 @@ export class Player {
         // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
         // (this.accuracy / 2) + (5 + 5) - 3;
     // }
-      
-      //If we don't evade, calculate damage done
-      let damage = playerTarget.calcBaseAttackDamage(inventory);
-      damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
-      attackHits = true;
-      
-      //If the attack is a crit, print the correct messages
-      if (this.isCriticalHit(playerTarget, inventory)){
-
-        //2x crit damage. If we don't recalculate here, crit damage is doubled after reduction;
-        //this way, if we score a critical hit, the damage is recalculated to be double and then reduced by armor
-        damage = playerTarget.calcBaseAttackDamage(inventory);
-        damage *= 2;
-        damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
-        
-        if (playerTarget.health !== 0){
-          appendText('*', true, 'playerText');
-          appendText(playerTarget.name + ':', false, 'underline', 'playerText');
-          appendText('CRITICAL HIT! ', false);
-          appendText(enemyTarget.name + ' takes', false);
-          appendText(damage.toString(), false, 'redText');
-          appendText('damage!', false);
-          enemyTarget.health -= damage;
-        }
-        
-        //Player gets one last attack before dying if it ends up at 0 hp
-        if (playerTarget.health === 0){
-          appendText('*', true, 'playerText');
-          appendText(playerTarget.name + ':', false, 'underline', 'playerText');
-          appendText('at near death attempts', false, 'redText');
-          appendText('one final attack on', false, 'redText');
-          appendText(enemyTarget.name, false, 'redText');
-          appendText('before perishing and CRITS for', false, 'redText');
-          appendText(damage.toString(), false, 'crimsonText');
-          appendText('damage!', false, 'redText');
-          enemyTarget.health -= damage;
-          playerTarget.health -= 1;
-      }
-
-      //If not a crit, print standard hit messages
-      } else {
-        //If the player has more than 0 hp allow the hit
-        if (playerTarget.health !== 0){
-          appendText('*', true, 'playerText');
-          appendText(playerTarget.name, false, 'underline', 'playerText');
-          appendText('hits', false);
-          appendText(enemyTarget.name, false);
-          appendText('for', false);
-          appendText(damage.toString(), false, 'redText');
-          appendText('damage!', false);
-          enemyTarget.health -= damage;
-        }
-        
-        //Player gets one last attack before dying if it ends up at 0 hp
-        if (playerTarget.health === 0){
-          appendText('*', true, 'playerText');
-          appendText(playerTarget.name, false, 'underline', 'playerText');
-          appendText('at near death attempts', false, 'redText');
-          appendText('one final attack on', false, 'redText');
-          appendText(enemyTarget.name, false, 'redText');
-          appendText('before perishing and hits for', false, 'redText');
-          appendText(damage.toString(), false, 'crimsonText');
-          appendText('damage!', false, 'redText');
-          enemyTarget.health -= damage;
-          playerTarget.health -= 1;
-      }
-    }
-      
-
-    //If we miss
-    } else {
-      attackHits = false;
-      if (playerTarget.health !== 0){
-        appendText('*', true, 'playerText');
-        appendText(playerTarget.name, false, 'underline', 'playerText');
-        appendText('misses', false, 'greyText');
-        appendText(enemyTarget.name + '!', false, 'greyText');
-      }
-      if (playerTarget.health === 0){
-        appendText('*', true, 'playerText');
-        appendText(playerTarget.name, false, 'underline', 'playerText');
-        appendText('at near death attempts', false, 'redText');
-        appendText('one final attack on', false, 'redText');
-        appendText(enemyTarget.name, false, 'redText');
-        appendText('before perishing and misses!', false, 'redText');
-        playerTarget.health -= 1;
-      }
-    }
-
-    return attackHits;
 
     //If the player or the enemy is at 0 hit points, they get one
     //last attack before dying. (Only attack, not action)
     //FIXME: With current setup, if hit again before the last attack, combat ends
-    // this.combatService.endTurn(this.memberIndex);
   }
     
 }
