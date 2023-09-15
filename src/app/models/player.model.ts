@@ -269,7 +269,7 @@ export class Player {
    /****************************************************************************************
    * Is Critical Hit - Calculates whether or not the hit is a crit or not
    ****************************************************************************************/
-    private isCriticalHit(playerTarget: Player, inventory: EquippableItem[]){
+    private isCriticalHit(inventory: EquippableItem[]){
       //(Luck + Weapon Crit/accessory/armor)/2 out of 255
       let critChance = Math.round((((this.calcTotalStatValue('luck', null, inventory) + this.calcTotalStatValue('crit', null, inventory)) / 2) / 255) * 100);
       if (_.random(1, 100) < critChance){
@@ -311,38 +311,37 @@ export class Player {
    * Player Attack - Handles basic player attacks.
    * Damage is based on attack power.
    ****************************************************************************************/
-  playerAttack(playerTarget: Player, enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){    
+  playerAttack(enemyTarget: Enemy, intervalID, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){    
     
     //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
     let attackHits = null;
 
-    if (playerTarget.ATB < 100 || intervalID === null){ return; }
+    if (this.ATB < 100 || intervalID === null){ return; }
     
     //Determine whether or not the attack hits
-    attackHits = this.calcAttackAccuracy(playerTarget, enemyTarget, inventory, appendText);
+    attackHits = this.calcAttackAccuracy(this, enemyTarget, inventory, appendText);
     if (!attackHits){
       return attackHits;
     }
     
     //Calculate the attack's damage if we don't miss
-    let damage = playerTarget.calcBaseAttackDamage(inventory);
-    damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
+    let damage = this.calcBaseAttackDamage(inventory);
 
     //If the attack is a crit, double the damage of the attack
-    let attackIsCrit = this.isCriticalHit(playerTarget, inventory);
+    let attackIsCrit = this.isCriticalHit(inventory);
     if (attackIsCrit){
       damage *= 2;
     }
 
     //Now that we have the attack's damage, crit or not, reduce it based on the target's DR
-    damage = playerTarget.calcDamageReduction(damage, enemyTarget, inventory);
+    damage = this.calcDamageReduction(damage, enemyTarget, inventory);
     
     //Display standard attack hits message if not a crit
     if (!attackIsCrit){
       //If the player has more than 0 hp allow the hit
-      if (playerTarget.health !== 0){
+      if (this.health !== 0){
         appendText('*', true, 'playerText');
-        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText(this.name, false, 'underline', 'playerText');
         appendText('hits', false);
         appendText(enemyTarget.name, false);
         appendText('for', false);
@@ -352,25 +351,25 @@ export class Player {
       }
       
       //Player gets one last attack before dying if it ends up at 0 hp
-      if (playerTarget.health === 0){
+      if (this.health === 0){
         appendText('*', true, 'playerText');
-        appendText(playerTarget.name, false, 'underline', 'playerText');
+        appendText(this.name, false, 'underline', 'playerText');
         appendText('at near death attempts', false, 'redText');
         appendText('one final attack on', false, 'redText');
-        appendText(enemyTarget.name, false, 'redText');
+        appendText(enemyTarget.name, false, 'crimsonText');
         appendText('before perishing and hits for', false, 'redText');
         appendText(damage.toString(), false, 'crimsonText');
         appendText('damage!', false, 'redText');
         enemyTarget.health -= damage;
-        playerTarget.health -= 1;
+        this.health -= 1;
     }
   }
 
   //If we crit, display a different hit message
   if (attackIsCrit){
-    if (playerTarget.health !== 0){
+    if (this.health !== 0){
       appendText('*', true, 'playerText');
-      appendText(playerTarget.name + ':', false, 'underline', 'playerText');
+      appendText(this.name + ':', false, 'underline', 'playerText');
       appendText('CRITICAL HIT! ', false);
       appendText(enemyTarget.name + ' takes', false);
       appendText(damage.toString(), false, 'redText');
@@ -379,9 +378,9 @@ export class Player {
     }
     
     //Player gets one last attack before dying if it ends up at 0 hp
-    if (playerTarget.health === 0){
+    if (this.health === 0){
       appendText('*', true, 'playerText');
-      appendText(playerTarget.name + ':', false, 'underline', 'playerText');
+      appendText(this.name + ':', false, 'underline', 'playerText');
       appendText('at near death attempts', false, 'redText');
       appendText('one final attack on', false, 'redText');
       appendText(enemyTarget.name, false, 'redText');
@@ -389,14 +388,14 @@ export class Player {
       appendText(damage.toString(), false, 'crimsonText');
       appendText('damage!', false, 'redText');
       enemyTarget.health -= damage;
-      playerTarget.health -= 1;
+      this.health -= 1;
     }
   }
   
   return attackHits;
   
     // Returns a random integer from 1-100:
-    // if ((_.random(1, 100)) < playerTarget.calcTotalStatValue('accuracy', null, inventory)){
+    // if ((_.random(1, 100)) < this.calcTotalStatValue('accuracy', null, inventory)){
 
       //If we hit, check if the enemy evades the attack
       //TODO: Enemy evasion

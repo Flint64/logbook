@@ -260,7 +260,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
             if (this.selectedPartyMember.ATB < 100 || this.intervalID === null){ return; }
 
             //true if the attack hits, false if it was a miss
-            if (this.selectedPartyMember.playerAttack(this.selectedPartyMember, this.selectedEnemy, this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
+            if (this.selectedPartyMember.playerAttack(this.selectedEnemy, this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
               this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
             }
             this.combatService.endTurn(this.selectedPartyMember);
@@ -378,7 +378,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //When ATB guage is full, enemy attack
     this.combatService.enemyList.forEach((e, index) => {
       if (e.ATB >= 100){
-        let result = e.enemyAttack(e, this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+        let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
         if (result.attackHits){
           this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
         }
@@ -431,7 +431,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
           //Keep selecting a random enemy until one is selected that isn't dead
           while(this.combatService.enemyList[rand].health < 0){ rand = _.random(0, (this.combatService.enemyList.length - 1)); }
 
-          if (member.playerAttack(member, this.combatService.enemyList[rand], this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
+          if (member.playerAttack(this.combatService.enemyList[rand], this.intervalID, this.appendText.bind(this), this.combatService.party.inventory)){
             this.colorEnemyBox('enemyHitSVG', 'enemyHit', 'enemyHitBorder');
           }
           this.combatService.endTurn(member);
