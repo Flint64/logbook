@@ -298,6 +298,11 @@ export class Magic {
                     case 'health':
                     case 'mana':
                     case 'rage':
+                    case 'mana':
+                    case 'speed':
+                    case 'strength':
+                    case 'luck':
+                    case 'PoisonResistance':
                     break;
 
                     default:
@@ -310,7 +315,7 @@ export class Magic {
                 }
                 
                 //Now for anything else. This first switch is just to make sure the name of the person targeted by the effect
-                //is displayed with the right colors depending on if it is an enemy or not.
+                //is displayed with the right colors depending on if it is an enemy or not.  - Same as consumableItem model
                 switch(e.effect.name){
                     case 'rage':
                     case 'health':
@@ -321,7 +326,7 @@ export class Magic {
                     break;
                 }
 
-                //This second switch is for each individual printout dependent on the effect name
+                //This second switch is for each individual printout dependent on the effect name  - Same as consumableItem model
                 switch (e.effect.name){
 
                 case 'rage':
@@ -342,6 +347,33 @@ export class Magic {
                         appendText(e.effect.duration, false);
                         appendText('turns!', false);
                     }
+                break;
+
+                case 'mana':
+                    if (!e.effect.duration){
+                        appendText(`${e.effect.modifier > 0 ? 'recovers' : 'loses'}` + ' ' + Math.abs(e.effect.modifier));
+                        appendText('mana!', false, this.textColor);
+                    }
+                    
+                    if (e.effect.duration){
+                        appendText(`${e.effect.modifier > 0 ? 'will recover' : 'will lose'}` + ' ' + Math.abs(e.effect.modifier));
+                        appendText('mana', false, this.textColor);
+                        appendText('for', false);
+                        appendText(e.effect.duration, false);
+                        appendText('turns!', false);
+                    }
+                break;
+
+                case 'speed':
+                case 'strength':
+                case 'luck':
+                case 'PoisonResistance':
+                    let splitName = e.effect.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+                    appendText('gains a', false);
+                    splitName.forEach((e) => { appendText(e, false, this.textColor) });
+                    appendText('boost for', false);
+                    appendText(`${e.effect.duration}`, false);
+                    appendText('turns!', false);
                 break;
             }
             

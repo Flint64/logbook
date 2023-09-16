@@ -169,13 +169,12 @@ export class ConsumableItem {
         
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect, index) => {
-            if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
+            let isPlayer: boolean = (target instanceof Player);
+            if (effect.name === 'health' && !effect.duration && effect.damageType){
                     let damageTypeName = effect.damageTypeName;
 
                 //If the effect is dealing damage to health, calculate any damage reduction
-                let isPlayer: boolean = (target instanceof Player);
                 //Consumables only allow one damage type, so array[0] is all that's needed
-                if (effect.name === 'health' && effect.damageType){
                     let arr = [];
                     arr.push(effect?.damageType[0]);
                     let damageAfterReduction = 0;
@@ -192,9 +191,74 @@ export class ConsumableItem {
                     if (damageTypeName){ appendText(`${damageTypeName}`, false, this.textColor); }
                     appendText('damage!', false);
                 } else {
+                    
                     target[effect.name] = target.calcTotalStatValue(effect.name, null, inventory);
+                    
+                    //Now for anything else. This first switch is just to make sure the name of the person targeted by the effect
+                    //is displayed with the right colors depending on if it is an enemy or not.  - Same as magic model
+                    switch(effect.name){
+                        case 'rage':
+                        case 'health':
+                        case 'mana':
+                        case 'speed':
+                        case 'strength':
+                        case 'luck':
+                        case 'PoisonResistance':
+                            if (isPlayer){ appendText(target.name, true, 'underline', 'playerText'); };
+                            if (!isPlayer){ appendText(target.name, true, 'redText'); };
+                        break;
+                    }
+                    
+                    //This second switch is for each individual printout dependent on the effect name - Same as magic model
+                    switch (effect.name){
+                        case 'health':
+                            if (!effect.duration){
+                                appendText(`${effect.modifier > 0 ? 'recovers' : 'loses'}` + ' ' + Math.abs(effect.modifier));
+                                appendText('health!', false, this.textColor);
+                            }
+                            
+                            if (effect.duration){
+                                appendText(`${effect.modifier > 0 ? 'will recover' : 'will lose'}` + ' ' + Math.abs(effect.modifier));
+                                appendText('health', false, this.textColor);
+                                appendText('for', false);
+                                appendText(`${effect.duration}`, false);
+                                appendText('turns!', false);
+                            }
+                        break;
+
+                        case 'mana':
+                            if (!effect.duration){
+                                appendText(`${effect.modifier > 0 ? 'recovers' : 'loses'}` + ' ' + Math.abs(effect.modifier));
+                                appendText('mana!', false, this.textColor);
+                            }
+                            
+                            if (effect.duration){
+                                appendText(`${effect.modifier > 0 ? 'will recover' : 'will lose'}` + ' ' + Math.abs(effect.modifier));
+                                appendText('mana', false, this.textColor);
+                                appendText('for', false);
+                                appendText(`${effect.duration}`, false);
+                                appendText('turns!', false);
+                            }
+                        break;
+
+                        case 'rage':
+                            appendText('flies into an', false);
+                            appendText('uncontrollable rage!', false);
+                        break;
+
+                        case 'speed':
+                        case 'strength':
+                        case 'luck':
+                        case 'PoisonResistance':
+                            let splitName = effect.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+                            appendText('gains a', false);
+                            splitName.forEach((e) => { appendText(e, false, this.textColor) });
+                            appendText('boost for', false);
+                            appendText(`${effect.duration}`, false);
+                            appendText('turns!', false);
+                        break;
+                    }
                 }
-            }
         });        
         
         //Remove any duplicate effects / instant effects before ending your turn
