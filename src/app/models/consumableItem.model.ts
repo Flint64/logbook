@@ -170,10 +170,7 @@ export class ConsumableItem {
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect, index) => {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                let parentEffectName = null;
-                if (this.effects[index -1]){
-                    parentEffectName = this.effects[index -1].name;
-                }
+                    let damageTypeName = effect.damageTypeName;
 
                 //If the effect is dealing damage to health, calculate any damage reduction
                 let isPlayer: boolean = (target instanceof Player);
@@ -192,7 +189,7 @@ export class ConsumableItem {
                     appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
                     appendText('takes', false);
                     appendText(`${damageAfterReduction}`, false);
-                    if (parentEffectName){ appendText(`${parentEffectName}`, false, this.textColor); }
+                    if (damageTypeName){ appendText(`${damageTypeName}`, false, this.textColor); }
                     appendText('damage!', false);
                 } else {
                     target[effect.name] = target.calcTotalStatValue(effect.name, null, inventory);
