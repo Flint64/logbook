@@ -136,7 +136,6 @@ export class ConsumableItem {
      * Use Item - Uses the selected item, adds any effects to the selected target, and prints the result
      * 'this' refers to the selected consumable. No need to pass in the party.consumables and numSelected.
      * We do however need access to the inventory to check equipment for any resistances.
-     * TODO: After the above two are done, rework castSpell & player/enemy attack functions to be cleaner and easier to work with like this one
      ******************************************************************************************************/
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
 
@@ -171,14 +170,17 @@ export class ConsumableItem {
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect, index) => {
             if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                let parentEffectName = this.effects[index -1].name;
+                let parentEffectName = null;
+                if (this.effects[index -1]){
+                    parentEffectName = this.effects[index -1].name;
+                }
 
                 //If the effect is dealing damage to health, calculate any damage reduction
                 let isPlayer: boolean = (target instanceof Player);
-                //Consumables only allow one damage type, so array[0] is all that's needed\
-                if (effect.name === 'health' && effect.damageType[0]){
+                //Consumables only allow one damage type, so array[0] is all that's needed
+                if (effect.name === 'health' && effect.damageType){
                     let arr = [];
-                    arr.push(effect.damageType[0]);
+                    arr.push(effect?.damageType[0]);
                     let damageAfterReduction = 0;
                     if (isPlayer){
                         let enemy = new Enemy(null);
@@ -190,7 +192,7 @@ export class ConsumableItem {
                     appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
                     appendText('takes', false);
                     appendText(`${damageAfterReduction}`, false);
-                    appendText(`${parentEffectName}`, false, this.textColor);
+                    if (parentEffectName){ appendText(`${parentEffectName}`, false, this.textColor); }
                     appendText('damage!', false);
                 } else {
                     target[effect.name] = target.calcTotalStatValue(effect.name, null, inventory);

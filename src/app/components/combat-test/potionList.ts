@@ -80,6 +80,8 @@ interface ConsumableItemData {
       },
     ],
   },
+
+  //Any potions/vials that have a negative health modifier MUST only have one effect with the negative modifier && damageType preceded by the DoT effect for it to have an effect name be displayed as the damage type. Otherwise x takes x damage will be displayed
   {
     name: 'Poison Vial',
     amount: 3,

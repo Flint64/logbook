@@ -144,58 +144,111 @@ export class Magic {
 
       return damageAfterReduction;
     }
+
+    /****************************************************************************************
+   * Calculate Attack Accuracy - Determines whether or not an attack hits or not.
+   * If we miss, stop here and print the result.
+   * true === hit
+   * false === miss
+   ****************************************************************************************/
+    calcSpellAccuracy(caster: Player | Enemy, spellTarget: Player | Enemy, inventory: EquippableItem[], appendText): boolean{
+        let casterIsPlayer: boolean = (caster instanceof Player);
+        let targetIsPlayer: boolean = (spellTarget instanceof Player);
+        
+        if ((_.random(1, 100)) < this.accuracy){
+          return true;
+        } else {
+            appendText('*', true, `${ casterIsPlayer ? 'playerText' : 'redText'}`);
+            appendText(caster.name, false, `${ casterIsPlayer ? 'underline' : 'crimsonText'}`, `${ casterIsPlayer ? 'playerText' : null}`);
+            appendText('casts', false, 'greyText');
+            appendText(this.name, false, this.textColor);
+            appendText('and misses', false, 'greyText');
+            appendText(spellTarget.name + '!', false, 'greyText', `${ targetIsPlayer ? 'underline' : null}`);
+          return false;
+        }
+      }
     
     /******************************************************************************************************
-     * Cast the spell - Similar to the useItem from the consumableItem class, but can target enemies as 
-     * well as the player
+     * Cast the spell - Similar to the useItem from the consumableItem class
      ******************************************************************************************************/
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
     castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
+        let casterIsPlayer: boolean = (caster instanceof Player);
+        let targetIsPlayer: boolean = (spellTarget instanceof Player);
+        let damageAfterReduction = 0;
         
         let spellDamage = this.calcSpellDamage(this, caster, inventory);
-        spellDamage = this.calcSpellDamageReduction(caster, spellDamage, spellTarget, inventory);
         
-        let effectWasResisted: boolean = false;
-        let resistedEffect: Effect = null;
+        //If we have damage types on the spell, reduce the spell damage by the correct damage resistance
+        if (this.damageTypes.length > 0){
+            if (targetIsPlayer){
+                let enemy = new Enemy(null);
+                damageAfterReduction = enemy.calcDamageReduction(spellDamage, (spellTarget as Player), inventory, this.damageTypes)
+            }
+
+            if (!targetIsPlayer){
+                let player: Player = new Player();
+                damageAfterReduction = player.calcDamageReduction(spellDamage, (spellTarget as Enemy), inventory, this.damageTypes);
+            }
+        }
 
         //Regardless of hit/miss, the spell costs mana
         caster.mana -= this.manaCost;
-                
-        //If the spell hits
-        if ((_.random(1, 100)) < this.accuracy){
-            
-        //If the spell has a damage value, apply it before the effect(s)
-        spellTarget.health -= Math.round(spellDamage);
-        
-        //If the spell has a duration and is targeted to yourself, add it to your effects list
-        this.effects.forEach((effect) => {
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        //Determine whether or not the spell hits
+        let spellHits = this.calcSpellAccuracy(caster, spellTarget, inventory, appendText);
+        if (!spellHits){
+            return;
+        }
+
+        //If the spell has a damage value, apply it before the effect(s)
+        spellTarget.health -= Math.round(damageAfterReduction);
+
+        //Now that we've dealt any spell base damage, handle adding any effects
+        let effectStatus = [];
+        
+        //For each spell effect, determine if it is resisted or not, and add the result to the effectStatus array
+        this.effects.forEach((effect) => {
+            let obj = {
+                wasResisted: null,
+                effect: null
+            }
+
+            //If the effect can be resisted, and depending on if it's targeted to self or not, calculate the correct effect resistance
             if (effect.canBeResisted){
-                if (!spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resistance', null, inventory))){
-                    if (effect.self){
-                        this.addSpellEffect(caster, effect);
-                    } else {
-                        this.addSpellEffect(spellTarget, effect);
-                    }
-                } else {
-                    effectWasResisted = true;
-                    resistedEffect = effect;
+                if (!effect.self){
+                    obj.wasResisted = spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resistance', null, inventory));
+                    obj.effect = effect;
                 }
-            } else {
-                //Add all effects from the item used if they have a duration && can't be resisted
-                    if (effect.self){
-                        this.addSpellEffect(caster, effect);
-                    } else {
-                        this.addSpellEffect(spellTarget, effect);
-                    }
+                
+                if (effect.self){
+                    obj.wasResisted = spellTarget.calcEffectResistance(caster.calcTotalStatValue(effect.name + 'Resistance', null, inventory));
+                    obj.effect = effect;
+                }
+            }
+                
+            //If the effect can't be resisted, add it to the array and set wasResisted to false
+            if (!effect.canBeResisted){
+                obj.effect = effect;
+                obj.wasResisted = false;
+            }
+            
+            effectStatus.push(obj);
+        });
+        
+        effectStatus.forEach((e) => {
+            if (!e.wasResisted){
+                e.effect.self ? this.addSpellEffect(caster, e.effect) : this.addSpellEffect(spellTarget, e.effect);
             }
 
             //For using healing/mana magic that have an instant affect
             //Can check both caster & target safely, as this will only
             //affect them if the effect is present in their list.
-            if ((effect.name === 'health' || effect.name === 'mana') && !effect.duration){
-                spellTarget[effect.name] = spellTarget.calcTotalStatValue(effect.name, null, inventory);
-                caster[effect.name] = caster.calcTotalStatValue(effect.name, null, inventory);
+            if ((e.effect.name === 'health' || e.effect.name === 'mana') && !e.effect.duration){
+                spellTarget[e.effect.name] = spellTarget.calcTotalStatValue(e.effect.name, null, inventory);
+                caster[e.effect.name] = caster.calcTotalStatValue(e.effect.name, null, inventory);
             }
 
             //For ANY effect with an instant duration / null, remove it immediately or else it gets duplicated twice
@@ -209,79 +262,89 @@ export class Magic {
 
         this.removeDuplicateEffects(caster);
         this.removeDuplicateEffects(spellTarget);
+        
+        //Now that all effects have been added and instant effects taken care of, display the result of the spell
 
-        let healthEffect = spellTarget.effects.find(({ name }) => name === 'health');
-        let enrageEffect = spellTarget.effects.find(({ name }) => name === 'rage');
-            
-            appendText('*', true, 'playerText');
-            appendText(caster.name, false, 'underline', 'playerText');
-            appendText('casts', false);
-            appendText(this.name, false, this.textColor);
+        //If the spell hits, display that we cast x on spellTarget.name
+        appendText('*', true, `${ casterIsPlayer ? 'playerText' : 'redText'}`);
+        appendText(caster.name, false, `${ casterIsPlayer ? 'underline' : 'crimsonText'}`, `${ casterIsPlayer ? 'playerText' : null}`);
+        appendText('casts', false);
+        appendText(this.name, false, this.textColor);
+        appendText('on', false);
+        appendText(spellTarget.name + '',false,`${ targetIsPlayer ? 'underline' : null}`, `${ targetIsPlayer ? 'playerText' : null}`);
 
-            if (healthEffect) {
-              appendText('on', false);
-              appendText(spellTarget.name + ',',false,'playerText','underline');
-              appendText('restoring', false);
-              appendText(healthEffect.modifier.toString(), false, 'playerText');
-              appendText('health!', false);
-            } else if (enrageEffect) {
-              appendText('on', false);
-              appendText(spellTarget.name + ',', false, 'playerText', 'underline');
-              appendText('sending them into', false);
-              appendText('an uncontrollable ', false);
-              appendText('rage', false, this.textColor);
-              appendText(' for ' + (enrageEffect.duration - 1) + ' turns!',false);
-
-            } else {
-
-              if (spellTarget instanceof Enemy) {
-                if (spellDamage){
-                  appendText('and hits', false);
-                  appendText(spellTarget.name, false, 'crimsonText');
-                  appendText('for', false);
-                  appendText(Math.round(spellDamage).toString(), false, this.textColor);
-                  appendText('damage!', false);
-                } else {
-                    appendText('on', false);
-                    appendText(spellTarget.name + '!',false,'crimsonText');
-                }
-                if (effectWasResisted) {
-                  appendText(`${spellTarget.name}`, true, 'crimsonText');
-                  appendText('resisted the', false);
-                  appendText(`${resistedEffect.name}`, false, this.textColor);
-                  appendText('effect!', false);
-                }
-              } else if (spellTarget instanceof Player) {
-                if (spellDamage){
-                  appendText('and hits', false);
-                  appendText(spellTarget.name, false, 'playerText', 'underline');
-                  appendText('for', false);
-                  appendText(Math.round(spellDamage).toString(), false, this.textColor);
-                  appendText('damage!', false);
-                } else {
-                    appendText('on', false);
-                    appendText(spellTarget.name + '!',false,'playerText','underline');
-                }
-                if (effectWasResisted) {
-                  appendText('*', true, 'playerText');
-                  appendText(`${spellTarget.name}`, false, 'underline', 'playerText');
-                  appendText('resisted the', false);
-                  appendText(`${resistedEffect.name}`, false, this.textColor);
-                  appendText('effect!', false);
-                }
-              }
+        //If the spell deals any damage, display the damage dealt to the target
+        if (spellDamage){
+            appendText('and hits', false);
+            appendText(spellTarget.name, false, `${ targetIsPlayer ? 'underline' : null}`);
+            appendText('for', false);
+            appendText(Math.round(spellDamage).toString(), false, this.textColor);
+            appendText('damage!', false);
+        }
+        
+        //For any effects resisted, display as such
+        effectStatus.forEach((e) => {
+            //If the effect was resisted and the target isn't dead from the spell, display that the effect was resisted
+            if (e.wasResisted && spellTarget.health > 0){
+                appendText(spellTarget.name, true, `${ targetIsPlayer ? 'underline' : 'crimsonText'}`, `${ targetIsPlayer ? 'playerText' : null}`);
+                appendText('resisted the', false);
+                appendText(e.effect.name, false, e.effect.textColor);
+                appendText('effect!', false);
             }
             
+            //If the effect wasn't resisted, and the effect isn't targeting health or mana, and the effect could have been resisted, and the target isn't dead, display the status infliction
+            if (!e.wasResisted && e.effect.canBeResisted && spellTarget.health > 0){
+                switch(e.effect.name){
+                    case 'health':
+                    case 'mana':
+                    case 'rage':
+                    break;
 
+                    default:
+                        appendText(spellTarget.name, true, `${ targetIsPlayer ? 'underline' : 'crimsonText'}`, `${ targetIsPlayer ? 'playerText' : null}`);
+                        appendText('is inflicted with', false);
+                        appendText(e.effect.name + '!', false, this.textColor);
+                    break;
+                        
+                    }
+                }
+                
+                //Now for anything else. This first switch is just to make sure the name of the person targeted by the effect
+                //is displayed with the right colors depending on if it is an enemy or not.
+                switch(e.effect.name){
+                    case 'rage':
+                    case 'health':
+                        if (e.effect.self && casterIsPlayer){ appendText(caster.name, true, 'underline', 'playerText'); };
+                        if (e.effect.self && !casterIsPlayer){ appendText(caster.name, true, 'redText'); };
+                        if (!e.effect.self && !targetIsPlayer){ appendText(spellTarget.name, true, 'redText'); };
+                        if (!e.effect.self && targetIsPlayer){ appendText(spellTarget.name, true, 'underline', 'playerText'); };
+                    break;
+                }
 
-        //If the spell misses
-        } else {
-            appendText('*', true);
-            appendText(caster.name, false, 'underline', 'playerText');
-            appendText('casts', false, 'greyText');
-            appendText(this.name, false, this.textColor);
-            appendText('and misses', false, 'greyText');
-            appendText(spellTarget.name + '!', false, 'greyText');
-        }
+                //This second switch is for each individual printout dependent on the effect name
+                switch (e.effect.name){
+
+                case 'rage':
+                    appendText('flies into an', false);
+                    appendText('uncontrollable rage!', false);
+                break;
+
+                case 'health':
+                    if (!e.effect.duration){
+                        appendText(`${e.effect.modifier > 0 ? 'recovers' : 'loses'}` + ' ' + Math.abs(e.effect.modifier));
+                        appendText('health!', false, this.textColor);
+                    }
+                    
+                    if (e.effect.duration){
+                        appendText(`${e.effect.modifier > 0 ? 'will recover' : 'will lose'}` + ' ' + Math.abs(e.effect.modifier));
+                        appendText('health', false, this.textColor);
+                        appendText('for', false);
+                        appendText(e.effect.duration, false);
+                        appendText('turns!', false);
+                    }
+                break;
+            }
+            
+        });
     }
 }

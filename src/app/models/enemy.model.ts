@@ -198,7 +198,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         enemyDamageTypes.push(copy);
       });
       
-        //If we don't pass in damageTypes as an argument, then the damage reduction will be from
+        //If we pass in damageTypes as an argument, then the damage reduction will be from
         //either a spell or consumable rather than a base attack done, so don't use base damage types
         if (damageTypes){
           enemyDamageTypes = [];
@@ -324,7 +324,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         appendText(playerTarget.name, false, 'greyText', 'underline');
         appendText('for', false, 'greyText');
         appendText(`${damage}`, false, 'redText');
-        appendText('damage!', false);
+        appendText('damage!', false, 'greyText');
         playerTarget.health -= damage;
       }
 

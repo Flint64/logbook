@@ -144,8 +144,9 @@ export class Player {
 
   /****************************************************************************************
    * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
-   * and calculates to see if that effect has been resisted or not. Returns true for effect
-   * was resisted, false for not
+   * and calculates to see if that effect has been resisted or not.
+   * true === effect resisted
+   * false === effect applied
    ****************************************************************************************/
     calcEffectResistance(resistance: number): boolean{
       let val = ((resistance / 2) / 150) * 100;
@@ -188,7 +189,7 @@ export class Player {
           }
         });
 
-        //If we don't pass in damageTypes as an argument, then the damage reduction will be from
+        //If we pass in damageTypes as an argument, then the damage reduction will be from
         //either a spell or consumable rather than a base attack done, so don't use the weapon damage types
         if (damageTypes){
           playerDamageTypes = [];
