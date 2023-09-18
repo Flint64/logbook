@@ -363,7 +363,6 @@ export class Player {
 
     //Determine whether or not the attack is evaded
     attackHits = this.calcEvasionChance(inventory, enemyTarget, appendText);
-    console.log(attackHits);
     if (attackHits){
       //Attack was evaded
       return attackHits;

@@ -277,10 +277,43 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       return false;
     }
 
-    /****************************************************************************************
-    * Calculate Evasion Chance - Calculates whether or not the attack was evaded
-    ****************************************************************************************/
-   
+  /****************************************************************************************
+  * Calculate Evasion Chance - Calculates whether or not the attack was evaded
+  * false === attack hits
+  * true === attack evaded
+  ****************************************************************************************/
+  calcEvasionChance(inventory: EquippableItem[], playerTarget: Player, appendText): boolean{
+    let enemyAccuracy = this.calcTotalStatValue('accuracy', null);
+    let enemyEvasion = playerTarget.calcTotalStatValue('evasion', null, inventory);
+    let evadePercent = enemyEvasion / (enemyEvasion + enemyAccuracy) / 2 ;
+    evadePercent = Math.round( evadePercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+    evadePercent *= 100;
+    if (_.random(1, 100) < evadePercent){
+      if (this.health !== 0){
+        appendText('*', true, 'redText');
+        appendText(this.name, false, 'redText');
+        appendText('attacks, but', false, 'greyText');
+        appendText(playerTarget.name, false, 'greyText');
+        appendText('deftly dodges the hit!', false, 'greyText');
+      }
+      if (this.health === 0){
+        appendText('*', true, 'redText');
+        appendText(this.name, false, 'redText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(playerTarget.name, false, 'redText');
+        appendText('before perishing, but', false, 'redText');
+        appendText(playerTarget.name, false, 'redText');
+        appendText('deftly dodges the hit!', false, 'redText');
+        this.health -= 1;
+      }
+      return true;
+    }
+
+    
+    return false;
+  }
+
     
    /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
@@ -307,6 +340,13 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     result.attackHits = this.calcAttackAccuracy(this, playerTarget, appendText);
     if (!result.attackHits){
       return result;
+    }
+
+    //Determine whether or not the attack is evaded
+    result.attackHits = this.calcEvasionChance(inventory, playerTarget, appendText);
+    if (result.attackHits){
+      //Attack was evaded
+      return result.attackHits;
     }
 
     //Calculate the attack's damage if we don't miss
