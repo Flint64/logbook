@@ -199,6 +199,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.keyListener();
   }
 
+  //Calculates the width of the party member info box if there are 1, 2, or 3 party members.
+  //Should be called any time the party formation changes.
   calcMemberBoxWidth(){
     let numPartyMembers = this.memberBoxes.toArray().length;
     switch (numPartyMembers){

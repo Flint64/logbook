@@ -244,13 +244,12 @@ export class Player {
 
    /****************************************************************************************
    * Calculate Base Attack Damage - Calculates the base attack damage including variance
-   * //TODO: Move variance from here to the weapon stat. Unless 7 is a good overall factor?
    ****************************************************************************************/
     private calcBaseAttackDamage(inventory: EquippableItem[]){
       let dam = (this.calcTotalStatValue('strength', null, inventory) / 2) + this.calcTotalStatValue('attack', null, inventory);
 
       //Damage variance, a random number from 1-7 more or less than the calculated value, minimum of 1
-      let variance = _.random(1, 7);
+      let variance = _.random(1, this.calcTotalStatValue('variance', null, inventory));
 
       // this will add minus sign in 50% of cases
       variance *= Math.round(Math.random()) ? 1 : -1; 

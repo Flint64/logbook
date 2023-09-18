@@ -149,6 +149,7 @@ export const weapons: Weapon[] = [
         accuracy: 5,
         luck: 0,
         attack: 2,
+        variance: 7,
         crit: 3,
         statusEffectResistances: [],
         damageTypes: [
@@ -167,6 +168,7 @@ export const weapons: Weapon[] = [
         accuracy: 5,
         luck: 0,
         attack: 4,
+        variance: 7,
         crit: 5,
         statusEffectResistances: [],
         damageTypes: [
@@ -186,6 +188,7 @@ export const weapons: Weapon[] = [
         accuracy: 5,
         luck: 0,
         attack: 6,
+        variance: 7,
         crit: 3,
         statusEffectResistances: [
             new PoisonResistance({resistance: 5})
@@ -206,6 +209,7 @@ export const weapons: Weapon[] = [
         accuracy: 5,
         luck: 0,
         attack: 6,
+        variance: 7,
         crit: 3,
         statusEffectResistances: [
             new BurnResistance({resistance: 30}) //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name

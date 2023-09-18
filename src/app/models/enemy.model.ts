@@ -18,6 +18,7 @@ export class Enemy {
         health: number = null;
         maxHealth: number = null;
         strength: number = null;
+        variance: number = null;
         defense: number = null;
         speed: number = null;
         mana: number = null;
@@ -34,15 +35,15 @@ export class Enemy {
         turnCount: number = null;
         ATB: number = 0;
     
-    /*
-      TODO: Add special abilities/attacks to enemy model. Have it be a % like accuracy to see
-      if the attack is a regular attack or special attack. If an enemy has more than one special
-      attack/magic ability (it'll be an array of abilities) each one should have a % value (totaling
-      up to 100%) to see which one gets used. Ex, an enemy may have 20% chance to use a special ability.
-      If they have 1 special ability, it's a 100% chance within the 20%. If they have 3, it can be 
-      any variation of 33% each, 20/40/40, 10/70/20 etc. Since it's out of 100%, we can programmatically
-      determine percent chance of any variation of percentages/number of abilities:
+        // TODO: Add special abilities/attacks to enemy model. Have it be a % like accuracy to see
+        // if the attack is a regular attack or special attack. If an enemy has more than one special
+        // attack/magic ability (it'll be an array of abilities) each one should have a % value (totaling
+        // up to 100%) to see which one gets used. Ex, an enemy may have 20% chance to use a special ability.
+        // If they have 1 special ability, it's a 100% chance within the 20%. If they have 3, it can be 
+        // any variation of 33% each, 20/40/40, 10/70/20 etc. Since it's out of 100%, we can programmatically
+        // determine percent chance of any variation of percentages/number of abilities:
 
+    /*
 let abilities = [{chance: 10}, {chance: 70}, {chance: 20}];
 let split = [];
 
@@ -169,7 +170,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       let dam = (this.calcTotalStatValue('strength', null) / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
 
       //Damage variance, a random number from 1-5 more or less than the calculated value, minimum of 1
-      let variance = _.random(1, 5);
+      let variance = _.random(1, this.calcTotalStatValue('variance', null));
 
       // this will add minus sign in 50% of cases
       variance *= Math.round(Math.random()) ? 1 : -1; 

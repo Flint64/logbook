@@ -103,6 +103,7 @@ export class Weapon extends EquippableItem{
     accuracy: number
     luck: number
     attack: number
+    variance: number
     crit: number
     statusEffectResistances: StatusEffectResistance[];
     damageTypes: DamageTypes[];
