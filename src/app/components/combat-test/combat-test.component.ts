@@ -11,22 +11,9 @@ import { InfoWindowComponent } from './info-window/info-window.component';
 import { enemies } from './enemyList';
 import { potions } from './potionList';
 import { spells } from './spellList';
-import { helms } from './equipmentList';
-import { chestplates } from './equipmentList';
-import { pants } from './equipmentList';
-import { bracers } from './equipmentList';
-import { greaves } from './equipmentList';
-import { weapons } from './equipmentList';
-import { trinkets } from './equipmentList';
+import { helms, chestplates, pants, bracers, greaves, weapons, trinkets } from './equipmentList';
 import { Player } from 'src/app/models/player.model';
-import { EquippableItem } from 'src/app/models/equipment/equippableItem.model';
-import { Helm } from 'src/app/models/equipment/helmModel';
-import { Chestplate } from 'src/app/models/equipment/chestplateModel';
-import { Pants } from 'src/app/models/equipment/pantsModel';
-import { Bracer } from 'src/app/models/equipment/bracerModel';
-import { Greaves } from 'src/app/models/equipment/greavesModel';
-import { Weapon } from 'src/app/models/equipment/weaponModel';
-import { Trinket } from 'src/app/models/equipment/trinketModel';
+import { EquippableItem, Bracer, Helm, Chestplate, Pants, Greaves, Weapon, Trinket} from 'src/app/models/equippableItem.model';
 //ng deploy --base-href=https://flint64.github.io/logbook/
 
 @Component({

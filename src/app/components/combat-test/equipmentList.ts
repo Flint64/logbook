@@ -2,13 +2,7 @@ import { BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamag
 import { Player } from "src/app/models/player.model";
 import { StatusEffectResistance, BurnResistance, PoisonResistance, FreezeResistance, ShockResistance } from "src/app/models/statusEffectResistanceModel";
 import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
-import { Weapon } from "src/app/models/equipment/weaponModel";
-import { Bracer } from "src/app/models/equipment/bracerModel";
-import { Chestplate } from "src/app/models/equipment/chestplateModel";
-import { Pants } from "src/app/models/equipment/pantsModel";
-import { Greaves } from "src/app/models/equipment/greavesModel";
-import { Trinket } from "src/app/models/equipment/trinketModel";
-import { Helm } from "src/app/models/equipment/helmModel";
+import { EquippableItem, Bracer, Weapon, Chestplate, Pants, Greaves, Trinket, Helm} from "src/app/models/equippableItem.model";
 
 /****************************************************************************************
  * Helms

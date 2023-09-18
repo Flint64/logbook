@@ -4,7 +4,7 @@ import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Player } from "./player.model";
 import { StatusEffectResistance } from "./statusEffectResistanceModel";
-import { EquippableItem } from "./equipment/equippableItem.model";
+import { EquippableItem } from "./equippableItem.model";
 
 export class Enemy {
     

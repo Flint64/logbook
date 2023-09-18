@@ -1,11 +1,10 @@
+import { EquippableItem, Bracer, Helm, Chestplate, Pants, Greaves, Weapon, Trinket} from 'src/app/models/equippableItem.model';
 import { Injectable } from '@angular/core';
 import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from './enemy.model';
 import { Player } from './player.model';
-import { EquippableItem } from './equipment/equippableItem.model';
 import { DamageTypes } from './damageTypes.model';
-import { Trinket } from './equipment/trinketModel';
 
 @Injectable()
 export class Magic {

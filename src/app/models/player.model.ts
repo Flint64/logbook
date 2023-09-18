@@ -1,10 +1,8 @@
-import { EquippableItem } from "./equipment/equippableItem.model";
+import { EquippableItem, Bracer, Helm, Chestplate, Pants, Greaves, Weapon, Trinket} from 'src/app/models/equippableItem.model';
 import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from "./enemy.model";
-import { Weapon } from "./equipment/weaponModel";
-import { Trinket } from "./equipment/trinketModel";
 
 export class Player {
     constructor(){}
