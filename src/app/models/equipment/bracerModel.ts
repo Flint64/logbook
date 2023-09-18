@@ -14,4 +14,5 @@ export class Bracer extends EquippableItem{
       accuracy: number
       luck: number
       crit: number
+      evasion: number
 }

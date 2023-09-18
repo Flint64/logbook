@@ -23,6 +23,7 @@ export class Enemy {
         mana: number = null;
         maxMana: number = null;
         accuracy: number = null;
+        evasion: number = null;
         luck: number = null;
         resistance: number = 10;
         intelligence: number = 0;
@@ -134,7 +135,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       totalStatValue += this.calcTotalStatValue('resistance', null, null, true, counter++);
 
     //If we don't have a matching DR, and the damage is elemental, return base resistance
-    } else if (!searchDamageResistances && isElemental === false && stopRecursion === false && counter < 1 && !searchStatusResistances){
+    } else if (!searchDamageResistances && isElemental === false && stopRecursion === false && counter < 1 && !searchStatusResistances && statName !== 'evasion'){
       totalStatValue += this.calcTotalStatValue('defense', null, null, true, counter++);
 
     //If we don't have a matching StatusResistance, return base resistance
@@ -275,6 +276,11 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       }
       return false;
     }
+
+    /****************************************************************************************
+    * Calculate Evasion Chance - Calculates whether or not the attack was evaded
+    ****************************************************************************************/
+   
     
    /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.

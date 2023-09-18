@@ -12,4 +12,5 @@ export class Chestplate extends EquippableItem{
       speed: number
       mana: number
       intelligence: number
+      evasion: number
 }

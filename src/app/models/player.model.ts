@@ -24,13 +24,12 @@ export class Player {
 
     //Speed = (Character's speed) + Accessory Bonuses
     speed: number = 200;
+    evasion: number = 0;
     mana: number = 33;
     accuracy: number = 80;
     luck: number = 5;
     canSelectEnemy: boolean = true;
     resistance: number = 10;
-
-    //TODO: Evade? dodge? Evade Rate = (Character's Evade% / 4) + Accessory Bonuses
     
     ATB: number = 100;
     turnCount: number = 0;
@@ -127,7 +126,7 @@ export class Player {
           totalStatValue += this.calcTotalStatValue('resistance', null, inventory, true, counter++);
 
         //If we don't have a matching DR, and the damage is elemental, return base resistance
-        } else if (!searchDamageResistances && isElemental === false && stopRecursion === false && counter < 1 && !searchStatusResistances){
+        } else if (!searchDamageResistances && isElemental === false && stopRecursion === false && counter < 1 && !searchStatusResistances && statName !== 'evasion'){
           totalStatValue += this.calcTotalStatValue('defense', null, inventory, true, counter++);
 
         //If we don't have a matching StatusResistance, return base resistance
@@ -307,6 +306,43 @@ export class Player {
         return false;
       }
     }
+
+    /****************************************************************************************
+    * Calculate Evasion Chance - Calculates whether or not the attack was evaded
+    * false === attack hits
+    * true === attack evaded
+    ****************************************************************************************/
+   calcEvasionChance(inventory: EquippableItem[], enemyTarget: Enemy, appendText): boolean{
+    let enemyEvasion = enemyTarget.calcTotalStatValue('evasion', null);
+    let playerAccuracy = this.calcTotalStatValue('accuracy', null, inventory);
+    let evadePercent = enemyEvasion / (enemyEvasion + playerAccuracy) / 2 ;
+    evadePercent = Math.round( evadePercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
+    evadePercent *= 100;
+    if (_.random(1, 100) < evadePercent){
+      if (this.health !== 0){
+        appendText('*', true, 'playerText');
+        appendText(this.name, false, 'underline', 'playerText');
+        appendText('attacks, but', false, 'greyText');
+        appendText(enemyTarget.name, false, 'greyText');
+        appendText('deftly dodges the hit!', false, 'greyText');
+      }
+      if (this.health === 0){
+        appendText('*', true, 'playerText');
+        appendText(this.name, false, 'underline', 'playerText');
+        appendText('at near death attempts', false, 'redText');
+        appendText('one final attack on', false, 'redText');
+        appendText(enemyTarget.name, false, 'redText');
+        appendText('before perishing, but', false, 'redText');
+        appendText(enemyTarget.name, false, 'redText');
+        appendText('deftly dodges the hit!', false, 'redText');
+        this.health -= 1;
+      }
+      return true;
+    }
+
+    
+    return false;
+   }
         
   /****************************************************************************************
    * Player Attack - Handles basic player attacks.
@@ -322,6 +358,14 @@ export class Player {
     //Determine whether or not the attack hits
     attackHits = this.calcAttackAccuracy(this, enemyTarget, inventory, appendText);
     if (!attackHits){
+      return attackHits;
+    }
+
+    //Determine whether or not the attack is evaded
+    attackHits = this.calcEvasionChance(inventory, enemyTarget, appendText);
+    console.log(attackHits);
+    if (attackHits){
+      //Attack was evaded
       return attackHits;
     }
     
@@ -394,17 +438,6 @@ export class Player {
   }
   
   return attackHits;
-  
-    // Returns a random integer from 1-100:
-    // if ((_.random(1, 100)) < this.calcTotalStatValue('accuracy', null, inventory)){
-
-      //If we hit, check if the enemy evades the attack
-      //TODO: Enemy evasion
-      //Hit Rate = (Character's Hit% / 2) + (Weapon Hit% + Accessory Bonuses) - Enemy Evade%
-    // checkIfHit(){
-        // (this.accuracy / 2) + (this.inventory.equippedWeapon + this.inventory.equippedGear) - enemy.dodge;
-        // (this.accuracy / 2) + (5 + 5) - 3;
-    // }
 
     //If the player or the enemy is at 0 hit points, they get one
     //last attack before dying. (Only attack, not action)

@@ -45,6 +45,7 @@ export const chestplates: Chestplate[] = [
         speed: 0,
         mana: 0,
         intelligence: 0,
+        evasion: 0,
         statusEffectResistances: [],        
         damageResistances: [],
         damageTypes: []
@@ -60,6 +61,7 @@ export const chestplates: Chestplate[] = [
         speed: 10,
         mana: 0,
         intelligence: 3,
+        evasion: 0,
         statusEffectResistances: [],        
         damageResistances: [],
         damageTypes: []
@@ -136,6 +138,7 @@ export const bracers: Bracer[] = [
         accuracy: 0,
         luck: 0,
         crit: 8,
+        evasion: 0,
         statusEffectResistances: [],
         damageResistances: [],
         damageTypes: []
@@ -255,6 +258,7 @@ export const trinkets: Trinket[] = [
         accuracy: null,
         luck: null,
         crit: null,
+        evasion: 5,
         statusEffectResistances: [new BurnResistance({resistance: 30})],
         damageTypes: [new FireDamage({percent: 10, elemental: true})],
         damageResistances: [new FireDamageResistance({resistance: 30, elemental: true})]
