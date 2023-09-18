@@ -190,12 +190,44 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     
     this.selectPartyMember(0);
     this.memberIndex = 0;
+
+    this.calcMemberBoxWidth();
+
   }
 
   ngOnDestroy(): void {
     this.keyListener();
   }
 
+  calcMemberBoxWidth(){
+    let numPartyMembers = this.memberBoxes.toArray().length;
+    switch (numPartyMembers){
+      case 1:
+        this.memberBoxes.toArray().forEach(e => {
+          e.nativeElement.classList.add('partyOfOne');
+          e.nativeElement.classList.remove('partyOfTwo');
+          e.nativeElement.classList.remove('partyOfThree');
+        });
+      break;
+
+      case 2:
+        this.memberBoxes.toArray().forEach(e => {
+          e.nativeElement.classList.add('partyOfTwo');
+          e.nativeElement.classList.remove('partyOfOne');
+          e.nativeElement.classList.remove('partyOfThree');
+        });
+      break;
+
+      case 3:
+        this.memberBoxes.toArray().forEach(e => {
+          e.nativeElement.classList.add('partyOfThree');
+          e.nativeElement.classList.remove('partyOfTwo');
+          e.nativeElement.classList.remove('partyOfOne');
+        });
+      break;
+    }
+  }
+  
   openHelpWindow(data: any): void {
     if (this.intervalID !== null){ this.stopATB(); }
 

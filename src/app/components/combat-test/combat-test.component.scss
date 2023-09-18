@@ -77,7 +77,7 @@ button{
     border: 1px solid white;
     min-height: 85px;
     max-height: 93px;
-    width: 30%; //TODO: Dynamic width for 2 or 1 party member
+    width: 30%;
     margin-bottom: 5px;
     margin-top: 5px;
     
@@ -86,6 +86,12 @@ button{
         margin: 0;
     }
 }
+
+//Dynamic widths for memberBox for 1, 2, or 3 party members
+.partyOfOne{ width: 90% !important; }
+.partyOfTwo{ width: 45% !important; }
+.partyOfThree{ width: 30% !important; }
+
 
 .innerBoxWrapper{
     max-height: 93px;
