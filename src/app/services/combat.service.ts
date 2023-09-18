@@ -23,7 +23,6 @@ export class CombatService {
   constructor() {
     this.player1.name = "Gort";
     this.player1.speed = 150;
-    this.player1.health = 80;
     
     this.player2.name = "Luke";
     this.player2.speed = 250;

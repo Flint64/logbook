@@ -18,6 +18,7 @@ export class Enemy {
         health: number = null;
         maxHealth: number = null;
         strength: number = null;
+        attack: number = null;
         variance: number = null;
         defense: number = null;
         speed: number = null;
@@ -167,7 +168,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    ****************************************************************************************/
     calcBaseAttackDamage(): number{
       //Damage is a random number between player min attack and attack
-      let dam = (this.calcTotalStatValue('strength', null) / 2) + 1 //TODO: 1 is enemy level? Not implemented yet
+      let dam = (this.calcTotalStatValue('strength', null) / 2) + this.calcTotalStatValue('attack', null);
 
       //Damage variance, a random number from 1-5 more or less than the calculated value, minimum of 1
       let variance = _.random(1, this.calcTotalStatValue('variance', null));
