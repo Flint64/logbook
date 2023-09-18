@@ -11,7 +11,6 @@ export class Weapon extends EquippableItem{
 
       strength: number
       speed: number
-      mana: number
       intelligence: number
       accuracy: number
       luck: number

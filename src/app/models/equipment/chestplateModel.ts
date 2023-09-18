@@ -6,11 +6,9 @@ export class Chestplate extends EquippableItem{
         Object.assign(this, data);
       }
 
-      health: number
       strength: number
       defense: number
       speed: number
-      mana: number
       intelligence: number
       evasion: number
 }

@@ -5,10 +5,8 @@ export class Trinket extends EquippableItem{
         super(data);
         Object.assign(this, data);
       }
-      health: number
       defense: number
       speed: number
-      mana: number
       intelligence: number
       strength: number
       accuracy: number

@@ -6,11 +6,9 @@ export class Bracer extends EquippableItem{
         Object.assign(this, data);
       }
 
-      health: number
       strength: number
       defense: number
       speed: number
-      mana: number
       accuracy: number
       luck: number
       crit: number

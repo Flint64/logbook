@@ -6,9 +6,7 @@ export class Helm extends EquippableItem{
         Object.assign(this, data);
       }
 
-    health: number
     defense: number
-    mana: number
     intelligence: number
     accuracy: number
 }

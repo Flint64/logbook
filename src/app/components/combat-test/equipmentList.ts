@@ -10,8 +10,6 @@ import { Greaves } from "src/app/models/equipment/greavesModel";
 import { Trinket } from "src/app/models/equipment/trinketModel";
 import { Helm } from "src/app/models/equipment/helmModel";
 
-//TODO: The health/mana stats on equipment don't do anything 
-
 /****************************************************************************************
  * Helms
  ****************************************************************************************/
@@ -20,9 +18,7 @@ export const helms: Helm[] = [
         name: 'Steel Helm',
         equippedBy: null,
         description: "A sturdy steel helm",
-        health: 0,
         defense: 3,
-        mana: 0,
         intelligence: 0,
         accuracy: 0,
         statusEffectResistances: [],
@@ -39,11 +35,9 @@ export const chestplates: Chestplate[] = [
         name: 'Chainmail',
         equippedBy: null,
         description: null,
-        health: 0,
         strength: 0,
         defense: 10,
         speed: 0,
-        mana: 0,
         intelligence: 0,
         evasion: 0,
         statusEffectResistances: [],        
@@ -55,11 +49,9 @@ export const chestplates: Chestplate[] = [
         name: 'Apprentice Robes',
         equippedBy: null,
         description: null,
-        health: 0,
         strength: 0,
         defense: 3,
         speed: 10,
-        mana: 0,
         intelligence: 3,
         evasion: 0,
         statusEffectResistances: [],        
@@ -71,11 +63,11 @@ export const chestplates: Chestplate[] = [
     //     name: 'TEST',
     //     equippedBy: null,
     //     description: null,
-    //     health: 0,
+    //     
     //     strength: 0,
     //     defense: 20,
     //     speed: 10,
-    //     mana: 0,
+    //     
     //     intelligence: 3,
     //     statusEffectResistances: [
     //         new PoisonResistance({resistance: 25}),
@@ -105,10 +97,10 @@ export const pants: Pants[] = [
     //     name: 'Fancy Pants',
     //     equippedBy: null,
     //     description: null,
-    //     health: 0,
+    //     
     //     defense: 5,
     //     speed: 0,
-    //     mana: 0,
+    //     
     //     intelligence: 0,
     //     statusEffectResistances: [
     //         new PoisonResistance({resistance: 25}),
@@ -130,11 +122,9 @@ export const bracers: Bracer[] = [
         name: 'Critical Bracers',
         equippedBy: null,
         description: null,
-        health: 0,
         strength: 0,
         defense: 0,
         speed: 0,
-        mana: 0,
         accuracy: 0,
         luck: 0,
         crit: 8,
@@ -161,7 +151,6 @@ export const weapons: Weapon[] = [
         description: null,
         strength: 0,
         speed: 0,
-        mana: 0,
         intelligence: 3,
         accuracy: 5,
         luck: 0,
@@ -180,7 +169,6 @@ export const weapons: Weapon[] = [
         description: null,
         strength: 0,
         speed: 0,
-        mana: 0,
         intelligence: 0,
         accuracy: 5,
         luck: 0,
@@ -200,7 +188,6 @@ export const weapons: Weapon[] = [
         description: null,
         strength: 0,
         speed: 0,
-        mana: 0,
         intelligence: 0,
         accuracy: 5,
         luck: 0,
@@ -221,7 +208,6 @@ export const weapons: Weapon[] = [
         description: 'An enchanted fiery morning star',
         strength: 0,
         speed: 0,
-        mana: 0,
         intelligence: 0,
         accuracy: 5,
         luck: 0,
@@ -249,10 +235,8 @@ export const trinkets: Trinket[] = [
         name: 'Trinket',
         equippedBy: null,
         description: 'A test trinket',
-        health: null,
         defense: null,
         speed: null,
-        mana: null,
         intelligence: null,
         strength: null,
         accuracy: null,

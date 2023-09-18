@@ -6,7 +6,6 @@ export class Greaves extends EquippableItem{
         Object.assign(this, data);
       }
 
-      health: number
       strength: number
       defense: number
       luck: number
