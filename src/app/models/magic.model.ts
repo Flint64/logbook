@@ -325,6 +325,7 @@ export class Magic {
                     break;
                 }
 
+                //TODO: If consolidating the display of these in to one place, this switch is the common part between consumableModel & magicModel
                 //This second switch is for each individual printout dependent on the effect name  - Same as consumableItem model
                 switch (e.effect.name){
 

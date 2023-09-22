@@ -469,8 +469,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * Check Status - Used in the template to check for status effects and display the 
    * correct status in the player/enemy box
    ****************************************************************************************/  
-  checkStatus(member: Player, statusName: string): boolean{
-    if (member.effects.find(({ name }) => name === statusName)){
+  checkStatus(target: Player | Enemy, statusName: string): boolean{
+    if (target.effects.find(({ name }) => name === statusName)){
       return true;
     }
   }
