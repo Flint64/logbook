@@ -41,7 +41,7 @@ export class CombatService {
    ****************************************************************************************/
   endTurn(member: Player){
     
-    member.ATB = -30;
+    member.ATB = -15;
     member.turnCount++;
 
     this.decrementEffects(member);
@@ -56,15 +56,15 @@ export class CombatService {
    * End Enemy Turn - Ends the enemies turn in combat. Resets the enemies ATB gauge and
    * decrements any active effects on them
    ****************************************************************************************/
-  endEnemyTurn(index: number){
+  endEnemyTurn(enemy: Enemy){
     //Choose a random number between -30/-10 to reset the enemy ATB gauge to so that
     //the enemy attacks are a little more random
-    this.enemyList[index].turnCount++;
+    enemy.turnCount++;
     let num = Math.floor(Math.random() * (30 - 10 + 1) + 10);
       num *= -1;
-      this.enemyList[index].ATB = num;
+      enemy.ATB = num;
 
-      this.decrementEffects(this.enemyList[index]);
+      this.decrementEffects(enemy);
       
   }
 

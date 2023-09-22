@@ -404,7 +404,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (result.attackHits){
           this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
         }
-        this.combatService.endEnemyTurn(index);
+        this.combatService.endEnemyTurn(e);
       }
     });
     
@@ -466,9 +466,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /****************************************************************************************
-   * Check Status - Used in the template to check for status effects on the party member
-   * and display the correct status in the player box
-   * //TODO: Enemies have no way of displaying active effects
+   * Check Status - Used in the template to check for status effects and display the 
+   * correct status in the player/enemy box
    ****************************************************************************************/  
   checkStatus(member: Player, statusName: string): boolean{
     if (member.effects.find(({ name }) => name === statusName)){
