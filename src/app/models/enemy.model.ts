@@ -12,7 +12,7 @@ export class Enemy {
     Object.assign(this, data);
   }
 
-        //TODO: Maybe have some attacks that take longer to recover from, like a strong attack that increases the ATB negative after using
+        //TODO: Maybe have some attacks that take longer to recover from, like a strong attack that increases the ATB negative after using or a negative speed modifier for 1 turn
         //TODO: Add in a numAttacks variable and make it so that some enemies can act more than once per turn, like a boss or something
         name: string = "";
         health: number = null;
