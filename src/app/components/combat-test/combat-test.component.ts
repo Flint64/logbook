@@ -427,7 +427,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //Increment each individual enemy's ATB guage if they have health remaining
     this.combatService.enemyList.forEach((enemy, index) => {
       if (enemy.health >= 0){
-        enemy.ATB += (enemy.speed/100);
+        enemy.ATB += (enemy.calcTotalStatValue('speed', null)/100);
       } else {
         //If the enemy is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
         if (!Array.from(this.enemyBoxes.toArray()[index].nativeElement.classList).includes('enemyHitSVG')){
