@@ -1,13 +1,40 @@
 <div class="centerCombat">
 
-    <div class="elem5 enemyArea" #gameBox>
+    <div class="enemyArea" #gameBox>
         <form [formGroup]="enemyForm" class="enemyForm">
             <div class="enemyBox noHover" #enemyBoxes *ngFor="let enemy of combatService.enemyList; let i = index" (click)="selectEnemy(i)">
-                <label>{{enemy.name}}</label>
-                <p>{{enemy.health}}</p>
-                <img #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">
-                <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
-                <progress class="enemyATB" *ngIf="showEnemyATB" max="100" [value]="combatService.enemyList[i].ATB"></progress>
+                <div class="innerBoxWrapperEnemy">
+
+                    <div>
+                        <label>{{enemy.name}}</label>
+                    </div>
+
+                    <div>
+                        <p *ngIf="showEnemyHP">{{enemy.health}}</p>
+                    </div>
+
+                    <div>
+                        <img #enemyIcons class="skull" src="assets/images/general/skull.svg" alt="enemy skull">
+                    </div>
+                    
+                    <div class="statusEffects">
+                        <p *ngIf="checkStatus(enemy,'Poison')" class="statusEffect poisonStatus">psn</p>
+                        <p *ngIf="checkStatus(enemy,'Burn')" class="statusEffect burnStatus">brn</p>
+                        <p *ngIf="checkStatus(enemy,'speed')" class="statusEffect speedStatus">spd</p>
+                        <p *ngIf="checkStatus(enemy,'rage')" class="statusEffect rageStatus">rag</p>
+                        <p *ngIf="checkStatus(enemy,'freeze')" class="statusEffect freezeStatus">frz</p>
+                        <p *ngIf="checkStatus(enemy,'strength')" class="statusEffect strengthStatus">str</p>
+                        <p *ngIf="checkStatus(enemy,'crit')" class="statusEffect strengthStatus">crt</p>
+                        <p *ngIf="checkStatus(enemy,'health')" class="statusEffect healthStatus">hp+</p>
+                        <p *ngIf="checkStatus(enemy,'mana')" class="statusEffect manaStatus">mp+</p>
+                    </div>
+
+                    <div class="enemyATBDiv">
+                        <input type="radio" [formControlName]="'enemySelected'" [value]="i" class="hidden">
+                        <progress class="enemyATB" *ngIf="showEnemyATB" max="100" [value]="combatService.enemyList[i].ATB"></progress>
+                    </div>
+                    
+                </div>
             </div>
         </form>
     </div>
@@ -58,7 +85,7 @@
                         <p style="color: orchid;">{{member.mana}} / {{member.maxMana}}</p>
                     </div>
 
-                    <div id="statusEffects">
+                    <div class="statusEffects">
                         <p *ngIf="checkStatus(member,'Poison')" class="statusEffect poisonStatus">psn</p>
                         <p *ngIf="checkStatus(member,'Burn')" class="statusEffect burnStatus">brn</p>
                         <p *ngIf="checkStatus(member,'speed')" class="statusEffect speedStatus">spd</p>

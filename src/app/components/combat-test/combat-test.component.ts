@@ -56,6 +56,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   helpText_magic: string = 'Not sure what a spell does? You can long press any spell to view its details.'
 
   showEnemyATB: boolean = true;
+  showEnemyHP: boolean = true;
 
 
   //These items in this list HAVE to match those in the switch
