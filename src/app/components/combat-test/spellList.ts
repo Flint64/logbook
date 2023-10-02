@@ -4,6 +4,7 @@ import { Effect } from 'src/app/models/effect.model';
 interface MagicData {
   name: string;
   manaCost: number;
+  healthCost: number;
   power: number;
   accuracy: number;
   variance: number;
@@ -19,8 +20,9 @@ export const spells: MagicData[] = [
   {
     name: 'Fireball',
     manaCost: 11,
+    healthCost: 0,
     power: 6,
-    accuracy: 80,
+    accuracy: 100,
     variance: 6,
     targets: 2,
     canTargetParty: false,
@@ -32,9 +34,11 @@ export const spells: MagicData[] = [
     ],
     effects: [
       {
-        name: 'Burn',
+        name: 'burn',
         duration: 4,
         modifier: 5,
+        damageTypeName: 'fire',
+        damageType: [new FireDamage({percent: 100, elemental: true})],
         canBeResisted: true,
         self: false,
         helpDescription: 'Take fire damage over time',
@@ -45,6 +49,7 @@ export const spells: MagicData[] = [
   {
     name: 'Ice Shard',
     manaCost: 8,
+    healthCost: 0,
     power: 4,
     accuracy: 80,
     variance: 2,
@@ -61,6 +66,7 @@ export const spells: MagicData[] = [
   {
     name: 'Poison Bolt',
     manaCost: 10,
+    healthCost: 0,
     power: 3,
     accuracy: 80,
     variance: 2,
@@ -73,9 +79,11 @@ export const spells: MagicData[] = [
     ],
     effects: [
       {
-        name: 'Poison',
+        name: 'poison',
         duration: 4,
         modifier: 5,
+        damageTypeName: 'poison',
+        damageType: [new PoisonDamage({percent: 100, elemental: true})],
         canBeResisted: true,
         self: false,
         helpDescription: 'Take poison damage over time',
@@ -86,6 +94,7 @@ export const spells: MagicData[] = [
   {
     name: 'Enrage',
     manaCost: 12,
+    healthCost: 0,
     power: 0,
     accuracy: 100,
     variance: 0,
@@ -117,6 +126,7 @@ export const spells: MagicData[] = [
   {
     name: 'Gift of Life',
     manaCost: 12,
+    healthCost: 0,
     power: 0,
     accuracy: 100,
     variance: 0,
@@ -148,6 +158,7 @@ export const spells: MagicData[] = [
   {
     name: 'Regeneration Burst',
     manaCost: 12,
+    healthCost: 0,
     power: 0,
     accuracy: 100,
     variance: 0,

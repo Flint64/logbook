@@ -74,6 +74,9 @@ export class CombatService {
    * DoT effects such as poison and burn.
    ****************************************************************************************/
   decrementEffects(target: Enemy | Player){
+    let tempEnemy = new Enemy({});
+    let tempPlayer = new Player();
+    
     //If the target is at 0 hp or less, don't decrement the effects and instead let them die
     if (target.health <= 0){ return; }
     
@@ -86,12 +89,16 @@ export class CombatService {
       //poison, burns, etc. Some other effects like rage that have a duration but
       //no modifier are handled in the incrementATB area as rage specifically
       //inhibits your ability to select a target, something not handled here.
+      let dam = 0;
       switch(target.effects[i].name){
-
         //Currently does x% of health damage based on its modifier. Round to prevent decimals
-        case 'Poison':
-            target.health -= Math.round((target.effects[i].modifier / 100) * target.maxHealth);
-            if (Math.round((target.effects[i].modifier / 100) * target.maxHealth) <= 0){
+        case 'poison':
+          dam = 0;
+          //Allow damage resistances to factor in to DoT effects
+          (target instanceof Player) ? dam = tempEnemy.calcDamageReduction(Math.round(target.effects[i].modifier / 100 * target.maxHealth), target, this.party.inventory, target.effects[i].damageType) : dam = tempPlayer.calcDamageReduction(Math.round(target.effects[i].modifier / 100 * target.maxHealth), target, this.party.inventory, target.effects[i].damageType);
+          
+            target.health -= dam;
+            if (dam <= 0){
               //Updated to prevent poison from killing
               if (target.health - 1 != 0){
                 target.health -= 1;
@@ -99,8 +106,10 @@ export class CombatService {
             }
         break;
         //Currently does flat damage equal to the modifier
-        case 'Burn':
-          target.health -= (target.effects[i].modifier);
+        case 'burn':
+          dam = 0;
+          (target instanceof Player) ? dam = tempEnemy.calcDamageReduction(target.effects[i].modifier, target, this.party.inventory, target.effects[i].damageType) : dam = tempPlayer.calcDamageReduction(target.effects[i].modifier, target, this.party.inventory, target.effects[i].damageType);
+          target.health -= dam;
         break;
         case 'health':
           target.health = target.calcTotalStatValue('health', null, this.party.inventory);

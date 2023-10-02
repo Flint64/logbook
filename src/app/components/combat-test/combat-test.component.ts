@@ -88,7 +88,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    }   
   }
   
-  ngOnInit(): void {
+  ngOnInit(): void {  
     //Converts the enemy list into actual Enemy objects
     let convertedEnemyList: Enemy[] = enemies.map(enemyData => new Enemy(enemyData));
     console.log(convertedEnemyList);
@@ -96,7 +96,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //i is less than the number of enemies we want displayed
     for (let i = 0; i < 3; i++){
       //Push the random enemies chosen to the combatService
-      let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
+      // let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
+      let enemy = convertedEnemyList[6];
       let clone = _.cloneDeep(new Enemy(enemy));
       this.combatService.enemyList.push(clone);
     }

@@ -1,6 +1,7 @@
 import { DamageTypes, BludgeoningDamage, PiercingDamage, SlashingDamage, FireDamage, IceDamage, PoisonDamage, ShockDamage } from "src/app/models/damageTypes.model";
 import { DamageResistance, BludgeoningDamageResistance, PiercingDamageResistance, SlashingDamageResistance, FireDamageResistance, IceDamageResistance, PoisonDamageResistance, ShockDamageResistance } from "src/app/models/damageResistanceModel";
 import { BurnResistance, PoisonResistance } from "src/app/models/statusEffectResistanceModel";
+import { Magic } from "src/app/models/magic.model";
 
 // TODO: Will need different lists of enemies and bosses, probably separated by level or something
 
@@ -172,5 +173,93 @@ export const enemies = [
       effects: [],
       turnCount: 0,
       ATB: 0
-    }
+    },
+
+    {
+      name: 'Mage',
+      health: 20,
+      maxHealth: 20,
+      strength: 2,
+      attack: 2,
+      variance: 5,
+      defense: 0,
+      speed: 70,
+      mana: 50,
+      maxMana: 50,
+      accuracy: 50,
+      evasion: 10,
+      luck: 5,
+      resistance: 90,
+      intelligence: 10,
+      damageTypes: [
+        new BludgeoningDamage({percent: 100, elemental: false})
+      ],
+      damageResistances: [],
+      statusEffectResistances: [],
+      specialAttackChance: 100,
+      specialAttacks: [
+        new Magic({
+            name: 'Fireball',
+            manaCost: 11,
+            healthCost: 0,
+            power: 6,
+            accuracy: 80,
+            variance: 6,
+            targets: 2,
+            canTargetParty: false,
+            canTargetEnemies: true,
+            textColor: 'redText',
+            useChance: 80,
+            damageTypes: [
+              new FireDamage({percent: 80, elemental: true}),
+              new BludgeoningDamage({percent: 20, elemental: false})
+            ],
+            effects: [
+              {
+                name: 'burn',
+                duration: 4,
+                modifier: 5,
+                canBeResisted: true,
+                self: false,
+                helpDescription: 'Take fire damage over time',
+                damageTypeName: 'fire',
+                damageType: [
+                  new FireDamage({percent: 100, elemental: true})
+                ]
+              },
+            ],
+        }),
+        new Magic({
+          name: 'Poison Bolt',
+          manaCost: 10,
+          healthCost: 0,
+          power: 3,
+          accuracy: 80,
+          variance: 2,
+          targets: 1,
+          canTargetParty: true,
+          canTargetEnemies: true,
+          textColor: 'greenText',
+          useChance: 20,
+          damageTypes: [
+            new PoisonDamage({percent: 100, elemental: true})
+          ],
+          effects: [
+            {
+              name: 'poison',
+              duration: 4,
+              modifier: 5,
+              damageTypeName: 'poison',
+              damageType: [new PoisonDamage({percent: 100, elemental: true})],
+              canBeResisted: true,
+              self: false,
+              helpDescription: 'Take poison damage over time',
+            },
+          ],
+        })
+      ],
+      effects: [],
+      turnCount: 0,
+      ATB: 0
+    },
   ];

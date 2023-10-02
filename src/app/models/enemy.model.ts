@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { Player } from "./player.model";
 import { StatusEffectResistance } from "./statusEffectResistanceModel";
 import { EquippableItem } from "./equippableItem.model";
+import { Magic } from "./magic.model";
 
 export class Enemy {
     
@@ -32,18 +33,11 @@ export class Enemy {
         damageTypes: Array<DamageTypes> = [];
         damageResistances: Array<DamageResistance> = [];
         statusEffectResistances: Array<StatusEffectResistance> = [];
+        specialAttackChance: number = 0;
+        specialAttacks: Array<Magic> = [];
         effects: Array<Effect> = [];
         turnCount: number = null;
         ATB: number = 0;
-    
-        // TODO: Add special abilities/attacks to enemy model. Have it be a % like accuracy to see
-        // if the attack is a regular attack or special attack. If an enemy has more than one special
-        // attack/magic ability (it'll be an array of abilities) each one should have a % value (totaling
-        // up to 100%) to see which one gets used. Ex, an enemy may have 20% chance to use a special ability.
-        // If they have 1 special ability, it's a 100% chance within the 20%. If they have 3, it can be 
-        // any variation of 33% each, 20/40/40, 10/70/20 etc. Since it's out of 100%, we can programmatically
-        // determine percent chance of any variation of percentages/number of abilities:
-
     /*
 let abilities = [{chance: 10}, {chance: 70}, {chance: 20}];
 let split = [];
@@ -220,11 +214,13 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
           let reductionPercent = (((playerElemDR)/2)/150);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
           elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+          if (elementalDamageAfterReduction <= 0){ elementalDamageAfterReduction = 1; }
         } else {
           playerPhysDR = playerTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental, inventory);
           let reductionPercent = playerPhysDR / (playerPhysDR + e.damage * 3);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
           physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+          if (physicalDamageAfterReduction <= 0){ physicalDamageAfterReduction = 1; }
         }
       });
       
@@ -316,6 +312,128 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     return false;
   }
 
+  /****************************************************************************************
+   * Is Special Ability - Calculates whether or not the attack is a special attack or
+   * standard hit
+   * true = attack is special attack
+   * false = standard attack
+   ****************************************************************************************/
+  isSpecialAbility(){
+    if (_.random(1, 100) < this.specialAttackChance){
+      return true;
+    }
+    return false;
+  }
+
+  /****************************************************************************************
+   * Select Special Ability - Handles using a special ability/magic for enemies.
+   * If a special ability is used, first we have to determine which one (if multiple) is
+   * used from the enemy's list. Utilize health/mana costs (if any), only allow use if
+   * we have the resources.
+   * 
+   * Special Abilities have a % chance each to be used out of 100
+   * If an enemy has more than one special attack/magic ability (it'll be an array of abilities)
+   * each one should have a % value (totaling up to 100%) to see which one gets used. 
+   * Ex, an enemy may have 20% chance to use a special ability. If they have 1 special ability,
+   * it's a 100% chance within the 20%. If they have 3, it can be any variation of 33% each,
+   * 20/40/40, 10/70/20 etc. Since it's out of 100%, we can programmatically
+   * determine percent chance of any variation of percentages/number of abilities:
+   * 
+   * If no ability is able to be used due to lacking health/mana requirements, and we've
+   * tried to find a suitable one 50 times, return and use a standard attack instead
+   ****************************************************************************************/
+  selectSpecialAbility(playerTarget: Player, appendText, inventory): boolean{
+
+    let abilities = this.specialAttacks;
+    let split = [];
+    let chosenAbility = null;
+
+    let rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+    abilities.forEach((e, index) => {
+      if (index === 0){ split.push(e.useChance)} else {
+      split.push(split[index-1]+e.useChance);  
+      }
+    });
+
+    let canUseAbility = false;
+    let count = 0;
+    while(!canUseAbility){
+      split.forEach((e, index) => {
+        //First	
+        if (index === 0){
+          if (rand <= e) {
+            //HERE
+            //If we have both a health and mana cost, check to see if we satisfy both conditions
+            if (!!abilities[index].healthCost && !!abilities[index].manaCost){
+              if (this.mana - abilities[index].manaCost >= 0 && this.health - abilities[index].healthCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //Otherwise, roll a different ability
+            }
+
+            //If the selected ability just has a mana cost, check to see if we have enough to use it
+            if (!!abilities[index].manaCost){
+              if (this.mana - abilities[index].manaCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //If not, roll a different ability
+             }
+
+             //Lastly, if the ability has a health cost (exhaust mana before only using these, if any) see if we have enough hp
+             if (!!abilities[index].healthCost){
+              if (this.health - abilities[index].healthCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //Otherwise, roll a different ability
+             }
+          }
+          
+        //Every other value
+        }else {
+          if (rand > split[index-1] && rand <= e){
+            //HERE
+            //If we have both a health and mana cost, check to see if we satisfy both conditions
+            if (!!abilities[index].healthCost && !!abilities[index].manaCost){
+              if (this.mana - abilities[index].manaCost >= 0 && this.health - abilities[index].healthCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //Otherwise, roll a different ability
+            }
+
+            //If the selected ability just has a mana cost, check to see if we have enough to use it
+            if (!!abilities[index].manaCost){
+              if (this.mana - abilities[index].manaCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //If not, roll a different ability
+             }
+
+             //Lastly, if the ability has a health cost (exhaust mana before only using these, if any) see if we have enough hp
+             if (!!abilities[index].healthCost){
+              if (this.health - abilities[index].healthCost >= 0){
+                chosenAbility = abilities[index];
+                canUseAbility = true;
+              } else { rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1; } //Otherwise, roll a different ability
+             }
+          }
+        }
+      });
+
+      //Increase the count each time we fail. If we hit 50 iterations, and there's still no ability chosen, default to a standard attack
+      count++;
+      if (count === 50 && !chosenAbility){
+        return false;
+      }
+  }
+
+    //If we have an ability that we can use, use it
+    if (chosenAbility){
+      chosenAbility.castSpell(this, playerTarget, appendText, inventory);
+      return true;
+    }
+    
+  }
+
     
    /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
@@ -338,6 +456,14 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       playerTargetIndex: rand
     }
 
+    //Determine if we're using a special ability or base attack
+    if (this.isSpecialAbility()){
+      let abilityUsed = this.selectSpecialAbility(playerTarget, appendText, inventory);
+      if (abilityUsed){
+        return result;
+      }
+    }
+    
     //Determine whether or not the attack hits
     result.attackHits = this.calcAttackAccuracy(this, playerTarget, appendText);
     if (!result.attackHits){

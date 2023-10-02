@@ -18,6 +18,7 @@ export class Magic {
     
       name: string
       manaCost: number
+      healthCost: number
       power: number
       accuracy: number
       variance: number
@@ -25,6 +26,7 @@ export class Magic {
       canTargetParty: boolean
       canTargetEnemies: boolean
       textColor: string
+      useChance: number
       damageTypes: DamageTypes[]
       effects: Effect[]
 
@@ -89,61 +91,6 @@ export class Magic {
         return spellDamage;
     }
 
-    /******************************************************************************************************
-     * Calculate Spell Damage Reduction - Returns the damage a given spell will deal after being reduced
-     * by any resistances on the target, be it a player or enemy. If the caster is an enemy, trinket
-     * damage types are included in the calculation, same as they are with standard attacks with any
-     * elemental damage
-    ******************************************************************************************************/
-    private calcSpellDamageReduction(caster: Player | Enemy, damage: number, target: Enemy | Player, inventory: EquippableItem[]): number{
-        let physicalDamageAfterReduction = 0;
-        let elementalDamageAfterReduction = 0;
-
-        let spellDamageTypes = [];
-        this.damageTypes.forEach((damageType) => {
-            let copy = _.cloneDeep(damageType);
-            copy.damage = Math.round((damageType.percent / 100) * damage);
-            spellDamageTypes.push(copy);
-        });
-
-      //Search through any trinkets that have any damage types tied to them, and increase the respective player damage type by that percentage
-        if (caster instanceof Player){
-            inventory.forEach((item) => {
-                if (item.equippedBy?.name === caster.name && (item instanceof Trinket)){
-                item.damageTypes.forEach((damageType) => {
-                    let damageTypeMatchIndex = spellDamageTypes.findIndex(playerDamageType => playerDamageType.constructor.name === damageType.constructor.name);
-                    if (damageTypeMatchIndex !== null || damageTypeMatchIndex !== undefined){
-                    spellDamageTypes[damageTypeMatchIndex].damage = spellDamageTypes[damageTypeMatchIndex].damage = Math.round((spellDamageTypes[damageTypeMatchIndex].damage + (spellDamageTypes[damageTypeMatchIndex].damage * (damageType.percent / 100))));
-                    }
-                });
-                }
-            });
-        }
-
-      let enemyPhysDR = null;
-      let enemyElemDR = null;
-      spellDamageTypes.forEach((e) => {
-        if (e.elemental){
-            enemyElemDR = target.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental, inventory);
-            let reductionPercent = (((enemyElemDR)/2)/150);
-            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
-            elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-          } else {
-            enemyPhysDR = target.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental, inventory);
-            let reductionPercent = enemyPhysDR / (enemyPhysDR + e.damage * 3);
-            reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
-            physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
-          }
-      });
-        
-      let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction;
-
-      //Prevent spells from doing 0 damage, limiting it to at least 1
-      if (damageAfterReduction <= 0){damageAfterReduction = 1;}
-
-      return damageAfterReduction;
-    }
-
     /****************************************************************************************
    * Calculate Attack Accuracy - Determines whether or not an attack hits or not.
    * If we miss, stop here and print the result.
@@ -169,6 +116,7 @@ export class Magic {
     
     /******************************************************************************************************
      * Cast the spell - Similar to the useItem from the consumableItem class
+     * TODO: Disallow casting spells (except resurrection magic) on dead party/enemies
      ******************************************************************************************************/
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
     castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
@@ -193,8 +141,6 @@ export class Magic {
 
         //Regardless of hit/miss, the spell costs mana
         caster.mana -= this.manaCost;
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         //Determine whether or not the spell hits
         let spellHits = this.calcSpellAccuracy(caster, spellTarget, inventory, appendText);
@@ -217,13 +163,14 @@ export class Magic {
 
             //If the effect can be resisted, and depending on if it's targeted to self or not, calculate the correct effect resistance
             if (effect.canBeResisted){
+                let effectName = effect.name.charAt(0).toUpperCase() + effect.name.slice(1);
                 if (!effect.self){
-                    obj.wasResisted = spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effect.name + 'Resistance', null, inventory));
+                    obj.wasResisted = spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effectName + 'Resistance', null, inventory));
                     obj.effect = effect;
                 }
                 
                 if (effect.self){
-                    obj.wasResisted = spellTarget.calcEffectResistance(caster.calcTotalStatValue(effect.name + 'Resistance', null, inventory));
+                    obj.wasResisted = spellTarget.calcEffectResistance(caster.calcTotalStatValue(effectName + 'Resistance', null, inventory));
                     obj.effect = effect;
                 }
             }
@@ -275,9 +222,9 @@ export class Magic {
         //If the spell deals any damage, display the damage dealt to the target
         if (spellDamage){
             appendText('and hits', false);
-            appendText(spellTarget.name, false, `${ targetIsPlayer ? 'underline' : null}`);
+            appendText(spellTarget.name, false, `${ targetIsPlayer ? 'underline' : null}`, `${ targetIsPlayer ? 'playerText' : null}`);
             appendText('for', false);
-            appendText(Math.round(spellDamage).toString(), false, this.textColor);
+            appendText(Math.round(damageAfterReduction).toString(), false, this.textColor);
             appendText('damage!', false);
         }
         

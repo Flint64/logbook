@@ -217,14 +217,16 @@ export class Player {
           let reductionPercent = (((enemyElemDR)/2)/150);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
           elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+          if (elementalDamageAfterReduction <= 0){ elementalDamageAfterReduction = 1; }
         } else {
           enemyPhysDR = enemyTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental);
           let reductionPercent = enemyPhysDR / (enemyPhysDR + e.damage * 3);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
           physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+          if (physicalDamageAfterReduction <= 0){ physicalDamageAfterReduction = 1; }
         }
       });
-
+      
       let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction;
 
       //Prevent attacks from doing 0 damage, limiting it to at least 1
