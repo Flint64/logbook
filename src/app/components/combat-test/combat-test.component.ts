@@ -96,8 +96,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //i is less than the number of enemies we want displayed
     for (let i = 0; i < 3; i++){
       //Push the random enemies chosen to the combatService
-      // let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
-      let enemy = convertedEnemyList[6];
+      let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
       let clone = _.cloneDeep(new Enemy(enemy));
       this.combatService.enemyList.push(clone);
     }
