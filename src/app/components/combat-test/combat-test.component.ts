@@ -408,7 +408,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
               if (result.attackHits){
                 this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
               }
-            }, _.random(1, 1000));
+            }, _.random(300, 1000));
             }
          } else {
            let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
