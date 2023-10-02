@@ -100,7 +100,7 @@ export const spells: MagicData[] = [
     variance: 0,
     targets: 0,
     canTargetParty: true,
-    canTargetEnemies: true, //TODO: Rage effect on enemies should prevent them from using special abilities/magic
+    canTargetEnemies: true,
     textColor: 'redText',
     damageTypes: [],
     effects: [

@@ -294,6 +294,13 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    * false = standard attack
    ****************************************************************************************/
   isSpecialAbility(){
+
+    //If the enemy has the rage effect active, it can't use special attacks
+    //and should default to a standard attack
+    if (this.effects.find(({ name }) => name === 'rage')){
+      return false;
+    }
+    
     if (_.random(1, 100) < this.specialAttackChance){
       return true;
     }
