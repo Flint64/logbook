@@ -400,10 +400,22 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //When ATB guage is full, enemy attack
     this.combatService.enemyList.forEach((e, index) => {
       if (e.ATB >= 100){
-        let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
-        if (result.attackHits){
-          this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
-        }
+
+        if (e.numAttacks > 1){
+          for (let i = 0; i < e.numAttacks; i++){
+              setTimeout(() => {
+              let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+              if (result.attackHits){
+                this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
+              }
+            }, _.random(1, 1000));
+            }
+         } else {
+           let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+           if (result.attackHits){
+             this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
+           }
+         }        
         this.combatService.endEnemyTurn(e);
       }
     });

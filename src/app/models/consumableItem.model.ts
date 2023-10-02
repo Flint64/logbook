@@ -67,7 +67,7 @@ export class ConsumableItem {
      * Only thrown vials on enemies can miss; a thrown vial on a fellow party member will always hit.
      * Uses base accuracy instead of equipment total so that it's slightly lower
      * If we miss the attack (greater than instead of less than) stop here and print the result
-     * TODO: Make this work better for non-potions. It's consumableItem model, not potionModel. This should work for scrolls/wands/whatever else it may be, not just throwing something.
+     * //TODO: Make this work better for non-potions. It's consumableItem model, not potionModel. This should work for scrolls/wands/whatever else it may be, not just throwing something.
      ******************************************************************************************************/
     calcThrownVialAccuracy(player: Player, target: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void): boolean{
         //Display text for a thrown item that misses the enemy target.

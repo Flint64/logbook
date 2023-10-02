@@ -14,7 +14,6 @@ export class Enemy {
   }
 
         //TODO: Maybe have some attacks that take longer to recover from, like a strong attack that increases the ATB negative after using or a negative speed modifier for 1 turn
-        //TODO: Add in a numAttacks variable and make it so that some enemies can act more than once per turn, like a boss or something
         name: string = "";
         health: number = null;
         maxHealth: number = null;
@@ -23,6 +22,7 @@ export class Enemy {
         variance: number = null;
         defense: number = null;
         speed: number = null;
+        numAttacks: number = null;
         mana: number = null;
         maxMana: number = null;
         accuracy: number = null;

@@ -1,12 +1,12 @@
 /****
- * TODO: Add specific damage weaknessess, like low/med/high
+ * //TODO: Add specific damage weaknessess, like low/med/high
  * low - 1.25 extra damage
  * med - 1.5 extra damage
  * high - status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that, ect
 */
 
 /**
- * TODO: Add specific damage resistances. Likely modify the ones we have here, but add in
+ * //TODO: Add specific damage resistances. Likely modify the ones we have here, but add in
  * a data point aside from just the resistance score, such as low/med/high resistance
  * low - 1.25 less damage
  * med - 1.5 less damage
