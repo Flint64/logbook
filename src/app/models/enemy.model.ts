@@ -38,31 +38,6 @@ export class Enemy {
         effects: Array<Effect> = [];
         turnCount: number = null;
         ATB: number = 0;
-    /*
-let abilities = [{chance: 10}, {chance: 70}, {chance: 20}];
-let split = [];
-
-let rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
-abilities.forEach((e, index) => {
-  if (index === 0){ split.push(e.chance)} else {
-  split.push(split[index-1]+e.chance);  
-  }
-});
-
-console.log(split);
-console.log(rand);
-
-split.forEach((e, index) => {
-  //First	
-  if (index === 0){
-    if (rand <= e) {console.log(abilities[index])}
-  //Every other value
-  }else {
-    if (rand > split[index-1] && rand <= e){console.log(abilities[index])}
-  }
-});
-    */
-
 
 /****************************************************************************************
    * Calculate Total Stat Value - Provides on-demand total stat values for the enemy for
