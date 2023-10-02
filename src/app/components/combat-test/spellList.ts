@@ -22,7 +22,7 @@ export const spells: MagicData[] = [
     manaCost: 11,
     healthCost: 0,
     power: 6,
-    accuracy: 100,
+    accuracy: 80,
     variance: 6,
     targets: 2,
     canTargetParty: false,
