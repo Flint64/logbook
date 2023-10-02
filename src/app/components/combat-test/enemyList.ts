@@ -208,7 +208,7 @@ export const enemies = [
             targets: 2,
             canTargetParty: false,
             canTargetEnemies: true,
-            textColor: 'redText',
+            textColor: 'orangeText',
             useChance: 80,
             damageTypes: [
               new FireDamage({percent: 80, elemental: true}),

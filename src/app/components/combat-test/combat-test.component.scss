@@ -292,13 +292,6 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
     color: white !important;
 }
 
-.poisonStatus{background: rgb(0, 75, 0);}
-.speedStatus, .strengthStatus{background: rgb(150, 110, 9);}
-.freezeStatus{background: rgb(20, 20, 151);}
-.rageStatus, .burnStatus{background: rgb(138, 12, 38);}
-.healthStatus { background: crimson; }
-.manaStatus { background: orchid; }
-
 #playerInventoryOptions{
     height: 100%;
 }
@@ -336,6 +329,7 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
 
 .greenText{ color: green !important; }
 .redText{ color: darkred !important; }
+.orangeText{ color: rgb(220, 51, 0) !important; }
 .greyText{ color: #9f9f9f !important; }
 .orchidText{ color: orchid !important; }
 .lightBlueText{ color: skyblue !important; }
@@ -345,7 +339,13 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
 .pinkText{ color: rgb(247, 158, 173) };
 .underline{ text-decoration: underline !important; }
 
-// .playerHealthBarPoison::-webkit-progress-value{ background: green !important; }
+.poisonStatus{background: rgb(0, 75, 0);}
+.speedStatus, .strengthStatus{background: rgb(150, 110, 9);}
+.freezeStatus{background: rgb(20, 20, 151);}
+.rageStatus{background: rgb(138, 12, 38);} 
+.burnStatus{background: rgb(220, 51, 0);}
+.healthStatus { background: crimson; }
+.manaStatus { background: orchid; }
 
 .enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%) !important; } //DarkRed/Crimson
 .whiteFilter { filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%) !important; } //White

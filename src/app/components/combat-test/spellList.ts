@@ -27,7 +27,7 @@ export const spells: MagicData[] = [
     targets: 2,
     canTargetParty: false,
     canTargetEnemies: true,
-    textColor: 'redText',
+    textColor: 'orangeText',
     damageTypes: [
       new FireDamage({percent: 80, elemental: true}),
       new BludgeoningDamage({percent: 20, elemental: false})
