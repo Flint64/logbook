@@ -402,7 +402,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
       if (e.ATB >= 100){
 
         if (e.numAttacks > 1){
-          for (let i = 0; i < e.numAttacks; i++){
+          for (let i = 0; i < _.random(1, e.numAttacks); i++){
               setTimeout(() => {
               let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
               if (result.attackHits){
