@@ -141,6 +141,7 @@ export class Magic {
 
         //Regardless of hit/miss, the spell costs mana
         caster.mana -= this.manaCost;
+        caster.health -= this.healthCost;
         
         //Determine whether or not the spell hits
         let spellHits = this.calcSpellAccuracy(caster, spellTarget, inventory, appendText);

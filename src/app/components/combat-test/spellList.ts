@@ -126,7 +126,7 @@ export const spells: MagicData[] = [
   {
     name: 'Gift of Life',
     manaCost: 12,
-    healthCost: 0,
+    healthCost: 15,
     power: 0,
     accuracy: 100,
     variance: 0,
@@ -143,14 +143,6 @@ export const spells: MagicData[] = [
         canBeResisted: false,
         self: false,
         helpDescription: 'Restores 25 health',
-      },
-      {
-        name: 'health',
-        duration: null,
-        modifier: -15,
-        canBeResisted: false,
-        self: true,
-        helpDescription: 'Removes 15 health',
       },
     ],
   },
