@@ -316,12 +316,15 @@ export class Magic {
                 case 'strength':
                 case 'luck':
                 case 'PoisonResistance':
-                    let splitName = e.effect.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-                    appendText('gains a', false);
-                    splitName.forEach((e) => { appendText(e, false, this.textColor) });
-                    appendText('boost for', false);
-                    appendText(`${e.effect.duration}`, false);
-                    appendText('turns!', false);
+                    //Only print the result if it's a positive modifier
+                    if (e.effect.modifier > 0){
+                        let splitName = e.effect.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+                        appendText('gains a', false);
+                        splitName.forEach((e) => { appendText(e, false, this.textColor) });
+                        appendText('boost for', false);
+                        appendText(`${e.effect.duration}`, false);
+                        appendText('turns!', false);
+                    }
                 break;
             }
             

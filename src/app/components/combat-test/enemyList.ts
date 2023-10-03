@@ -234,6 +234,16 @@ export const enemies = [
                   new FireDamage({percent: 100, elemental: true})
                 ]
               },
+              {
+                name: 'speed',
+                duration: 4,
+                modifier: -15,
+                canBeResisted: false,
+                self: true,
+                helpDescription: 'Increases your speed',
+                damageTypeName: null,
+                damageType: null
+              }
             ],
         }),
         new Magic({

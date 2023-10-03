@@ -482,7 +482,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    * correct status in the player/enemy box
    ****************************************************************************************/  
   checkStatus(target: Player | Enemy, statusName: string): boolean{
-    if (target.effects.find(({ name }) => name === statusName)){
+    let status = target.effects.find(({ name }) => name === statusName);
+    if (status && status.modifier > 0){
       return true;
     }
   }
