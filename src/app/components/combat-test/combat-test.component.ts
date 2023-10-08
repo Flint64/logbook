@@ -400,11 +400,13 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     //When ATB guage is full, enemy attack
     this.combatService.enemyList.forEach((e, index) => {
       if (e.ATB >= 100){
+        let res = null;
 
         if (e.numAttacks > 1){
           for (let i = 0; i < _.random(1, e.numAttacks); i++){
               setTimeout(() => {
               let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+              res = result;
               if (result.attackHits){
                 this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
               }
@@ -412,11 +414,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
             }
          } else {
            let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+           res = result;
            if (result.attackHits){
              this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
            }
          }        
-        this.combatService.endEnemyTurn(e);
+        this.combatService.endEnemyTurn(e, res.recoveryPeriod);
       }
     });
     
@@ -483,6 +486,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    ****************************************************************************************/  
   checkStatus(target: Player | Enemy, statusName: string): boolean{
     let status = target.effects.find(({ name }) => name === statusName);
+    //Only display that we have a positive modifier for
     if (status && status.modifier > 0){
       return true;
     }

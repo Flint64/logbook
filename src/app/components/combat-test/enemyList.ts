@@ -210,12 +210,13 @@ export const enemies = [
             manaCost: 11,
             healthCost: 0,
             power: 6,
-            accuracy: 80,
+            accuracy: 75,
             variance: 6,
             targets: 2,
             canTargetParty: false,
             canTargetEnemies: true,
             textColor: 'orangeText',
+            recoveryPeriod: -50,
             useChance: 80,
             damageTypes: [
               new FireDamage({percent: 80, elemental: true}),
@@ -233,16 +234,6 @@ export const enemies = [
                 damageType: [
                   new FireDamage({percent: 100, elemental: true})
                 ]
-              },
-              {
-                name: 'speed',
-                duration: 4,
-                modifier: -15,
-                canBeResisted: false,
-                self: true,
-                helpDescription: 'Increases your speed',
-                damageTypeName: null,
-                damageType: null
               }
             ],
         }),

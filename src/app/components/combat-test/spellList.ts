@@ -12,6 +12,7 @@ interface MagicData {
   canTargetParty: boolean;
   canTargetEnemies: boolean;
   textColor: string;
+  recoveryPeriod: number;
   damageTypes: DamageTypes[]
   effects: Partial<Effect>[];
 }
@@ -28,6 +29,7 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'orangeText',
+    recoveryPeriod: null,
     damageTypes: [
       new FireDamage({percent: 80, elemental: true}),
       new BludgeoningDamage({percent: 20, elemental: false})
@@ -57,6 +59,7 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'lightBlueText',
+    recoveryPeriod: null,
     damageTypes: [
       new IceDamage({percent: 100, elemental: true})
     ],
@@ -74,6 +77,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'greenText',
+    recoveryPeriod: null,
     damageTypes: [
       new PoisonDamage({percent: 100, elemental: true})
     ],
@@ -102,6 +106,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'redText',
+    recoveryPeriod: null,
     damageTypes: [],
     effects: [
       {
@@ -134,6 +139,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
+    recoveryPeriod: null,
     damageTypes: [],
     effects: [
       {
@@ -158,6 +164,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
+    recoveryPeriod: null,
     damageTypes: [],
     effects: [
       {

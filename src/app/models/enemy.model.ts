@@ -323,11 +323,15 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    * If no ability is able to be used due to lacking health/mana requirements, and we've
    * tried to find a suitable one 50 times, return and use a standard attack instead
    ****************************************************************************************/
-  selectSpecialAbility(playerTarget: Player, appendText, inventory): boolean{
+  selectSpecialAbility(playerTarget: Player, appendText, inventory){
 
     let abilities = this.specialAttacks;
     let split = [];
     let chosenAbility = null;
+    let result = {
+      recoveryPeriod: null,
+      abilityWasUsed: false
+    }
 
     let rand = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
     abilities.forEach((e, index) => {
@@ -343,7 +347,6 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         //First	
         if (index === 0){
           if (rand <= e) {
-            //HERE
             //If we have both a health and mana cost, check to see if we satisfy both conditions
             if (!!abilities[index].healthCost && !!abilities[index].manaCost){
               if (this.mana - abilities[index].manaCost >= 0 && this.health - abilities[index].healthCost >= 0){
@@ -372,7 +375,6 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         //Every other value
         }else {
           if (rand > split[index-1] && rand <= e){
-            //HERE
             //If we have both a health and mana cost, check to see if we satisfy both conditions
             if (!!abilities[index].healthCost && !!abilities[index].manaCost){
               if (this.mana - abilities[index].manaCost >= 0 && this.health - abilities[index].healthCost >= 0){
@@ -403,14 +405,19 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
       //Increase the count each time we fail. If we hit 50 iterations, and there's still no ability chosen, default to a standard attack
       count++;
       if (count === 50 && !chosenAbility){
-        return false;
+        result.abilityWasUsed = false;
+        return result;
       }
   }
 
     //If we have an ability that we can use, use it
     if (chosenAbility){
       chosenAbility.castSpell(this, playerTarget, appendText, inventory);
-      return true;
+      result.abilityWasUsed = true;
+      if (chosenAbility?.recoveryPeriod){
+        result.recoveryPeriod = chosenAbility.recoveryPeriod;
+      }
+      return result;
     }
     
   }
@@ -434,13 +441,15 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     //Return true/false if we hit/miss to use to show graphic of if enemy is hit or not
     let result = {
       attackHits: null,
-      playerTargetIndex: rand
+      playerTargetIndex: rand,
+      recoveryPeriod: 0
     }
 
     //Determine if we're using a special ability or base attack
     if (this.isSpecialAbility()){
       let abilityUsed = this.selectSpecialAbility(playerTarget, appendText, inventory);
-      if (abilityUsed){
+      if (abilityUsed.abilityWasUsed === true){
+        result.recoveryPeriod = abilityUsed.recoveryPeriod;
         return result;
       }
     }
@@ -455,7 +464,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     result.attackHits = this.calcEvasionChance(inventory, playerTarget, appendText);
     if (result.attackHits){
       //Attack was evaded
-      return result.attackHits;
+      return result;
     }
 
     //Calculate the attack's damage if we don't miss

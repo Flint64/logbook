@@ -27,6 +27,7 @@ export class Magic {
       canTargetEnemies: boolean
       textColor: string
       useChance: number
+      recoveryPeriod: number
       damageTypes: DamageTypes[]
       effects: Effect[]
 
