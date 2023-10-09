@@ -29,7 +29,7 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'orangeText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [
       new FireDamage({percent: 80, elemental: true}),
       new BludgeoningDamage({percent: 20, elemental: false})
@@ -42,6 +42,7 @@ export const spells: MagicData[] = [
         damageTypeName: 'fire',
         damageType: [new FireDamage({percent: 100, elemental: true})],
         canBeResisted: true,
+        applicationChance: 80,
         self: false,
         helpDescription: 'Take fire damage over time',
       },
@@ -59,7 +60,7 @@ export const spells: MagicData[] = [
     canTargetParty: false,
     canTargetEnemies: true,
     textColor: 'lightBlueText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [
       new IceDamage({percent: 100, elemental: true})
     ],
@@ -77,7 +78,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'greenText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [
       new PoisonDamage({percent: 100, elemental: true})
     ],
@@ -89,6 +90,7 @@ export const spells: MagicData[] = [
         damageTypeName: 'poison',
         damageType: [new PoisonDamage({percent: 100, elemental: true})],
         canBeResisted: true,
+        applicationChance: 80,
         self: false,
         helpDescription: 'Take poison damage over time',
       },
@@ -106,7 +108,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'redText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [],
     effects: [
       {
@@ -114,6 +116,7 @@ export const spells: MagicData[] = [
         duration: 4,
         modifier: null,
         canBeResisted: false,
+        applicationChance: 60,
         self: false,
         helpDescription: 'Attack randomly, unable to choose a target or special ability',
       },
@@ -122,6 +125,7 @@ export const spells: MagicData[] = [
         duration: 4,
         modifier: 5,
         canBeResisted: false,
+        applicationChance: 100,
         self: false,
         helpDescription: 'Increase attack power',
       },
@@ -139,7 +143,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [],
     effects: [
       {
@@ -147,6 +151,7 @@ export const spells: MagicData[] = [
         duration: null,
         modifier: 25,
         canBeResisted: false,
+        applicationChance: 100,
         self: false,
         helpDescription: 'Restores 25 health',
       },
@@ -164,7 +169,7 @@ export const spells: MagicData[] = [
     canTargetParty: true,
     canTargetEnemies: false,
     textColor: 'pinkText',
-    recoveryPeriod: null,
+    recoveryPeriod: 0,
     damageTypes: [],
     effects: [
       {
@@ -172,6 +177,7 @@ export const spells: MagicData[] = [
         duration: 4,
         modifier: 8,
         canBeResisted: false,
+        applicationChance: 100,
         self: false,
         helpDescription: 'Restores 8 health for 4 turns',
       },

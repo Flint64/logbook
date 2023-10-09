@@ -329,7 +329,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     let split = [];
     let chosenAbility = null;
     let result = {
-      recoveryPeriod: null,
+      recoveryPeriod: 0,
       abilityWasUsed: false
     }
 

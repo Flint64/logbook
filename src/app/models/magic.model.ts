@@ -166,6 +166,16 @@ export class Magic {
             //If the effect can be resisted, and depending on if it's targeted to self or not, calculate the correct effect resistance
             if (effect.canBeResisted){
                 let effectName = effect.name.charAt(0).toUpperCase() + effect.name.slice(1);
+
+                //If the effect has a chance to not be applied (applicationChance < 100) then first check to see if
+                //the effect will be applied before checking if it's resisted or not. If it isn't applied,
+                //do nothing.
+                if (effect.applicationChance < 100){
+                    if (_.random(1, 100) > effect.applicationChance){
+                        return;
+                    }
+                }
+                
                 if (!effect.self){
                     obj.wasResisted = spellTarget.calcEffectResistance(spellTarget.calcTotalStatValue(effectName + 'Resistance', null, inventory));
                     obj.effect = effect;

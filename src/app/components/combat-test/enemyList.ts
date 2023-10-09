@@ -228,6 +228,7 @@ export const enemies = [
                 duration: 4,
                 modifier: 5,
                 canBeResisted: true,
+                applicationChance: 80,
                 self: false,
                 helpDescription: 'Take fire damage over time',
                 damageTypeName: 'fire',
@@ -248,6 +249,7 @@ export const enemies = [
           canTargetParty: true,
           canTargetEnemies: true,
           textColor: 'greenText',
+          recoveryPeriod: 0,
           useChance: 20,
           damageTypes: [
             new PoisonDamage({percent: 100, elemental: true})
@@ -260,6 +262,7 @@ export const enemies = [
               damageTypeName: 'poison',
               damageType: [new PoisonDamage({percent: 100, elemental: true})],
               canBeResisted: true,
+              applicationChance: 80,
               self: false,
               helpDescription: 'Take poison damage over time',
             },

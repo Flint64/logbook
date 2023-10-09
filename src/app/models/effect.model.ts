@@ -11,6 +11,7 @@ export class Effect {
     damageTypeName: string
     damageType: DamageTypes[] //Only allow one damageType for effects on consumableItems. Spells can have multiple.
     canBeResisted: boolean
+    applicationChance: number
     self: boolean
     helpDescription: string
 }

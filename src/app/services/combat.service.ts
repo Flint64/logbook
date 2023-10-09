@@ -66,7 +66,7 @@ export class CombatService {
       num *= -1;
       enemy.ATB = num;
 
-    if (recoveryDuration < 0 && recoveryDuration !== null){
+    if (recoveryDuration && recoveryDuration < 0){
       enemy.ATB += recoveryDuration;
     }
 
