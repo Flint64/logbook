@@ -6,6 +6,7 @@ import { Effect } from "src/app/models/effect.model";
 // Define a separate interface for ConsumableItemData
 interface ConsumableItemData {
     name: string;
+    type: string;
     amount: number;
     thrown: boolean;
     textColor: string;
@@ -15,6 +16,7 @@ interface ConsumableItemData {
   export const potions: ConsumableItemData[] = [
   {
     name: 'Healing Potion',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'pinkText',
@@ -32,6 +34,7 @@ interface ConsumableItemData {
 
   {
     name: 'Regenerative Potion',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'pinkText',
@@ -49,6 +52,7 @@ interface ConsumableItemData {
 
   {
     name: 'Mana Potion',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'orchidText',
@@ -66,6 +70,7 @@ interface ConsumableItemData {
 
   {
     name: 'Speed Potion',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'goldText',
@@ -83,6 +88,7 @@ interface ConsumableItemData {
 
   {
     name: 'Poison Vial',
+    type: 'potion',
     amount: 3,
     thrown: true,
     textColor: 'greenText',
@@ -110,6 +116,7 @@ interface ConsumableItemData {
 
   {
     name: 'Multiple Effects',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: null,
@@ -151,6 +158,7 @@ interface ConsumableItemData {
 
   {
     name: 'Rage Potion',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'crimsonText',
@@ -168,6 +176,7 @@ interface ConsumableItemData {
 
   {
     name: 'Damage+',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'crimsonText',
@@ -185,6 +194,7 @@ interface ConsumableItemData {
 
   {
     name: 'Crit+',
+    type: 'potion',
     amount: 3,
     thrown: false,
     textColor: 'goldText',
@@ -210,6 +220,7 @@ interface ConsumableItemData {
 
   {
     name: 'Poison Resist',
+    type: 'potion',
     amount: 3,
     thrown: true,
     textColor: 'greenText',

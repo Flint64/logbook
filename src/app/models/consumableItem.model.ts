@@ -16,6 +16,7 @@ export class ConsumableItem {
       //but not every item can be thrown in combat. If thrown is true,
       //then an enemy can be selected as a target in lieu of a Player
         name: string
+        type: string
         amount: number
         thrown: boolean
         textColor: string
@@ -67,7 +68,6 @@ export class ConsumableItem {
      * Only thrown vials on enemies can miss; a thrown vial on a fellow party member will always hit.
      * Uses base accuracy instead of equipment total so that it's slightly lower
      * If we miss the attack (greater than instead of less than) stop here and print the result
-     * //TODO: Make this work better for non-potions. It's consumableItem model, not potionModel. This should work for scrolls/wands/whatever else it may be, not just throwing something.
      ******************************************************************************************************/
     calcThrownVialAccuracy(player: Player, target: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void): boolean{
         //Display text for a thrown item that misses the enemy target.
@@ -75,9 +75,9 @@ export class ConsumableItem {
             if ((_.random(1, 100)) > player.accuracy){
                 appendText('*', true, 'playerText');
                 appendText(player.name, false, 'playerText', 'underline');
-                appendText('throws a', false);
+                appendText(`${this.type === 'potion' ? 'throws a' : 'uses'}`, false);
                 appendText(this.name, false, this.textColor);
-                appendText(`at ${target.name}`, false);
+                appendText(`${this.type === 'potion' ? 'at' : 'on'} ${target.name}`, false);
                 appendText('and misses!', false)
                 return true;
             }
@@ -88,13 +88,17 @@ export class ConsumableItem {
             let isPlayer: boolean = (target instanceof Player);
             appendText('*', true, 'playerText');
             appendText(player.name, false, 'playerText', 'underline');
-            appendText('throws a', false);
+            appendText(`${this.type === 'potion' ? 'throws a' : 'uses'}`, false);
             appendText(this.name, false, this.textColor);
-            appendText('at', false)
+            appendText(`${this.type === 'potion' ? 'at' : 'on'}`, false)
             appendText(`${target.name},`, false, `${ isPlayer ? 'underline' : ''}`, '');
-            appendText('and the', false);
-            appendText('vial shatters', false);
-            appendText('on impact!', false);
+            if (this.type === 'potion'){
+                appendText('and the', false);
+                appendText('vial shatters', false);
+                appendText('on impact!', false);
+            } else {
+                appendText('and hits!', false);
+            }
         }
         return false;
     }
