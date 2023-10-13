@@ -348,7 +348,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         if (index === 0){
           if (rand <= e) {
             //If we have both a health and mana cost, check to see if we satisfy both conditions
-            if (!!abilities[index].healthCost && !!abilities[index].manaCost){
+            if ((!!abilities[index].healthCost && !!abilities[index].manaCost) || (abilities[index].healthCost === 0 && abilities[index].manaCost === 0)){
               if (this.mana - abilities[index].manaCost >= 0 && this.health - abilities[index].healthCost >= 0){
                 chosenAbility = abilities[index];
                 canUseAbility = true;
@@ -356,7 +356,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
             }
 
             //If the selected ability just has a mana cost, check to see if we have enough to use it
-            if (!!abilities[index].manaCost){
+            if (!!abilities[index].manaCost || abilities[index].manaCost === 0){
               if (this.mana - abilities[index].manaCost >= 0){
                 chosenAbility = abilities[index];
                 canUseAbility = true;
@@ -364,7 +364,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
              }
 
              //Lastly, if the ability has a health cost (exhaust mana before only using these, if any) see if we have enough hp
-             if (!!abilities[index].healthCost){
+             if (!!abilities[index].healthCost || abilities[index].healthCost === 0){
               if (this.health - abilities[index].healthCost >= 0){
                 chosenAbility = abilities[index];
                 canUseAbility = true;

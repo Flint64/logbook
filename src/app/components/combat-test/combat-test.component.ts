@@ -418,8 +418,12 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
            if (result.attackHits){
              this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
            }
-         }        
-        this.combatService.endEnemyTurn(e, res.recoveryPeriod);
+         }
+         if (res?.recoveryPeriod){
+           this.combatService.endEnemyTurn(e, res.recoveryPeriod);
+          } else {
+           this.combatService.endEnemyTurn(e, null);
+         }
       }
     });
     

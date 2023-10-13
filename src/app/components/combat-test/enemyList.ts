@@ -141,6 +141,29 @@ export const enemies = [
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),
       ],
+      specialAttackChance: 20,
+      specialAttacks: [
+        new Magic({
+            name: 'Slam',
+            manaCost: 0,
+            healthCost: 0,
+            useStrength: true,
+            isAbility: true,
+            power: 6,
+            accuracy: 60,
+            variance: 4,
+            targets: 2,
+            canTargetParty: false,
+            canTargetEnemies: true,
+            textColor: 'slateText',
+            recoveryPeriod: -50,
+            useChance: 100,
+            damageTypes: [
+              new BludgeoningDamage({percent: 100, elemental: false})
+            ],
+            effects: [],
+        })
+      ],
       effects: [],
       turnCount: 0,
       ATB: 0

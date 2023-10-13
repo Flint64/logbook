@@ -16,13 +16,16 @@ export class Magic {
         this.effects = (data.effects || []).map(effectData => new Effect(effectData));
       }
     
+      //TODO: Allow enemies to target other enemies for healing magic
       name: string
       manaCost: number
       healthCost: number
+      useStrength: boolean //if true, override intelligence and use strength for the ability instead
+      isAbility: boolean
       power: number
       accuracy: number
       variance: number
-      targets: number
+      targets: number //Unused
       canTargetParty: boolean
       canTargetEnemies: boolean
       textColor: string
@@ -79,6 +82,10 @@ export class Magic {
         let spellDamage = 0;
         if (spell.power){
             spellDamage = ((caster.calcTotalStatValue('intelligence', null, inventory) / 2.5) * spell.power);
+            
+            if (this.useStrength){
+                spellDamage = ((caster.calcTotalStatValue('strength', null, inventory) / 2.5) * spell.power);
+            }
 
             //Damage variance equal  to a range between 1 and the spell's power
             let variance = _.random(1, spell.variance);
@@ -107,7 +114,7 @@ export class Magic {
         } else {
             appendText('*', true, `${ casterIsPlayer ? 'playerText' : 'redText'}`);
             appendText(caster.name, false, `${ casterIsPlayer ? 'underline' : 'crimsonText'}`, `${ casterIsPlayer ? 'playerText' : null}`);
-            appendText('casts', false, 'greyText');
+            appendText(`${this.isAbility ? 'uses' : 'casts'}`, false, 'greyText');
             appendText(this.name, false, this.textColor);
             appendText('and misses', false, 'greyText');
             appendText(spellTarget.name + '!', false, 'greyText', `${ targetIsPlayer ? 'underline' : null}`);
@@ -226,7 +233,7 @@ export class Magic {
         //If the spell hits, display that we cast x on spellTarget.name
         appendText('*', true, `${ casterIsPlayer ? 'playerText' : 'redText'}`);
         appendText(caster.name, false, `${ casterIsPlayer ? 'underline' : 'crimsonText'}`, `${ casterIsPlayer ? 'playerText' : null}`);
-        appendText('casts', false);
+        appendText(`${this.isAbility ? 'uses' : 'casts'}`, false);
         appendText(this.name, false, this.textColor);
         appendText('on', false);
         appendText(spellTarget.name + '',false,`${ targetIsPlayer ? 'underline' : null}`, `${ targetIsPlayer ? 'playerText' : null}`);
@@ -234,7 +241,7 @@ export class Magic {
         //If the spell deals any damage, display the damage dealt to the target
         if (spellDamage){
             appendText('and hits', false);
-            appendText(spellTarget.name, false, `${ targetIsPlayer ? 'underline' : null}`, `${ targetIsPlayer ? 'playerText' : null}`);
+            // appendText(spellTarget.name, false, `${ targetIsPlayer ? 'underline' : null}`, `${ targetIsPlayer ? 'playerText' : null}`);
             appendText('for', false);
             appendText(Math.round(damageAfterReduction).toString(), false, this.textColor);
             appendText('damage!', false);
