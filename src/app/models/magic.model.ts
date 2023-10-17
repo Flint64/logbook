@@ -16,7 +16,6 @@ export class Magic {
         this.effects = (data.effects || []).map(effectData => new Effect(effectData));
       }
     
-      //TODO: Allow enemies to target other enemies for healing magic
       name: string
       manaCost: number
       healthCost: number
