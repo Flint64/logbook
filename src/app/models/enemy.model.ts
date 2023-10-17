@@ -323,7 +323,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    * If no ability is able to be used due to lacking health/mana requirements, and we've
    * tried to find a suitable one 50 times, return and use a standard attack instead
    ****************************************************************************************/
-  selectSpecialAbility(playerTarget: Player, appendText, inventory){
+  selectSpecialAbility(playerTarget: Player, appendText, inventory, enemies){
 
     let abilities = this.specialAttacks;
     let split = [];
@@ -412,7 +412,28 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
 
     //If we have an ability that we can use, use it
     if (chosenAbility){
-      chosenAbility.castSpell(this, playerTarget, appendText, inventory);
+      //If the selected spell can only target other enemies, select a random enemy target
+      if (chosenAbility.canTargetEnemies && chosenAbility.canTargetParty === false){
+        let chosenEnemy = new Enemy({});
+        while (chosenEnemy.health <= 0){
+          chosenEnemy = enemies[_.random(0, (enemies.length - 1))];
+        }
+        chosenAbility.castSpell(this, chosenEnemy, appendText, inventory);
+      }
+
+      //If the selected spell can target both party and enemies, 50/50
+      if (chosenAbility.canTargetEnemies && chosenAbility.canTargetParty){
+        if (_.random(0, 1) === 0){
+          let chosenEnemy = new Enemy({});
+          while (chosenEnemy.health <= 0){
+            chosenEnemy = enemies[_.random(0, (enemies.length - 1))];
+          }
+          chosenAbility.castSpell(this, chosenEnemy, appendText, inventory);
+        } else {
+          chosenAbility.castSpell(this, playerTarget, appendText, inventory);
+        }
+      }
+
       result.abilityWasUsed = true;
       if (chosenAbility?.recoveryPeriod){
         result.recoveryPeriod = chosenAbility.recoveryPeriod;
@@ -426,7 +447,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
    /****************************************************************************************
    * Enemy Attack - Handles basic enemy attacks. Damage is based on attack power.
    ****************************************************************************************/
-  enemyAttack(party, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory){
+  enemyAttack(party, enemies, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory){
     
     //Select a random party member to attack & calculate damage
     let rand = _.random(0, (party.length - 1));
@@ -447,7 +468,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
 
     //Determine if we're using a special ability or base attack
     if (this.isSpecialAbility()){
-      let abilityUsed = this.selectSpecialAbility(playerTarget, appendText, inventory);
+      let abilityUsed = this.selectSpecialAbility(playerTarget, appendText, inventory, enemies);
       if (abilityUsed.abilityWasUsed === true){
         result.recoveryPeriod = abilityUsed.recoveryPeriod;
         return result;

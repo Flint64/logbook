@@ -405,7 +405,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         if (e.numAttacks > 1){
           for (let i = 0; i < _.random(1, e.numAttacks); i++){
               setTimeout(() => {
-              let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+              let result = e.enemyAttack(this.combatService.party.members, this.combatService.enemyList, this.appendText.bind(this), this.combatService.party.inventory);
               res = result;
               if (result.attackHits){
                 this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
@@ -413,7 +413,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
             }, _.random(300, 1000));
             }
          } else {
-           let result = e.enemyAttack(this.combatService.party.members, this.appendText.bind(this), this.combatService.party.inventory);
+           let result = e.enemyAttack(this.combatService.party.members, this.combatService.enemyList, this.appendText.bind(this), this.combatService.party.inventory);
            res = result;
            if (result.attackHits){
              this.colorPlayerBox(result.playerTargetIndex, 'enemyHit', 'enemyHitBorder');
