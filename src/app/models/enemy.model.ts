@@ -418,6 +418,12 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
         while (chosenEnemy.health <= 0){
           chosenEnemy = enemies[_.random(0, (enemies.length - 1))];
         }
+
+        //If the selected ability heals and the target's health is still full, select a different ability
+        if (chosenAbility.effects.find(({ name }) => name === 'health') && chosenEnemy.health >= chosenEnemy.maxHealth){
+          this.selectSpecialAbility(playerTarget, appendText, inventory, enemies);
+          return;
+        }
         chosenAbility.castSpell(this, chosenEnemy, appendText, inventory);
       }
 
@@ -428,6 +434,11 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
           while (chosenEnemy.health <= 0){
             chosenEnemy = enemies[_.random(0, (enemies.length - 1))];
           }
+
+          //If the selected ability heals and the target's health is still full, select a different ability
+        if (chosenAbility.effects.find(({ name }) => name === 'health') && chosenEnemy.health >= chosenEnemy.maxHealth){
+          this.selectSpecialAbility(playerTarget, appendText, inventory, enemies);
+        }
           chosenAbility.castSpell(this, chosenEnemy, appendText, inventory);
         } else {
           chosenAbility.castSpell(this, playerTarget, appendText, inventory);
