@@ -184,4 +184,39 @@ export const spells: MagicData[] = [
     ],
   },
 
+  {
+    name: 'Resurrection',
+    manaCost: 25,
+    healthCost: 0,
+    power: 0,
+    accuracy: 100,
+    variance: 0,
+    targets: 0,
+    canTargetParty: true,
+    canTargetEnemies: false,
+    textColor: 'pinkText',
+    recoveryPeriod: 0,
+    damageTypes: [],
+    effects: [
+      {
+        name: 'health',
+        duration: null,
+        modifier: 25,
+        canBeResisted: false,
+        applicationChance: 100,
+        self: false,
+        helpDescription: 'Restores 25 health',
+      },
+      {
+        name: 'resurrect',
+        duration: null,
+        modifier: 0,
+        canBeResisted: false,
+        applicationChance: 100,
+        self: false,
+        helpDescription: '',
+      },
+    ],
+  },
+
 ];

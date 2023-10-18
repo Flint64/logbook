@@ -132,6 +132,15 @@ export class Magic {
         let damageAfterReduction = 0;
         
         let spellDamage = this.calcSpellDamage(this, caster, inventory);
+
+
+        //Only allow casting of spells on dead targets if there is a resurrect effect in place
+        if (spellTarget.health <= 0){
+            if (!this.effects.find(({ name }) => name === 'resurrect')){
+                appendText("Can't cast magic on a corpse!", true);
+                return;
+            }
+        }
         
         //If we have damage types on the spell, reduce the spell damage by the correct damage resistance
         if (this.damageTypes.length > 0){

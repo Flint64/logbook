@@ -176,6 +176,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.combatService.party.members[0].magic.push(convertedSpells[5]);
     this.combatService.party.members[1].magic.push(convertedSpells[1]);
     this.combatService.party.members[2].magic.push(convertedSpells[2]);
+    this.combatService.party.members[0].magic.push(convertedSpells[6]);
     
     //Auto-start combat
     this.enemyForm.controls.enemySelected.setValue(0);
@@ -435,6 +436,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           member.ATB += (member.calcTotalStatValue('speed', null, this.combatService.party.inventory)/100);
         }
+        this.memberBoxes.toArray()[index].nativeElement.classList.remove('playerHit');
       } else {
         //If the player is dead, make it's text & icon red. Only add the red filter if the class isn't in place already
         if (!Array.from(this.memberBoxes.toArray()[index].nativeElement.classList).includes('playerHit')){

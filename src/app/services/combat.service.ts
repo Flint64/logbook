@@ -26,6 +26,7 @@ export class CombatService {
     
     this.player2.name = "Luke";
     this.player2.speed = 250;
+    this.player2.health = -5;
 
     this.player3.name = "Max";
     this.player3.speed = 125;
