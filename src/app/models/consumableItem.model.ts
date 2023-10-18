@@ -144,10 +144,18 @@ export class ConsumableItem {
      * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
-
-        //Do nothing if the target is dead
+        
+        //Only allow using consumables on dead targets if there is a resurrect effect in place
         if (target.health < 0){
-            appendText('Can\'t use an item on a corpse!', true);
+            if (!this.effects.find(({ name }) => name === 'resurrect')){
+                appendText('Can\'t use an item on a corpse!', true);
+                return;
+            }
+        }
+
+        //Disallow using resurrection items on the living
+        if (target.health > 0 && this.effects.find(({ name }) => name === 'resurrect')){
+            appendText("Can't resurrect the living!", true);
             return;
         }
 

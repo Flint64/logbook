@@ -236,4 +236,30 @@ interface ConsumableItemData {
     ],
   },
 
+  {
+    name: 'Resurrection Draught',
+    type: 'potion',
+    amount: 3,
+    thrown: true,
+    textColor: 'pinkText',
+    effects: [
+      {
+        name: 'health',
+        duration: null,
+        modifier: 25,
+        canBeResisted: false,
+        self: true,
+        helpDescription: 'Restores 25 health',
+      },
+      {
+        name: 'resurrect',
+        duration: null,
+        modifier: 0,
+        canBeResisted: false,
+        self: true,
+        helpDescription: '',
+      }
+    ],
+  },
+
 ];

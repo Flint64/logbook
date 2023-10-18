@@ -142,6 +142,12 @@ export class Magic {
             }
         }
         
+        //Disallow using resurrection magic on the living
+        if (spellTarget.health > 0 && this.effects.find(({ name }) => name === 'resurrect')){
+            appendText("Can't resurrect the living!", true);
+            return;
+        }
+        
         //If we have damage types on the spell, reduce the spell damage by the correct damage resistance
         if (this.damageTypes.length > 0){
             if (targetIsPlayer){
