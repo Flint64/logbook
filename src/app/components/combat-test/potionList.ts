@@ -94,7 +94,7 @@ interface ConsumableItemData {
     textColor: 'greenText',
     effects: [
       {
-        name: 'Poison',
+        name: 'poison',
         duration: 4,
         modifier: 5,
         canBeResisted: true,
@@ -240,7 +240,7 @@ interface ConsumableItemData {
     name: 'Resurrection Draught',
     type: 'potion',
     amount: 3,
-    thrown: true,
+    thrown: false,
     textColor: 'pinkText',
     effects: [
       {
@@ -258,6 +258,24 @@ interface ConsumableItemData {
         canBeResisted: false,
         self: true,
         helpDescription: '',
+      }
+    ],
+  },
+
+  {
+    name: 'Antidote',
+    type: 'pill',
+    amount: 3,
+    thrown: false,
+    textColor: 'greenText',
+    effects: [
+      {
+        name: 'poisonCure',
+        duration: null,
+        modifier: 0,
+        canBeResisted: false,
+        self: true,
+        helpDescription: 'Cures poison',
       }
     ],
   },

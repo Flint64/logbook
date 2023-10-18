@@ -282,6 +282,7 @@ export class Magic {
                     case 'strength':
                     case 'luck':
                     case 'PoisonResistance':
+                    case 'poisonCure':
                     break;
 
                     default:
@@ -357,6 +358,10 @@ export class Magic {
                         appendText(`${e.effect.duration}`, false);
                         appendText('turns!', false);
                     }
+                break;
+                case 'poisonCure':
+                    spellTarget.effects = spellTarget.effects.filter(function(e) { return e.name !== 'poison' });
+                    appendText('is cured of poison!', false);
                 break;
             }
             

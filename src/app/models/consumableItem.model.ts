@@ -218,6 +218,7 @@ export class ConsumableItem {
                         case 'strength':
                         case 'luck':
                         case 'PoisonResistance':
+                        case 'poisonCure':
                             if (isPlayer){ appendText(target.name, true, 'underline', 'playerText'); };
                             if (!isPlayer){ appendText(target.name, true, 'redText'); };
                         break;
@@ -271,6 +272,10 @@ export class ConsumableItem {
                             appendText('boost for', false);
                             appendText(`${effect.duration}`, false);
                             appendText('turns!', false);
+                        break;
+                        case 'poisonCure':
+                            target.effects = target.effects.filter(function(e) { return e.name !== 'poison' });
+                            appendText('is cured of poison!', false);
                         break;
                     }
                 }

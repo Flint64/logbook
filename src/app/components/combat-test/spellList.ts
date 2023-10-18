@@ -26,7 +26,7 @@ export const spells: MagicData[] = [
     accuracy: 80,
     variance: 6,
     targets: 2,
-    canTargetParty: false,
+    canTargetParty: true,
     canTargetEnemies: true,
     textColor: 'orangeText',
     recoveryPeriod: 0,
