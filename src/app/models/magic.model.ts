@@ -123,7 +123,6 @@ export class Magic {
     
     /******************************************************************************************************
      * Cast the spell - Similar to the useItem from the consumableItem class
-     * //TODO: Disallow casting spells (except resurrection magic) on dead party/enemies
      ******************************************************************************************************/
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
     castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
