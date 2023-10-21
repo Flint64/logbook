@@ -1,0 +1,71 @@
+<app-combat-test *ngIf="combatService.combatActive"></app-combat-test>
+
+<main *ngIf="!combatService.combatActive">
+    <div class="storyText showOverflow" #gameBox #story *ngIf="viewingMain.isActive">
+    </div>
+
+    <div class="playerOptions showOverflow" #gameBox *ngIf="viewingMain.isActive">
+        <div id="playerMainOptions">
+            <!-- <p *ngFor="let option of mainMenuOptions; let i = index" (click)="optionSelected(i+1)" [ngClass]="{'actionDisabled': combatService.party.members[memberIndex]?.ATB < 100 || intervalID === null}" >{{(i+1) + '. ' + option}}</p>
+            <p *ngIf="intervalID !== null" (click)="stopATB()" [ngClass]="{'actionDisabled': intervalID === null}">{{mainMenuOptions.length + 1 + '. Pause'}}</p>
+            <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{mainMenuOptions.length + 1 + '. Resume'}}</p> -->
+        </div>
+    </div>
+
+    <div *ngIf="viewingInventory.isActive">
+        Inventory
+    </div>
+    
+    <div *ngIf="viewingEquipment.isActive">
+        Equipment
+    </div>
+    
+    <div *ngIf="viewingStats.isActive">
+        Stats
+    </div>
+    
+    <div *ngIf="viewingSettings.isActive">
+        Settings
+    </div>
+    
+
+    <div class="gameOptions">
+        <div #inventory (click)="switchView('inventory')">
+            <p *ngIf="!viewingInventory.isActive">Inventory</p>
+            <p *ngIf="viewingInventory.isActive">Back</p>
+        </div>
+        <div #equipment (click)="switchView('equipment')">
+            <p *ngIf="!viewingEquipment.isActive">Equipment</p>
+            <p *ngIf="viewingEquipment.isActive">Back</p>
+        </div>
+        <div #stats (click)="switchView('stats')">
+            <p *ngIf="!viewingStats.isActive">Stats</p>
+            <p *ngIf="viewingStats.isActive">Back</p>
+        </div>
+        <div #settings (click)="switchView('settings')">
+            <p *ngIf="!viewingSettings.isActive">Settings</p>
+            <p *ngIf="viewingSettings.isActive">Back</p>
+        </div>
+    </div>
+    
+    <div class="playerBars">
+        <form [formGroup]="partyForm" class="partyForm">
+            <div class="memberBox" #memberBoxes *ngFor="let member of combatService.party.members; let i = index" (click)="selectPartyMember(i, $event.target)">
+                <div class="innerBoxWrapper">
+                    <div>
+                        <label>{{member.name}}</label>
+                        <p style="margin-top: 5px; color: crimson;">{{member.health}} / {{member.maxHealth}}</p>
+                        <p style="color: orchid;">{{member.mana}} / {{member.maxMana}}</p>
+                    </div>
+
+                    <div class="statusEffects">
+                    </div>
+                    
+                    <div style="width: 100%;">
+                        <input type="radio" [formControlName]="'memberSelected'" [value]="i" class="hidden">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>

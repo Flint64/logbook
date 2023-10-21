@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InfoWindowComponent } from './components/combat-test/info-window/info-window.component';
 import { LongPressDirective } from './directives/long-press.directive';
+import { MainComponent } from './components/main/main.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { LongPressDirective } from './directives/long-press.directive';
     HomeComponent,
     CombatTestComponent,
     InfoWindowComponent,
-    LongPressDirective
+    LongPressDirective,
+    MainComponent
   ],
   imports: [
     BrowserModule,

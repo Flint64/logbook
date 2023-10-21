@@ -9,6 +9,7 @@ import { Party } from '../models/party.model';
 })
 export class CombatService {
 
+  combatActive: boolean = false;
   party: Party = new Party();
   
   player1: Player = new Player();
@@ -26,7 +27,6 @@ export class CombatService {
     
     this.player2.name = "Luke";
     this.player2.speed = 250;
-    this.player2.health = -5;
 
     this.player3.name = "Max";
     this.player3.speed = 125;
