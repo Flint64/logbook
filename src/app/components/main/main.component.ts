@@ -45,6 +45,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   
   ngOnInit(): void {
 
+    //Grab text speed from localstorage, if any
     if (localStorage.getItem('textSpeed')){
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
     }
@@ -57,11 +58,16 @@ export class MainComponent implements OnInit, AfterViewInit {
         
   }
 
+/****************************************************************************************
+ * After View Init - Grabs the buttons and adds them to an array of objects with a
+ * matching name for use in switchView to dynamically add/remove classes without repeated
+ * code
+ ****************************************************************************************/  
   ngAfterViewInit(): void {
-      let obj1 = {name: 'inventory', element: this.inventory}
-      let obj2 = {name: 'equipment', element: this.equipment}
-      let obj3 = {name: 'stats', element: this.stats}
-      let obj4 = {name: 'settings', element: this.settings}
+    let obj1 = {name: 'inventory', element: this.inventory}
+    let obj2 = {name: 'equipment', element: this.equipment}
+    let obj3 = {name: 'stats', element: this.stats}
+    let obj4 = {name: 'settings', element: this.settings}
     this.elements.push(obj1);
     this.elements.push(obj2);
     this.elements.push(obj3);
@@ -77,7 +83,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
 
 /****************************************************************************************
- * PrintText - Prints text in an RPG like way via setInterval. Increases the textPosition
+ * Print Text - Prints text in an RPG like way via setInterval. Increases the textPosition
  * each time the function is called, and stops the interval when the position has reached
  * the supplied string's length, and resets to 0 for the next batch.
  ****************************************************************************************/
@@ -102,6 +108,13 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
   }
 
+/****************************************************************************************
+ * Switch View - Handles switching the main page from the main story menu in to each
+ * of the different menus - inventory, equipment, stats, and settings. Loops through
+ * arrays of data so as to not repeat the same lines of code to turn off/on a bool
+ * for each button press. Sets an active class which forces a highlight and changes
+ * the text to 'back'. Pressing the same menu button again takes you to the main page
+ ****************************************************************************************/
   switchView(name: string){
 
     this.pages.forEach((page) => {
@@ -132,17 +145,14 @@ export class MainComponent implements OnInit, AfterViewInit {
           element.element.nativeElement.classList.remove('active');
       }
     });
-
-
-
   }
 
 /****************************************************************************************
  * Select Party Member - Allows you to select a party member
- * Clicking anywhere on the enemy box selects them.
+ * Clicking anywhere on the enemy box selects them. Unlike the same function in the
+ * combat file, this one allows deselecting a party member.
  ****************************************************************************************/
   selectPartyMember(index){
-
     if (this.memberIndex === index && this.partyForm.controls.memberSelected.value !== null){
       this.memberBoxes.toArray()[index].nativeElement.classList.remove('memberSelected');
       this.partyForm.controls.memberSelected.setValue(null);

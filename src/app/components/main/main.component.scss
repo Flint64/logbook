@@ -17,7 +17,7 @@ main{
         // height: 95%;
         padding-left: 5px;
         &:first-child{
-            height: 10dem;
+            // height: 12em;
             margin-top: 8px;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
@@ -48,10 +48,10 @@ main{
     }
 }
 
-.playerOptions{
+.playerOptions, .inventoryDiv, .equipmentDiv, .statsDiv, .settingsDiv, .storyText {
     margin-top: -1px;
-    min-height: 6em;
-    height: 55%;
+    min-height: 8em;
+    height: 45%;
 }
 
 .playerOptions p{
