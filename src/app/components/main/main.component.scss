@@ -82,6 +82,8 @@ main{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    padding-left: 2.5px !important;
+    padding-right: 2.5px;
     div{
         width: 100%;
         &:first-child{ border-right: 1px solid white; }
