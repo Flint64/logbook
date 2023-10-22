@@ -17,8 +17,44 @@
         Inventory
     </div>
 
-    <div class="inventoryDiv" *ngIf="viewingInventory.isActive">
-        Inventory
+    <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive">
+        <!-- <p *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'">{{item.name}}</p> -->
+        <p class="header">Bracers:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Helms:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Chestplates:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Pants:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Greaves:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Weapons:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'">{{item.name}}</li>
+        </ol>
+        
+        <p class="header">Trinkets:</p>
+        <ol>
+            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'">{{item.name}}</li>
+        </ol>
+        
+        
     </div>
 
 <!--Equipment Menu----------------------------------------------------------------------------------------------------------------------------------->

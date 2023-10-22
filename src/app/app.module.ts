@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { InfoWindowComponent } from './components/combat-test/info-window/info-window.component';
 import { LongPressDirective } from './directives/long-press.directive';
 import { MainComponent } from './components/main/main.component';
+import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MainComponent } from './components/main/main.component';
     CombatTestComponent,
     InfoWindowComponent,
     LongPressDirective,
-    MainComponent
+    MainComponent,
+    EquipmentFilterPipe
   ],
   imports: [
     BrowserModule,

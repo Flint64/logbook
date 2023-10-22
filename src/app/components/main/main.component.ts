@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChi
 import { FormControl, FormGroup } from '@angular/forms';
 import { Player } from 'src/app/models/player.model';
 import { CombatService } from 'src/app/services/combat.service';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-main',
@@ -41,10 +42,12 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   elements = [];
   
-  constructor(public combatService: CombatService, private renderer: Renderer2) { }
+  constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2) { }
   
   ngOnInit(): void {
 
+    this.loaderService.loadDevelopmentEnv();
+    
     //Grab text speed from localstorage, if any
     if (localStorage.getItem('textSpeed')){
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
@@ -116,6 +119,8 @@ export class MainComponent implements OnInit, AfterViewInit {
  * the text to 'back'. Pressing the same menu button again takes you to the main page
  ****************************************************************************************/
   switchView(name: string){
+
+    console.log(this.combatService.party.inventory);
 
     this.pages.forEach((page) => {
       if (page.name === name) {

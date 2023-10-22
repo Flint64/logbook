@@ -156,3 +156,22 @@ main{
 .showOverflow{
     overflow-y: scroll;
 }
+
+.overflowAuto{
+    overflow-y: auto;
+}
+
+ol{
+    li{
+        font-size: 1.1em;
+    }
+}
+
+p.header{
+    font-size: 1.35em;
+    margin-bottom: -15px;
+    margin-top: 1.5em;
+    &:first-of-type{
+        margin-top: 5px;
+    }
+}
