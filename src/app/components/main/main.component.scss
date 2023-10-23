@@ -52,7 +52,129 @@ main{
     margin-top: -1px;
     min-height: 8em;
     height: 45%;
+    p.header:first-of-type{
+        border-top: none;
+    }
 }
+
+.displaySwap{
+    &:hover{
+        color: black;
+        background-color: white;
+        cursor: pointer;
+        padding-left: 2.5px;
+        padding-right: 2.5px;
+    }
+}
+
+.detailsPlaceholder{
+    color: white; 
+    font-size: 1.2em !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inventoryDivTop{
+    display: grid;
+    grid-template-rows: 1fr 10fr;
+    padding-left: 2.5px !important;
+    margin-right: 2.5px;
+    div:first-child{
+        border-bottom: 1px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1.35em;
+        p{
+            margin: 5px;
+        }
+    }
+    
+    p.indent{
+     margin-left: 20px;
+     font-size: 1em;
+     margin-top: 2.5px;
+     margin-bottom: 6px;
+    //  &:nth-child(odd){
+    //     color: #a4d2ff;
+    //  }
+    }
+    p.indent2x{
+        margin-left: 40px;
+        font-size: 1em;
+        margin-top: 2.5px;
+        margin-bottom: 4px;
+    }
+}
+
+p.header{
+    font-size: 1.35em;
+    margin-bottom: 5px;
+    margin-top: 1em;
+    text-decoration: underline;
+    border-top: 1px solid #9f9f9f;
+    padding-top: 7px;
+    &:first-of-type{
+        margin-top: 5px;
+    }
+}
+
+.infoDiv{
+    p.header{ 
+        border-top: none;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+        margin-left: 20px;
+     }
+}
+
+section.item {
+    min-height: 5em;
+    -webkit-column-count: 3;  /* Chrome, Safari, Opera */
+    -moz-column-count: 3;     /* Firefox */
+    column-count: 3;
+    column-fill: auto;
+    column-width: auto;
+    div{
+        font-size: 1.2em;
+        margin-left: 10px;
+        width: max-content;
+        height: max-content;
+        padding-left: 2.5px;
+        padding-right: 2.5px;
+        &:hover{
+            color: black;
+            background-color: white;
+            cursor: pointer;
+        }
+    }
+  }
+
+section.display {
+    -webkit-column-count: 2;  /* Chrome, Safari, Opera */
+    -moz-column-count: 2;     /* Firefox */
+    column-count: 2;
+    column-fill: auto;
+    column-width: auto;
+    max-height: 280px;
+    font-size: 1.2em;
+    div{
+        font-size: 1.1em;
+        margin-left: 10px;
+        font-size: 1.1em;
+        width: max-content;
+        height: max-content;
+        padding-left: 2.5px;
+        padding-right: 2.5px;
+        &:hover{
+            color: black;
+            background-color: white;
+            cursor: pointer;
+        }
+    }
+  }
 
 .playerOptions p{
     margin: 0;
@@ -161,19 +283,14 @@ main{
 
 .overflowAuto{
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
-ol{
-    li{
-        font-size: 1.1em;
-    }
-}
-
-p.header{
-    font-size: 1.35em;
-    margin-bottom: -15px;
-    margin-top: 1.5em;
-    &:first-of-type{
-        margin-top: 5px;
+@media (hover: hover) {
+    .playerOptions p:hover {
+    /* solves sticky problem */
+    color: black;
+    background-color: white;
+    cursor: pointer;
     }
 }

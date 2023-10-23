@@ -11,53 +11,68 @@
             <p *ngIf="intervalID === null" (click)="startCombat()" [ngClass]="{'actionDisabled': intervalID !== null || enemyForm.controls.enemySelected.value === null}">{{mainMenuOptions.length + 1 + '. Resume'}}</p> -->
         </div>
     </div>
-
-    <!-- //TODO: Allow the inventory menu to swap between consumables/equippables. Right now it only displays equippable items -->
+    
 <!--Inventory Menu----------------------------------------------------------------------------------------------------------------------------------->
-    <div class="inventoryDiv" *ngIf="viewingInventory.isActive">
-        Inventory
+    <div class="inventoryDiv inventoryDivTop" *ngIf="viewingInventory.isActive">
+        <div>
+            <p *ngIf="viewingConsumables">Inventory - Consumables</p>
+            <p *ngIf="!viewingConsumables">Inventory - Equipment</p>
+            <p *ngIf="!viewingConsumables" class="displaySwap" (click)="inventoryDisplaySwap()">View Consumables</p>
+            <p *ngIf="viewingConsumables" class="displaySwap" (click)="inventoryDisplaySwap()">View Equipment</p>
+        </div>
+
+        <p class="indent detailsPlaceholder" *ngIf="!selectedItem">Select an item to view it's details</p>
+        
+        <div class="overflowAuto infoDiv">
+            <p class="header">{{selectedItem?.name}}</p>
+            <section *ngIf="selectedItem" class="overflowAuto display">
+                <p class="indent">Description: &nbsp;{{selectedItem?.description}}</p>
+                <p class="indent">Accuracy: &nbsp;{{selectedItem?.accuracy}}</p>
+                <p class="indent">Crit: &nbsp;{{selectedItem?.crit}}</p>
+                <p class="indent">Damage Resistances:</p>
+                <p class="indent2x" *ngFor="let DR of selectedItem?.damageResistances | capitalSplit: 'resistance'">{{DR.name + DR.value}}</p> 
+                <p class="indent">Damage Types:</p>
+                <p class="indent2x" *ngFor="let DT of selectedItem?.damageTypes | capitalSplit: 'percent'">{{DT.name + DT.value}}</p>
+                <p class="indent">Defense: &nbsp;{{selectedItem?.defense}}</p>
+                <p class="indent">Evasion: &nbsp;{{selectedItem?.evasion}}</p>
+                <p class="indent">Luck: &nbsp;{{selectedItem?.luck}}</p>
+                <p class="indent">Speed: &nbsp;{{selectedItem?.speed}}</p>
+                <p class="indent">Status Resistances: </p>
+                <p class="indent2x" *ngFor="let SR of selectedItem?.statusEffectResistances | capitalSplit: 'resistance'">{{SR.name + SR.value}}</p>
+                <p class="indent">Strength: &nbsp;{{selectedItem?.strength}}</p>
+                <p class="indent">Intelligence: &nbsp;{{selectedItem?.invelligence}}</p>
+            </section>
+        </div>
     </div>
 
-    <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive">
-        <!-- <p *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'">{{item.name}}</p> -->
+    <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && !viewingConsumables">
         <p class="header">Bracers:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'">{{item.name}}</li>
-        </ol>
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Helms:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'">{{item.name}}</li>
-        </ol>
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Chestplates:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'">{{item.name}}</li>
-        </ol>
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Pants:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'">{{item.name}}</li>
-        </ol>
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Greaves:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'">{{item.name}}</li>
-        </ol>
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Weapons:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'">{{item.name}}</li>
-        </ol>
-        
+        <section class="item"> <div (click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+
         <p class="header">Trinkets:</p>
-        <ol>
-            <li *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'">{{item.name}}</li>
-        </ol>
-        
-        
+        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
     </div>
 
+    <!-- //TODO: Make this display consumable items the same way as the equipment above -->
+    <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && viewingConsumables">
+        <p class="header">Potions:</p>
+    </div>
+    
 <!--Equipment Menu----------------------------------------------------------------------------------------------------------------------------------->
     <div class="equipmentDiv" *ngIf="viewingEquipment.isActive">
         Equipment

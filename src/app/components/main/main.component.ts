@@ -42,6 +42,9 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   elements = [];
   
+  selectedItem = null;
+  viewingConsumables = false;
+  
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2) { }
   
   ngOnInit(): void {
@@ -120,7 +123,10 @@ export class MainComponent implements OnInit, AfterViewInit {
  ****************************************************************************************/
   switchView(name: string){
 
-    console.log(this.combatService.party.inventory);
+    console.log(this.combatService.party.consumables);
+
+    //Reset the selected item so the view is empty when navigating to a screen that uses it
+    this.selectedItem = null;
 
     this.pages.forEach((page) => {
       if (page.name === name) {
@@ -152,6 +158,14 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
   }
 
+  inventoryDisplaySwap(){
+    this.viewingConsumables = !this.viewingConsumables;
+  }
+
+  viewEquipmentDetails(item){
+    this.selectedItem = item;
+  }
+  
 /****************************************************************************************
  * Select Party Member - Allows you to select a party member
  * Clicking anywhere on the enemy box selects them. Unlike the same function in the

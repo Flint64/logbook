@@ -16,6 +16,7 @@ import { InfoWindowComponent } from './components/combat-test/info-window/info-w
 import { LongPressDirective } from './directives/long-press.directive';
 import { MainComponent } from './components/main/main.component';
 import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
+import { CapitalSplitPipe } from './pipes/capital-split.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
     InfoWindowComponent,
     LongPressDirective,
     MainComponent,
-    EquipmentFilterPipe
+    EquipmentFilterPipe,
+    CapitalSplitPipe
   ],
   imports: [
     BrowserModule,
