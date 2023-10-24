@@ -2,6 +2,7 @@ import { Effect } from "./effect.model";
 import { Player } from "./player.model";
 import { Enemy } from "./enemy.model";
 import _ from 'lodash';
+import { Magic } from "./magic.model";
 
 export class ConsumableItem {
 
@@ -11,14 +12,9 @@ export class ConsumableItem {
         // Create instances of Effect for the effect property
         this.effects = (data.effects || []).map(effectData => new Effect(effectData));
       }
-        
-      //Consumables are assumed to be able to be used on any party member,
-      //but not every item can be thrown in combat. If thrown is true,
-      //then an enemy can be selected as a target in lieu of a Player
         name: string
-        type: string
         amount: number
-        thrown: boolean
+        canTargetEnemies: boolean
         textColor: string
         effects: Effect[]
 
@@ -70,29 +66,32 @@ export class ConsumableItem {
      * If we miss the attack (greater than instead of less than) stop here and print the result
      ******************************************************************************************************/
     calcThrownVialAccuracy(player: Player, target: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void): boolean{
+        let type = null;
+        if (this.constructor.name === 'Potion'){ type = this.constructor.name; }
+
         //Display text for a thrown item that misses the enemy target.
-        if (this.thrown && (target instanceof Enemy)){
+        if (this.canTargetEnemies && (target instanceof Enemy)){
             if ((_.random(1, 100)) > player.accuracy){
                 appendText('*', true, 'playerText');
                 appendText(player.name, false, 'playerText', 'underline');
-                appendText(`${this.type === 'potion' ? 'throws a' : 'uses'}`, false);
+                appendText(`${type === 'Potion' ? 'throws a' : 'uses'}`, false);
                 appendText(this.name, false, this.textColor);
-                appendText(`${this.type === 'potion' ? 'at' : 'on'} ${target.name}`, false);
+                appendText(`${type === 'Potion' ? 'at' : 'on'} ${target.name}`, false);
                 appendText('and misses!', false)
                 return true;
             }
         }
 
         //Display text for a thrown item that impacts the target, be it player or enemy
-        if (this.thrown){
+        if (this.canTargetEnemies){
             let isPlayer: boolean = (target instanceof Player);
             appendText('*', true, 'playerText');
             appendText(player.name, false, 'playerText', 'underline');
-            appendText(`${this.type === 'potion' ? 'throws a' : 'uses'}`, false);
+            appendText(`${type === 'Potion' ? 'throws a' : 'uses'}`, false);
             appendText(this.name, false, this.textColor);
-            appendText(`${this.type === 'potion' ? 'at' : 'on'}`, false)
+            appendText(`${type === 'Potion' ? 'at' : 'on'}`, false)
             appendText(`${target.name},`, false, `${ isPlayer ? 'underline' : ''}`, '');
-            if (this.type === 'potion'){
+            if (type === 'Potion'){
                 appendText('and the', false);
                 appendText('vial shatters', false);
                 appendText('on impact!', false);
@@ -144,6 +143,12 @@ export class ConsumableItem {
      * We do however need access to the inventory to check equipment for any resistances.
      ******************************************************************************************************/
     useItem(player: Player, target: Player | Enemy, inventory, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void){
+
+        if (this.constructor.name === 'Scroll'){
+            this.amount -= 1;
+            this['spell'].castSpell(player, target, appendText, inventory);
+            return;
+        }
         
         //Only allow using consumables on dead targets if there is a resurrect effect in place
         if (target.health < 0){
@@ -169,7 +174,7 @@ export class ConsumableItem {
         }
         
         //If the used item isn't a thrown item, display the base "use item" text rather than the thrown item text
-        if (!this.thrown){
+        if (!this.canTargetEnemies){
             appendText('*', true, 'playerText');
             appendText(player.name, false, 'playerText', 'underline');
             appendText('uses', false);
@@ -286,4 +291,19 @@ export class ConsumableItem {
     }
 
         
+}
+
+export class Potion extends ConsumableItem{
+    constructor(data: Partial<Potion>) {
+    super(data);
+    Object.assign(this, data);
+    }
+}
+
+export class Scroll extends ConsumableItem{
+    constructor(data: Partial<Scroll>) {
+    super(data);
+    Object.assign(this, data);
+    }
+    spell: Magic
 }

@@ -318,39 +318,3 @@ progress.enemyATB, progress.enemyATB::-webkit-progress-value{
 .skull{
     filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
 }
-
-/* Toggle styles for different events */
-.enemyHit{ color: crimson !important; }
-.enemyHitBorder{ border: 5px solid darkred !important; }
-.playerHit{ border: 1px solid crimson !important; }
-.purpleBorder{ border: 1px solid rebeccapurple !important; }
-.yellowBorder{ border: 1px solid gold !important; }
-.greenBorder{ border: 1px solid green !important; }
-
-.greenText{ color: green !important; }
-.redText{ color: darkred !important; }
-.orangeText{ color: rgb(220, 51, 0) !important; }
-.greyText{ color: #9f9f9f !important; }
-.slateText{ color: slategray !important; }
-.orchidText{ color: orchid !important; }
-.lightBlueText{ color: skyblue !important; }
-.playerText{ color: #4caf50 !important; }
-.crimsonText{ color: crimson !important; }
-.goldText{ color: gold !important; }
-.pinkText{ color: rgb(247, 158, 173) };
-.underline{ text-decoration: underline !important; }
-
-.poisonStatus{background: rgb(0, 75, 0);}
-.speedStatus, .strengthStatus{background: rgb(150, 110, 9);}
-.freezeStatus{background: rgb(20, 20, 151);}
-.rageStatus{background: rgb(138, 12, 38);} 
-.burnStatus{background: rgb(220, 51, 0);}
-.healthStatus { background: crimson; }
-.manaStatus { background: orchid; }
-
-.enemyHitSVG{ filter: invert(16%) sepia(94%) saturate(4548%) hue-rotate(341deg) brightness(88%) contrast(95%) !important; } //DarkRed/Crimson
-.whiteFilter { filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%) !important; } //White
-.greenFilter{ filter: invert(42%) sepia(29%) saturate(1040%) hue-rotate(84deg) brightness(85%) contrast(96%) !important; } //Green
-.redFilter{ filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%) !important; } //Red
-.yellowFilter { filter: invert(82%) sepia(73%) saturate(1004%) hue-rotate(9deg) brightness(105%) contrast(104%) !important; } //Yellow
-.lightBlueFilter { filter: invert(74%) sepia(42%) saturate(361%) hue-rotate(155deg) brightness(99%) contrast(86%) !important; } //SkyBlue

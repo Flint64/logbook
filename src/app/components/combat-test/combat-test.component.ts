@@ -457,7 +457,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   this.selectingSpellOrConsumableTarget = true;
   this.selectedSpell = null;
-  if (this.combatService.party.consumables[numSelected - 1].thrown){ this.consumableIsThrowable = true; }
+  if (this.combatService.party.consumables[numSelected - 1].canTargetEnemies){ this.consumableIsThrowable = true; }
   this.viewingInventoryOptions = false;
   this.selectedConsumableItem = this.combatService.party.consumables[numSelected - 1];
 

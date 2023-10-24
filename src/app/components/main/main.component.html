@@ -25,7 +25,7 @@
         
         <div class="overflowAuto infoDiv">
             <p class="header">{{selectedItem?.name}}</p>
-            <section *ngIf="selectedItem" class="overflowAuto display">
+            <section *ngIf="selectedItem && !viewingConsumables" class="overflowAuto display">
                 <p class="indent">Description: &nbsp;{{selectedItem?.description}}</p>
                 <p class="indent">Accuracy: &nbsp;{{selectedItem?.accuracy}}</p>
                 <p class="indent">Crit: &nbsp;{{selectedItem?.crit}}</p>
@@ -42,35 +42,49 @@
                 <p class="indent">Strength: &nbsp;{{selectedItem?.strength}}</p>
                 <p class="indent">Intelligence: &nbsp;{{selectedItem?.invelligence}}</p>
             </section>
+            <section *ngIf="selectedItem && viewingConsumables" class="overflowAuto display">
+                <p class="indent">Number held: &nbsp;{{selectedItem?.amount}}</p>
+                <p class="indent">Can Target Enemies: &nbsp;{{selectedItem?.canTargetEnemies}}</p>
+                <div *ngIf="selectedItem?.effects.length > 0">
+                    <p class="indent">Effects: </p>
+                    <p class="indent2x" *ngFor="let effect of selectedItem?.effects">{{effect.helpDescription}}</p>
+                </div>
+                <div *ngIf="selectedItem?.spell">
+                    <p class="indent">Casts <span [class]="selectedItem.spell.textColor">{{selectedItem.spell.name}}</span> on selected target</p>
+                </div>
+            </section>
         </div>
     </div>
 
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && !viewingConsumables">
         <p class="header">Bracers:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Helms:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Chestplates:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Pants:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Greaves:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
         
         <p class="header">Weapons:</p>
-        <section class="item"> <div (click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
-
+        <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        
         <p class="header">Trinkets:</p>
-        <section class="item"> <div class="indent"(click)="viewEquipmentDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
     </div>
-
-    <!-- //TODO: Make this display consumable items the same way as the equipment above -->
+    
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && viewingConsumables">
         <p class="header">Potions:</p>
+        <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.consumables | consumableFilter: 'Potion'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+
+        <p class="header">Scrolls:</p>
+        <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.consumables | consumableFilter: 'Scroll'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
     </div>
     
 <!--Equipment Menu----------------------------------------------------------------------------------------------------------------------------------->

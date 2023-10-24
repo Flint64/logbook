@@ -3,22 +3,20 @@ import { Effect } from "src/app/models/effect.model";
 
 //TODO: Think about adding an id field to each potion, as well as an amount (separate from the amount currently stored) as if the game is updated when people are playing it if changes are made to the base file those changes won't be reflected and could cause some problems if effects are changed or something. If we have an id field and an amount and that's all we store when saving the game, then we can repopulate it on load with fresh versions of the items and there shouldn't be any issues. And do the same with the magic as well.
 
-// Define a separate interface for ConsumableItemData
-interface ConsumableItemData {
+// Define a separate interface for PotionData
+interface PotionData {
     name: string;
-    type: string;
     amount: number;
-    thrown: boolean;
+    canTargetEnemies: boolean;
     textColor: string;
     effects: Partial<Effect>[];
   }
     
-  export const potions: ConsumableItemData[] = [
+  export const potions: PotionData[] = [
   {
     name: 'Healing Potion',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'pinkText',
     effects: [
       {
@@ -34,9 +32,8 @@ interface ConsumableItemData {
 
   {
     name: 'Regenerative Potion',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'pinkText',
     effects: [
       {
@@ -52,9 +49,8 @@ interface ConsumableItemData {
 
   {
     name: 'Mana Potion',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'orchidText',
     effects: [
       {
@@ -70,9 +66,8 @@ interface ConsumableItemData {
 
   {
     name: 'Speed Potion',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'goldText',
     effects: [
       {
@@ -88,9 +83,8 @@ interface ConsumableItemData {
 
   {
     name: 'Poison Vial',
-    type: 'potion',
     amount: 3,
-    thrown: true,
+    canTargetEnemies: true,
     textColor: 'greenText',
     effects: [
       {
@@ -116,9 +110,8 @@ interface ConsumableItemData {
 
   {
     name: 'Multiple Effects',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: null,
     effects: [
       {
@@ -158,9 +151,8 @@ interface ConsumableItemData {
 
   {
     name: 'Rage Potion',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'crimsonText',
     effects: [
         {
@@ -176,9 +168,8 @@ interface ConsumableItemData {
 
   {
     name: 'Damage+',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'crimsonText',
     effects: [
       {
@@ -194,9 +185,8 @@ interface ConsumableItemData {
 
   {
     name: 'Crit+',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'goldText',
     effects: [
       {
@@ -220,9 +210,8 @@ interface ConsumableItemData {
 
   {
     name: 'Poison Resist',
-    type: 'potion',
     amount: 3,
-    thrown: true,
+    canTargetEnemies: true,
     textColor: 'greenText',
     effects: [
       {
@@ -238,9 +227,8 @@ interface ConsumableItemData {
 
   {
     name: 'Resurrection Draught',
-    type: 'potion',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'pinkText',
     effects: [
       {
@@ -264,9 +252,8 @@ interface ConsumableItemData {
 
   {
     name: 'Antidote',
-    type: 'pill',
     amount: 3,
-    thrown: false,
+    canTargetEnemies: false,
     textColor: 'greenText',
     effects: [
       {

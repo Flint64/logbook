@@ -159,10 +159,11 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
 
   inventoryDisplaySwap(){
+    this.selectedItem =  null;
     this.viewingConsumables = !this.viewingConsumables;
   }
 
-  viewEquipmentDetails(item){
+  viewItemDetails(item){
     this.selectedItem = item;
   }
   

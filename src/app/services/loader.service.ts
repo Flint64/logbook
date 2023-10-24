@@ -8,8 +8,11 @@ import { EquippableItem, Bracer, Helm, Chestplate, Pants, Greaves, Weapon, Trink
 import { spells } from '../components/combat-test/spellList';
 import { potions } from '../components/combat-test/potionList';
 import { ConsumableItem } from '../models/consumableItem.model';
+import { Potion } from '../models/consumableItem.model';
 import { Effect } from '../models/effect.model';
 import { Magic } from '../models/magic.model';
+import { Scroll } from '../models/consumableItem.model';
+import { scrolls } from '../components/combat-test/scrollList';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +53,7 @@ export class LoaderService {
 
     let convertedWeapons: EquippableItem[] = weapons.map(weaponData => new Weapon(weaponData));
     convertedWeapons.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Weapon(e))); });
+    
 
     let convertedTrinkets: EquippableItem[] = trinkets.map(trinketData => new Trinket(trinketData));
     convertedTrinkets.forEach((e) => { this.combatService.party.inventory.push(_.cloneDeep(new Trinket(e))); });
@@ -68,24 +72,36 @@ export class LoaderService {
     this.combatService.party.inventory[9].equippedBy = this.combatService.party.members[0]; //Gort, Trinket
     // console.log(this.combatService.party.inventory);
 
-    let convertedPotions: ConsumableItem[] = potions.map(potionData => {
+    let convertedPotions: Potion[] = potions.map(potionData => {
       // Create instances of Effect for the effect property inside the nested map
       const effects = (potionData.effects || []).map(effectData => new Effect(effectData));
       
-      // Create a new ConsumableItem instance with the updated effect property
-      return new ConsumableItem({ ...potionData, effects: effects });
+      // Create a new Potion instance with the updated effect property
+      return new Potion({ ...potionData, effects: effects });
     });
 
     //Populate your potions list from those in the potionList file. Currently adds all potions in the file to your inventory
     convertedPotions.forEach((potion) => {
         this.combatService.party.consumables.push(potion);
+      });
+
+    let convertedScrolls: Scroll[] = scrolls.map(scrollData => {
+      // Create instances of Effect for the effect property inside the nested map
+      const effects = (scrollData.effects || []).map(effectData => new Effect(effectData));
+      
+      // Create a new Potion instance with the updated effect property
+      return new Scroll({ ...scrollData, effects: effects});
+    });
+      
+    convertedScrolls.forEach(scroll => {
+        this.combatService.party.consumables.push(scroll);
     });
 
     let convertedSpells: Magic[] = spells.map(spellData => {
       // Create instances of Effect for the effect property inside the nested map
       const effects = (spellData.effects || []).map(effectData => new Effect(effectData));
       
-      // Create a new ConsumableItem instance with the updated effect property
+      // Create a new Magic instance with the updated effect property
       return new Magic({ ...spellData, effects: effects });
     });
 

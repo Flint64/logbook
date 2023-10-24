@@ -77,13 +77,22 @@ export class Magic {
      * Calculate Spell Damage - Returns the damage a given spell will deal, accounting for player's
      * intelligence stat, spell power, and damage variance.
     ******************************************************************************************************/
-    private calcSpellDamage(spell: Magic, caster: Player | Enemy, inventory: EquippableItem[]): number{
+    private calcSpellDamage(spell: Magic, caster: Player | Enemy, inventory: EquippableItem[], isScroll): number{
         let spellDamage = 0;
         if (spell.power){
             spellDamage = ((caster.calcTotalStatValue('intelligence', null, inventory) / 2.5) * spell.power);
             
             if (this.useStrength){
                 spellDamage = ((caster.calcTotalStatValue('strength', null, inventory) / 2.5) * spell.power);
+            }
+
+            //Use a flat 10 intelligence for scrolls/items that are used from an item, and not innately cast
+            if (isScroll){
+                spellDamage = ((10 / 2.5) * spell.power);
+            
+            if (this.useStrength){
+                spellDamage = ((10 / 2.5) * spell.power);
+            }
             }
 
             //Damage variance equal  to a range between 1 and the spell's power
@@ -125,12 +134,12 @@ export class Magic {
      * Cast the spell - Similar to the useItem from the consumableItem class
      ******************************************************************************************************/
     //TODO: Rework spell scaling, it's very swingy right now, that or I'm not utilizing the stats correctly
-    castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[]){
+    castSpell(caster: Player | Enemy, spellTarget: Player | Enemy, appendText: (text: string, newline?: boolean, className?: string, className2?: string) => void, inventory: EquippableItem[], isScroll: boolean = false){
         let casterIsPlayer: boolean = (caster instanceof Player);
         let targetIsPlayer: boolean = (spellTarget instanceof Player);
         let damageAfterReduction = 0;
         
-        let spellDamage = this.calcSpellDamage(this, caster, inventory);
+        let spellDamage = this.calcSpellDamage(this, caster, inventory, isScroll);
 
 
         //Only allow casting of spells on dead targets if there is a resurrect effect in place

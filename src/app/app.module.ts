@@ -17,6 +17,7 @@ import { LongPressDirective } from './directives/long-press.directive';
 import { MainComponent } from './components/main/main.component';
 import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
 import { CapitalSplitPipe } from './pipes/capital-split.pipe';
+import { ConsumableFilterPipe } from './pipes/consumable-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CapitalSplitPipe } from './pipes/capital-split.pipe';
     LongPressDirective,
     MainComponent,
     EquipmentFilterPipe,
-    CapitalSplitPipe
+    CapitalSplitPipe,
+    ConsumableFilterPipe
   ],
   imports: [
     BrowserModule,
