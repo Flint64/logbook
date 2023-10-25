@@ -122,6 +122,7 @@ p.header{
 }
 
 .infoDiv{
+    width: 32em;
     p.header{ 
         border-top: none;
         padding-top: 0 !important;
@@ -166,12 +167,10 @@ section.display {
         font-size: 1.1em;
         margin-left: 10px;
         font-size: 1.1em;
-        width: max-content;
+        width: 200%;
         height: max-content;
         padding-left: 2.5px;
         padding-right: 2.5px;
-    }
-    div{
         margin: 0;
     }
   }

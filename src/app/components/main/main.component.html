@@ -26,28 +26,34 @@
         <div class="overflowAuto infoDiv">
             <p class="header">{{selectedItem?.name}}</p>
             <section *ngIf="selectedItem && !viewingConsumables" class="overflowAuto display">
-                <p class="indent">Description: &nbsp;{{selectedItem?.description}}</p>
-                <p class="indent">Accuracy: &nbsp;{{selectedItem?.accuracy}}</p>
-                <p class="indent">Crit: &nbsp;{{selectedItem?.crit}}</p>
-                <p class="indent">Damage Resistances:</p>
-                <p class="indent2x" *ngFor="let DR of selectedItem?.damageResistances | capitalSplit: 'resistance'">{{DR.name + DR.value}}</p> 
-                <p class="indent">Damage Types:</p>
-                <p class="indent2x" *ngFor="let DT of selectedItem?.damageTypes | capitalSplit: 'percent'">{{DT.name + DT.value}}</p>
-                <p class="indent">Defense: &nbsp;{{selectedItem?.defense}}</p>
-                <p class="indent">Evasion: &nbsp;{{selectedItem?.evasion}}</p>
-                <p class="indent">Luck: &nbsp;{{selectedItem?.luck}}</p>
-                <p class="indent">Speed: &nbsp;{{selectedItem?.speed}}</p>
-                <p class="indent">Status Resistances: </p>
-                <p class="indent2x" *ngFor="let SR of selectedItem?.statusEffectResistances | capitalSplit: 'resistance'">{{SR.name + SR.value}}</p>
-                <p class="indent">Strength: &nbsp;{{selectedItem?.strength}}</p>
-                <p class="indent">Intelligence: &nbsp;{{selectedItem?.invelligence}}</p>
+                <p class="indent" *ngIf="selectedItem?.description">Description: &nbsp;{{selectedItem?.description}}</p>
+                <p class="indent" *ngIf="selectedItem?.accuracy">Accuracy: &nbsp;{{selectedItem?.accuracy}}</p>
+                <p class="indent" *ngIf="selectedItem?.crit">Crit: &nbsp;{{selectedItem?.crit}}</p>
+                <div *ngIf="selectedItem?.damageResistances.length > 0">
+                    <p class="indent">Damage Resistances:</p>
+                    <p class="indent2x" *ngFor="let DR of selectedItem?.damageResistances | capitalSplit: 'resistance'">{{'- ' + DR.name + DR.value}}</p> 
+                </div>
+                <div *ngIf="selectedItem?.damageTypes.length > 0">
+                    <p class="indent">Damage Types:</p>
+                    <p class="indent2x" *ngFor="let DT of selectedItem?.damageTypes | capitalSplit: 'percent'">{{'- ' + DT.name + DT.value}}</p>
+                </div>
+                <p class="indent" *ngIf="selectedItem?.defense">Defense: &nbsp;{{selectedItem?.defense}}</p>
+                <p class="indent" *ngIf="selectedItem?.evasion">Evasion: &nbsp;{{selectedItem?.evasion}}</p>
+                <p class="indent" *ngIf="selectedItem?.luck">Luck: &nbsp;{{selectedItem?.luck}}</p>
+                <p class="indent" *ngIf="selectedItem?.speed">Speed: &nbsp;{{selectedItem?.speed}}</p>
+                <div *ngIf="selectedItem?.statusEffectResistances.length > 0">
+                    <p class="indent">Status Resistances: </p>
+                    <p class="indent2x" *ngFor="let SR of selectedItem?.statusEffectResistances | capitalSplit: 'resistance'">{{'- ' + SR.name + SR.value}}</p>
+                </div>
+                <p class="indent" *ngIf="selectedItem?.strength">Strength: &nbsp;{{selectedItem?.strength}}</p>
+                <p class="indent" *ngIf="selectedItem?.invelligence">Intelligence: &nbsp;{{selectedItem?.invelligence}}</p>
             </section>
             <section *ngIf="selectedItem && viewingConsumables" class="overflowAuto display">
                 <p class="indent">Number held: &nbsp;{{selectedItem?.amount}}</p>
                 <p class="indent">Can Target Enemies: &nbsp;{{selectedItem?.canTargetEnemies}}</p>
                 <div *ngIf="selectedItem?.effects.length > 0">
                     <p class="indent">Effects: </p>
-                    <p class="indent2x" *ngFor="let effect of selectedItem?.effects">{{effect.helpDescription}}</p>
+                    <p class="indent2x" *ngFor="let effect of selectedItem?.effects">{{'- ' + effect.helpDescription}}</p>
                 </div>
                 <div *ngIf="selectedItem?.spell">
                     <p class="indent">Casts <span [class]="selectedItem.spell.textColor">{{selectedItem.spell.name}}</span> on selected target</p>
