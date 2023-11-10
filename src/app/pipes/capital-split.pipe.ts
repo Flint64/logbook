@@ -8,6 +8,10 @@ export class CapitalSplitPipe implements PipeTransform {
 
   transform(value: DamageResistance[], fieldName: string): Array<any> {
     let arr = [];
+
+    if (!value){
+      return;
+    }
     
     value.forEach(e => {
       let split = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);

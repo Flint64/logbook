@@ -48,13 +48,25 @@ main{
     }
 }
 
-.playerOptions, .inventoryDiv, .equipmentDiv, .statsDiv, .settingsDiv, .storyText {
+.inventoryDiv, .statsDiv, .settingsDiv, .statsDivTop, .settingsDivTop {
     margin-top: -1px;
     min-height: 8em;
     height: 45%;
     p.header:first-of-type{
         border-top: none;
     }
+}
+
+.equipmentDiv, .playerOptions{
+    margin-top: -1px;
+    min-height: 8em;
+    height: 25%;
+}
+
+.equipmentDivTop, .storyText{
+    margin-top: -1px;
+    min-height: 8em;
+    height: 65%;
 }
 
 .displaySwap{
@@ -75,12 +87,13 @@ main{
     align-items: center;
 }
 
-.inventoryDivTop{
+//FIXME: InventoryDivTop on smaller phone size screen is overflownig-x  - not sure why, equipment page is fine
+.inventoryDivTop, .equipmentDivTop{
     display: grid;
     grid-template-rows: 1fr 10fr;
     padding-left: 2.5px !important;
     margin-right: 2.5px;
-    div:first-child{
+    .headerDiv{
         border-bottom: 1px solid white;
         display: flex;
         align-items: center;
@@ -121,6 +134,14 @@ p.header{
     }
 }
 
+.noBorder{
+    border: none !important;
+}
+
+.indentOnly{
+    margin-left: 20px !important;
+}
+
 .infoDiv{
     width: 32em;
     p.header{ 
@@ -140,7 +161,7 @@ section.item {
     column-fill: auto;
     column-width: auto;
     column-gap: 12px;
-    div{
+    >div{
         font-size: 1.2em;
         margin-left: 10px;
         width: max-content;
@@ -151,8 +172,15 @@ section.item {
             color: black;
             background-color: white;
             cursor: pointer;
+            .equipped{
+                filter: none;
+            }
         }
     }
+  }
+
+  .itemCategory{
+    max-height: 100% !important;
   }
 
 section.display {
@@ -227,6 +255,9 @@ section.display {
     color: black;
     background-color: white;
     cursor: pointer;
+    .equipped{
+        filter: none;
+    }
 }
 
 .partyForm {
@@ -283,6 +314,63 @@ section.display {
 .overflowAuto{
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.equipmentDetails{
+    p{
+        font-size: 1.2em;
+        margin: 5px;
+    }
+}
+
+.equipmentOptions{
+    border-top: 1px solid white;
+    font-size: 1.35em;
+    display: flex;
+    justify-content: space-between;
+    p{
+        margin: 5px;
+        padding-left: 2.5px;
+        padding-right: 2.5px;
+        &:hover{
+            color: black;
+            background-color: white;
+            cursor: pointer;
+        }
+    }
+    p.invisible{
+        width: 1px;
+    }
+}
+
+.equipped{
+    filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
+    vertical-align: middle;
+    height: 22px;
+}
+
+.statUp, .statGained{
+    color: #4caf50;
+}
+
+.statDown{
+    color: rgb(193, 0, 0);
+}
+
+.statRemoved{
+    color: #9f9f9f;
+    text-decoration: line-through;
+}
+
+
+
+.actionDisabled{
+    color: #9f9f9f !important;
+    &:hover{
+        color: #9f9f9f !important;
+        background-color: black !important;
+        cursor: default !important;
+    }
 }
 
 @media (hover: hover) {

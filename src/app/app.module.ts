@@ -18,6 +18,7 @@ import { MainComponent } from './components/main/main.component';
 import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
 import { CapitalSplitPipe } from './pipes/capital-split.pipe';
 import { ConsumableFilterPipe } from './pipes/consumable-filter.pipe';
+import { SelectCategoryComponent } from './components/main/select-category/select-category.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ConsumableFilterPipe } from './pipes/consumable-filter.pipe';
     MainComponent,
     EquipmentFilterPipe,
     CapitalSplitPipe,
-    ConsumableFilterPipe
+    ConsumableFilterPipe,
+    SelectCategoryComponent
   ],
   imports: [
     BrowserModule,

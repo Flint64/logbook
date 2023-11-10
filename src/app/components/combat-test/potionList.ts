@@ -245,7 +245,7 @@ interface PotionData {
         modifier: 0,
         canBeResisted: false,
         self: true,
-        helpDescription: '',
+        helpDescription: 'Resurrects player',
       }
     ],
   },

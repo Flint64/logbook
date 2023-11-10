@@ -1,0 +1,9 @@
+<body>
+    <div class="infoBox">
+        <p (click)="selectCategory(category)" class="lg" *ngFor="let category of equipmentCategories">{{category.displayName}}</p>
+    </div>
+
+    <div class="options">
+        <button (click)="onClose()">Cancel</button>
+    </div>
+</body>

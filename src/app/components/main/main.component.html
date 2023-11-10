@@ -14,7 +14,7 @@
     
 <!--Inventory Menu----------------------------------------------------------------------------------------------------------------------------------->
     <div class="inventoryDiv inventoryDivTop" *ngIf="viewingInventory.isActive">
-        <div>
+        <div class="headerDiv">
             <p *ngIf="viewingConsumables">Inventory - Consumables</p>
             <p *ngIf="!viewingConsumables">Inventory - Equipment</p>
             <p *ngIf="!viewingConsumables" class="displaySwap" (click)="inventoryDisplaySwap()">View Consumables</p>
@@ -64,25 +64,25 @@
 
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && !viewingConsumables">
         <p class="header">Bracers:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Helms:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Chestplates:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Pants:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Greaves:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Weapons:</p>
-        <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
         <p class="header">Trinkets:</p>
-        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
+        <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
     </div>
     
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && viewingConsumables">
@@ -94,29 +94,113 @@
     </div>
     
 <!--Equipment Menu----------------------------------------------------------------------------------------------------------------------------------->
-    <div class="equipmentDiv" *ngIf="viewingEquipment.isActive">
-        Equipment
+    <div class="equipmentDivTop overflowAuto" *ngIf="viewingEquipment.isActive">
+        <div class="headerDiv">
+            <p>Equipment <span *ngIf="selectedPartyMember">{{ '- ' + selectedPartyMember.name}}</span></p>
+            <p class="displaySwap" *ngIf="!viewEquipped" (click)="toggleViewEquipped()">Show Equipped</p>
+            <p class="displaySwap" *ngIf="viewEquipped" (click)="toggleViewEquipped()">Hide Equipped</p>
+        </div>
+
+        <p class="indent detailsPlaceholder" *ngIf="!selectedPartyMember">Select a party member</p>
+
+        <div class="overflowAuto equipmentDetails" *ngIf="selectedPartyMember">            
+            <p>{{'Strength - '     + selectedPartyMember.calcTotalStatValue('strength',     null, combatService.party.inventory)}} <span *ngIf="selectedItem" #strRef>{{calcStatDifferences('strength',     strRef)}} </span> </p>
+            <p>{{'Intelligence - ' + selectedPartyMember.calcTotalStatValue('intelligence', null, combatService.party.inventory)}} <span *ngIf="selectedItem" #intRef>{{calcStatDifferences('intelligence', intRef)}} </span> </p>
+            <p>{{'Defense - '      + selectedPartyMember.calcTotalStatValue('defense',      null, combatService.party.inventory)}} <span *ngIf="selectedItem" #defRef>{{calcStatDifferences('defense',      defRef)}} </span> </p>
+            <p>{{'Speed - '        + selectedPartyMember.calcTotalStatValue('speed',        null, combatService.party.inventory)}} <span *ngIf="selectedItem" #spdRef>{{calcStatDifferences('speed',        spdRef)}} </span> </p>
+            <p>{{'Evasion - '      + selectedPartyMember.calcTotalStatValue('evasion',      null, combatService.party.inventory)}} <span *ngIf="selectedItem" #evsRef>{{calcStatDifferences('evasion',      evsRef)}} </span> </p>
+            <p>{{'Accuracy - '     + selectedPartyMember.calcTotalStatValue('accuracy',     null, combatService.party.inventory)}} <span *ngIf="selectedItem" #accRef>{{calcStatDifferences('accuracy',     accRef)}} </span> </p>
+            <p>{{'Luck - '         + selectedPartyMember.calcTotalStatValue('luck',         null, combatService.party.inventory)}} <span *ngIf="selectedItem" #lckRef>{{calcStatDifferences('luck',         lckRef)}} </span> </p>
+            <p>{{'Resistance - '   + selectedPartyMember.calcTotalStatValue('resistance',   null, combatService.party.inventory)}} <span *ngIf="selectedItem" #resRef>{{calcStatDifferences('resistance',   resRef)}} </span> </p>
+            <p>{{'Crit - '         + selectedPartyMember.calcTotalStatValue('crit',         null, combatService.party.inventory)}} <span *ngIf="selectedItem" #crtRef>{{calcStatDifferences('crit',         crtRef)}} </span> </p>
+            <p>{{'Attack - '       + selectedPartyMember.calcTotalStatValue('attack',       null, combatService.party.inventory)}} <span *ngIf="selectedItem" #atkRef>{{calcStatDifferences('attack',       atkRef)}} </span> </p>
+            <div>
+                <p>Damage Resistances:</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamageResistance', null, combatService.party.inventory)" >{{'Bludgeoning Damage Resistance - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamageResistance', null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamageResistance',    null, combatService.party.inventory)" >{{'Piercing Damage Resistance - '    + selectedPartyMember.calcTotalStatValue('PiercingDamageResistance',    null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('SlashingDamageResistance',    null, combatService.party.inventory)" >{{'Slashing Damage Resistance - '    + selectedPartyMember.calcTotalStatValue('SlashingDamageResistance',    null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('FireDamageResistance',        null, combatService.party.inventory)" >{{'Fire Damage Resistance - '        + selectedPartyMember.calcTotalStatValue('FireDamageResistance',        null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('IceDamageResistance',         null, combatService.party.inventory)" >{{'Ice Damage Resistance - '         + selectedPartyMember.calcTotalStatValue('IceDamageResistance',         null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonDamageResistance',      null, combatService.party.inventory)" >{{'Poison Damage Resistance - '      + selectedPartyMember.calcTotalStatValue('PoisonDamageResistance',      null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('ShockDamageResistance',       null, combatService.party.inventory)" >{{'Shock Damage Resistance - '       + selectedPartyMember.calcTotalStatValue('ShockDamageResistance',       null, combatService.party.inventory)}}</p>
+            </div>
+            <div>
+                <!-- <div *ngIf="!selectedItem || selectedItem === equippedItem"> -->
+                <div *ngIf="!damageTypeDisplay.length">
+                    <p>Damage Type(s):</p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory)" >{{'Bludgeoning Damage - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory) + '%'}}  </p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory)" >{{'Piercing Damage - '    + selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory) + '%'}}  </p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory)" > <span #slashDamTypeDisplay> {{'Slashing Damage - '    + selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory) + '%'}} </span> <!--  <span *ngIf="selectedItem" #blgDam>{{damageTypeDifference('SlashingDamage', blgDam, slashDamTypeDisplay)}} </span> --> </p> 
+                    <!-- <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory)" >{{'Slashing Damage - '    + selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory) + '%'}}  </p>  -->
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory)" >{{'Fire Damage - '        + selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory) + '%'}}  </p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory)" >{{'Ice Damage - '         + selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory) + '%'}}  </p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory)" >{{'Poison Damage - '      + selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory) + '%'}}  </p>
+                    <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory)" >{{'Shock Damage - '       + selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory) + '%'}}  </p>
+                </div>
+                <div *ngIf="damageTypeDisplay.length">
+                    <p>Damage Type(s):</p>
+                    <span *ngFor="let obj of damageTypeDisplay">
+                        <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
+                            <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.percent + '%'}}</span>
+                            <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.percent + '% / '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.percent + '%'}}</span></span>
+                            <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
+                            <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
+                        </p>
+                    </span>
+                </div>
+            </div>
+            <div>
+                <p>Status Resistances: </p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BurnResistance',   null, combatService.party.inventory)" >{{'Burn Resistance - '     + selectedPartyMember.calcTotalStatValue('BurnResistance',   null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonResistance', null, combatService.party.inventory)" >{{'Poison Resistance - '   + selectedPartyMember.calcTotalStatValue('PoisonResistance', null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('FreezeResistance', null, combatService.party.inventory)" >{{'Freeze Resistance - '   + selectedPartyMember.calcTotalStatValue('FreezeResistance', null, combatService.party.inventory)}}</p>
+                <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('ShockResistance',  null, combatService.party.inventory)" >{{'Shock Resistance - '    + selectedPartyMember.calcTotalStatValue('ShockResistance',  null, combatService.party.inventory)}}</p>
+            </div>
+        </div>
+
+        <div class="equipmentOptions">
+            <p (click)="changeItemCategory()">Change Category</p>
+            <p [ngClass]="{'actionDisabled': !selectedItem}" (click)="cancelEquip()">Cancel</p>
+            <p *ngIf="(selectedItem?.equippedBy?.name !== selectedPartyMember?.name)" [ngClass]="{'actionDisabled': (!selectedItem || !selectedPartyMember)}" (click)="equipItem()">Equip</p>
+            <p *ngIf="(selectedItem?.equippedBy?.name === selectedPartyMember?.name)" [ngClass]="{'actionDisabled': (!selectedItem || !selectedPartyMember)}" (click)="equipItem()">Unequip</p>
+            <!-- <p class="invisible">invisible</p> -->
+        </div>
+        
     </div>
 
-    <div class="equipmentDiv" *ngIf="viewingEquipment.isActive">
-        Equipment
+    <div class="equipmentDiv overflowAuto" *ngIf="viewingEquipment.isActive">
+        <div *ngIf="selectedPartyMember">
+            <p class="header noBorder">{{itemCategoryDisplay}}:</p>
+            <section class="item itemCategory" *ngIf="!viewEquipped">
+                <div class="indent"(click)="viewItemDetails(item, true, $event.target)" *ngFor="let item of notEquippedItems | equipmentFilter: itemCategory; let i = index">
+                    {{i+1 + '. ' + item.name}}
+                    <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> 
+                </div>
+            </section>
+            <section class="item itemCategory" *ngIf="viewEquipped">
+                <div class="indent"(click)="viewItemDetails(item, true, $event.target)" *ngFor="let item of combatService.party.inventory | equipmentFilter: itemCategory; let i = index">
+                    {{i+1 + '. ' + item.name}}
+                    <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> 
+                </div>
+            </section>
+        </div>
     </div>
 
 <!--Stats Menu----------------------------------------------------------------------------------------------------------------------------------------->
-    <div class="statsDiv" *ngIf="viewingStats.isActive">
+    <div class="statsDivTop overflowAuto" *ngIf="viewingStats.isActive">
         Stats
     </div>
 
-    <div class="statsDiv" *ngIf="viewingStats.isActive">
+    <div class="statsDiv overflowAuto" *ngIf="viewingStats.isActive">
         Stats
     </div>
 
 <!--Settings menu--------------------------------------------------------------------------------------------------------------------------------------->
-    <div class="settingsDiv" *ngIf="viewingSettings.isActive">
+    <div class="settingsDivTop overflowAuto" *ngIf="viewingSettings.isActive">
         Settings
     </div>
 
-    <div class="settingsDiv" *ngIf="viewingSettings.isActive">
+    <div class="settingsDiv overflowAuto" *ngIf="viewingSettings.isActive">
         Settings
     </div>
 <!-------------------------------------------------------------------------------------------------------------------------------------------------------->
@@ -143,7 +227,7 @@
     
     <div class="playerBars">
         <form [formGroup]="partyForm" class="partyForm">
-            <div class="memberBox" #memberBoxes *ngFor="let member of combatService.party.members; let i = index" (click)="selectPartyMember(i, $event.target)">
+            <div class="memberBox" #memberBoxes *ngFor="let member of combatService.party.members; let i = index" (click)="selectPartyMember(i)">
                 <div class="innerBoxWrapper">
                     <div>
                         <label>{{member.name}}</label>
