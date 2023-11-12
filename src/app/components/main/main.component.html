@@ -129,9 +129,12 @@
                 <div *ngIf="damageResistanceDisplay.length">
                     <p>Damage Resistances:</p>
                     <span *ngFor="let obj of damageResistanceDisplay">
-                        <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
-                            <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.resistance}}</span>
-                            <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.resistance + '/ '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.resistance}}</span></span>
+                        <p class="indentOnly">
+                            <span [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
+                                <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.resistance}}</span>
+                                <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.resistance + '/ '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.resistance}}</span></span>
+                            </span>
+
                             <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
                             <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
                         </p>
@@ -153,9 +156,12 @@
                 <div *ngIf="damageTypeDisplay.length">
                     <p>Damage Type(s):</p>
                     <span *ngFor="let obj of damageTypeDisplay">
-                        <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
-                            <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.percent + '%'}}</span>
-                            <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.percent + '% / '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.percent + '%'}}</span></span>
+                        <p class="indentOnly">
+                            <span [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
+                                <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.percent + '%'}}</span>
+                                <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.percent + '% / '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.percent + '%'}}</span></span>
+                            </span>
+                            
                             <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
                             <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
                         </p>
@@ -174,9 +180,12 @@
                 <div *ngIf="statusResistanceDisplay.length">
                     <p>Status Resistances: </p>
                     <span *ngFor="let obj of statusResistanceDisplay">
-                        <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
-                            <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.resistance}}</span>
-                            <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.resistance + '/ '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.resistance}}</span></span>
+                        <p class="indentOnly">
+                            <span [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
+                                <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.resistance}}</span>
+                                <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.resistance + '/ '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.resistance}}</span></span>
+                            </span>
+
                             <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
                             <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
                         </p>

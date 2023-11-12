@@ -479,7 +479,7 @@ export class MainComponent implements OnInit, AfterViewInit {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
           statRemoved: true,
-          // statDown: true
+          statDown: true
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
