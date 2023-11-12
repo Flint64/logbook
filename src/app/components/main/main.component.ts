@@ -53,7 +53,10 @@ export class MainComponent implements OnInit, AfterViewInit {
   itemCategory: string = 'Weapon';
   itemCategoryDisplay: string = 'Weapons';
   equippedItem = null;
+
   damageTypeDisplay = [];
+  statusResistanceDisplay = [];
+  damageResistanceDisplay = [];
   
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
@@ -201,7 +204,9 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.previousElement = element;     
     }
     this.selectedItem = item;
-    this.damageTypeDifference();
+    this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
+    this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
+    this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
   }
 
 /****************************************************************************************
@@ -255,7 +260,9 @@ export class MainComponent implements OnInit, AfterViewInit {
       delete this.selectedItem.equippedBy;
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
-      this.damageTypeDifference();
+      this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
+      this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
+      this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
       return;
     }
 
@@ -365,11 +372,15 @@ export class MainComponent implements OnInit, AfterViewInit {
  * an item to equip. Displays strikethrough and greyed out for lost damage types,
  * up/down arrows for the same damage type increase/decrease, and green text with up arrow
  * for gained damage types
+ * 
+ * //TODO: Make trinkets only display a +% for damage types, and not overwrite item stats
  ****************************************************************************************/
-  damageTypeDifference(){
+  damageTypeDifference(varName: string, arrayTarget: string){
     //If we don't have the required data to display a change, do nothing
     if (!this.selectedPartyMember || !this.selectedItem){
-      this.damageTypeDisplay = [];
+      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
+      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
+      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
       return
     }
 
@@ -377,9 +388,11 @@ export class MainComponent implements OnInit, AfterViewInit {
     if (!this.equippedItem && this.selectedItem){      
       let obj = null;
       let splitName = null;
-      this.damageTypeDisplay = [];
+      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
+      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
+      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
 
-      this.selectedItem.damageTypes.forEach(e => {
+      this.selectedItem[varName].forEach(e => {
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         obj = {
           item: e,
@@ -387,14 +400,18 @@ export class MainComponent implements OnInit, AfterViewInit {
           statGained: true,
           statUp: true
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       });
       return;
     }
 
     // Don't display stat change if the selected item is the equipped item
     if (this.equippedItem === this.selectedItem){
-      this.damageTypeDisplay = [];
+      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
+      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
+      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
       return;
     }
 
@@ -403,25 +420,29 @@ export class MainComponent implements OnInit, AfterViewInit {
     //manipulating the DOM with renderer2 and having to wait for a delay
     let obj = null;
     let splitName = null;
-    this.damageTypeDisplay = [];
+    if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
+    if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
+    if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
      
     //Loop through the equippedItem's damage types
     //If the selected item damage type matches the equipped, no change
-     this.equippedItem.damageTypes.forEach(e => {
-      let found = this.selectedItem.damageTypes.find((el) => el.constructor.name === e.constructor.name);
+     this.equippedItem[varName].forEach(e => {
+      let found = this.selectedItem[varName].find((el) => el.constructor.name === e.constructor.name);
 
-      if (found && found.percent === e.percent){
+      if ((found && found.percent === e.percent) || (found && found.resistance === e.resistance)){
         splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         // Same exact damage type
         obj = {
           item: found,
           name: splitName[0] + ' ' + splitName[1],
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
       
       //If there's a match but the percent is higher, display up arrow for increase
-      if (found && found.percent > e.percent){
+      if ((found && found.percent > e.percent) || (found && found.resistance > e.resistance)){
         splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         // Higher percentage of e.constructor.name
         obj = {
@@ -430,11 +451,13 @@ export class MainComponent implements OnInit, AfterViewInit {
           name: splitName[0] + ' ' + splitName[1],
           statUp: true
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
       
       //If there's a match but the percent is lower, display down arrow for decrease
-      if (found && found.percent < e.percent){
+      if ((found && found.percent < e.percent) || (found && found.resistance < e.resistance)){
         splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         // Less percentage of e.constructor.name
         obj = {
@@ -443,7 +466,9 @@ export class MainComponent implements OnInit, AfterViewInit {
           name: splitName[0] + ' ' + splitName[1],
           statDown: true
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
 
       //If we don't find a match, that damage type has been lost
@@ -453,9 +478,12 @@ export class MainComponent implements OnInit, AfterViewInit {
         obj = {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
-          statRemoved: true
+          statRemoved: true,
+          // statDown: true
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
       
     });
@@ -463,8 +491,8 @@ export class MainComponent implements OnInit, AfterViewInit {
     //Now loop through the selectedItem's damage types
     //If we don't find a match, that means we have gained that damage type
     //and it should be displayed as a new one with an up arrow
-    this.selectedItem.damageTypes.forEach(e => {
-      let found = this.equippedItem.damageTypes.find((el) => el.constructor.name === e.constructor.name)
+    this.selectedItem[varName].forEach(e => {
+      let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name)
       if (!found){
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         // gained e.constructor.name
@@ -474,7 +502,9 @@ export class MainComponent implements OnInit, AfterViewInit {
           statUp: true,
           statGained: true
         }
-        this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
+        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
     });
   }
@@ -504,7 +534,9 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.previousPartyMember = this.memberBoxes.toArray()[index].nativeElement;
     this.equippedItem = null;
     this.getEquippedItem();
-    this.damageTypeDifference();
+    this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
+    this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
+    this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
   }
 
 
