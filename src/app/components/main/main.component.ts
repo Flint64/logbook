@@ -141,7 +141,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     //Reset the selected item so the view is empty when navigating to a screen that uses it
     this.selectedItem = null;
     this.equippedItem = null;
-    this.damageTypeDisplay = [];
+    this.clearItemDetailArrays()
     if (this.memberIndex !== null){
       this.selectPartyMember(this.memberIndex);
     }
@@ -236,7 +236,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.viewEquipped = !this.viewEquipped;
     this.selectedItem = null;
     this.equippedItem = null;
-    this.damageTypeDisplay = [];
+    this.clearItemDetailArrays()
   }
   
 /****************************************************************************************
@@ -246,7 +246,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   cancelEquip(){
     this.selectedItem = null;
     this.equippedItem = null;
-    this.damageTypeDisplay = [];
+    this.clearItemDetailArrays()
     this.previousElement.classList.remove('active');
   }
 
@@ -254,6 +254,12 @@ export class MainComponent implements OnInit, AfterViewInit {
  * Equip Item - Handles equipping/unequipping items
  ****************************************************************************************/
   equipItem(){
+
+    //Do nothing if we don't have an item selected
+    if (!this.selectedItem){
+      return;
+    }
+    
     //If the selected item matches the equipped item, unequip it
     if (this.selectedItem === this.equippedItem){
       this.equippedItem = null;
@@ -279,7 +285,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.selectedItem.equippedBy = this.selectedPartyMember;
       this.getEquippedItem();
       //Clear damageTypeDisplay to show the newly equipped item's stats as your new stats
-      this.damageTypeDisplay = [];
+      this.clearItemDetailArrays()
 
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
@@ -304,7 +310,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       if (result){
         this.selectedItem = null;
         this.equippedItem = null;
-        this.damageTypeDisplay = [];
+        this.clearItemDetailArrays()
         this.itemCategory = result['value'];
         this.itemCategoryDisplay = result['displayName'];
       }
@@ -385,7 +391,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     //If we don't have an equipped item, display the selected item's stats all as gained
-    if (!this.equippedItem && this.selectedItem){      
+    if (!this.equippedItem && this.selectedItem){
       let obj = null;
       let splitName = null;
       if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
@@ -394,11 +400,13 @@ export class MainComponent implements OnInit, AfterViewInit {
 
       this.selectedItem[varName].forEach(e => {
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory) + this.selectedPartyMember.calcTotalStatValue('e.constructor.name',  null, this.combatService.party.inventory) + e.resistance;
         obj = {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
           statGained: true,
-          statUp: true
+          statUp: true,
+          totalStat: total
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
@@ -436,7 +444,7 @@ export class MainComponent implements OnInit, AfterViewInit {
           item: found,
           name: splitName[0] + ' ' + splitName[1],
         }
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
+        // if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj); //Don't push the damageTypeDisplay as it gets displayed in conjunction with any other like 100 / 40. If this is pushed we get a duplicate line of 40
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
         if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
@@ -449,7 +457,7 @@ export class MainComponent implements OnInit, AfterViewInit {
           equipped: e,
           item: found,
           name: splitName[0] + ' ' + splitName[1],
-          statUp: true
+          statUp: true,
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
@@ -495,18 +503,27 @@ export class MainComponent implements OnInit, AfterViewInit {
       let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name)
       if (!found){
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory) + this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory) + e.resistance;
         // gained e.constructor.name
         obj = {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
           statUp: true,
-          statGained: true
+          statGained: true,
+          totalStat: total
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
         if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
     });
+    
+  }
+
+  clearItemDetailArrays(){
+    this.damageTypeDisplay = [];
+    this.statusResistanceDisplay = [];
+    this.damageResistanceDisplay = [];
   }
   
 /****************************************************************************************
@@ -522,7 +539,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.selectedPartyMember = null;
       this.equippedItem = null;
       this.selectedItem = null;
-      this.damageTypeDisplay = [];
+      this.clearItemDetailArrays()
       return;
     }
     
