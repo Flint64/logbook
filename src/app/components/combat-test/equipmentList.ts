@@ -230,7 +230,7 @@ export const weapons: Weapon[] = [
  ****************************************************************************************/
 export const trinkets: Trinket[] = [
     {
-        name: 'Trinket',
+        name: 'Fire Gem',
         equippedBy: null,
         description: 'A test trinket',
         defense: null,
@@ -244,5 +244,21 @@ export const trinkets: Trinket[] = [
         statusEffectResistances: [new BurnResistance({resistance: 30})],
         damageTypes: [new FireDamage({percent: 10, elemental: true})],
         damageResistances: [new FireDamageResistance({resistance: 30, elemental: true})]
+    },
+    {
+        name: 'Ice Gem',
+        equippedBy: null,
+        description: 'A test trinket',
+        defense: null,
+        speed: null,
+        intelligence: null,
+        strength: null,
+        accuracy: null,
+        luck: null,
+        crit: null,
+        evasion: 5,
+        statusEffectResistances: [new FreezeResistance({resistance: 30})],
+        damageTypes: [new IceDamage({percent: 10, elemental: true})],
+        damageResistances: [new IceDamageResistance({resistance: 30, elemental: true})]
     }
 ];

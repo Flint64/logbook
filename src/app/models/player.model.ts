@@ -139,6 +139,28 @@ export class Player {
       return totalStatValue;
     }
 
+    calcTrinketValue(inventory: EquippableItem[]){
+      let equippedEquipment = [];
+      let trinketDamageBonuses = [];
+      
+      inventory.forEach((equipment) => {
+        if (equipment.equippedBy?.name === this.name){
+          equippedEquipment.push(equipment);
+        }
+      });
+
+      equippedEquipment.forEach((equippedItem) => {
+        if (equippedItem instanceof Trinket){
+          equippedItem.damageTypes.forEach((e) => {
+            trinketDamageBonuses.push(e);
+          });
+        }
+      });
+
+      return trinketDamageBonuses;
+      
+    }
+
   /****************************************************************************************
    * Calculate Effect Resistance - Checks a given stat resistance from calcTotalStatValue
    * and calculates to see if that effect has been resisted or not.

@@ -50,13 +50,14 @@ export class MainComponent implements OnInit, AfterViewInit {
   viewEquipped: boolean = true;
   notEquippedItems: EquippableItem[] = [];
   previousElement = null;
-  itemCategory: string = 'Weapon';
-  itemCategoryDisplay: string = 'Weapons';
+  itemCategory: string = 'Trinket';
+  itemCategoryDisplay: string = 'Trinkets';
   equippedItem = null;
 
   damageTypeDisplay = [];
   statusResistanceDisplay = [];
   damageResistanceDisplay = [];
+  trinketDamageBonuses = [];
   
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
@@ -141,7 +142,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     //Reset the selected item so the view is empty when navigating to a screen that uses it
     this.selectedItem = null;
     this.equippedItem = null;
-    this.clearItemDetailArrays()
+    this.clearItemDetailArrays();
     if (this.memberIndex !== null){
       this.selectPartyMember(this.memberIndex);
     }
@@ -236,7 +237,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.viewEquipped = !this.viewEquipped;
     this.selectedItem = null;
     this.equippedItem = null;
-    this.clearItemDetailArrays()
+    this.clearItemDetailArrays();
   }
   
 /****************************************************************************************
@@ -246,7 +247,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   cancelEquip(){
     this.selectedItem = null;
     this.equippedItem = null;
-    this.clearItemDetailArrays()
+    this.clearItemDetailArrays();
     this.previousElement.classList.remove('active');
   }
 
@@ -285,7 +286,8 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.selectedItem.equippedBy = this.selectedPartyMember;
       this.getEquippedItem();
       //Clear damageTypeDisplay to show the newly equipped item's stats as your new stats
-      this.clearItemDetailArrays()
+      this.clearItemDetailArrays();
+      this.trinketDisplay();
 
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
@@ -310,9 +312,10 @@ export class MainComponent implements OnInit, AfterViewInit {
       if (result){
         this.selectedItem = null;
         this.equippedItem = null;
-        this.clearItemDetailArrays()
+        this.clearItemDetailArrays();
         this.itemCategory = result['value'];
         this.itemCategoryDisplay = result['displayName'];
+        this.trinketDisplay();
       }
     });
   }
@@ -373,6 +376,19 @@ export class MainComponent implements OnInit, AfterViewInit {
     
   }
 
+  trinketDisplay(){
+    this.trinketDamageBonuses = [];
+    let trinketBonuses = this.selectedPartyMember.calcTrinketValue(this.combatService.party.inventory);
+    let obj = null;
+    trinketBonuses.forEach((e) => {
+      let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+      obj = {
+        display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
+      }
+      this.trinketDamageBonuses.push(obj);
+    });
+  }
+
 /****************************************************************************************
  * Damage Type Difference - Handles displaying item damage type changes when selecting
  * an item to equip. Displays strikethrough and greyed out for lost damage types,
@@ -382,6 +398,7 @@ export class MainComponent implements OnInit, AfterViewInit {
  * //TODO: Make trinkets only display a +% for damage types, and not overwrite item stats
  ****************************************************************************************/
   damageTypeDifference(varName: string, arrayTarget: string){
+        
     //If we don't have the required data to display a change, do nothing
     if (!this.selectedPartyMember || !this.selectedItem){
       if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
@@ -389,6 +406,18 @@ export class MainComponent implements OnInit, AfterViewInit {
       if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
       return
     }
+
+    //Trinket stuff
+    this.trinketDamageBonuses = [];
+    let trinketBonuses = this.selectedPartyMember.calcTrinketValue(this.combatService.party.inventory);
+    let obj2 = null;
+    trinketBonuses.forEach((e) => {
+      let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+      obj2 = {
+        display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
+      }
+      this.trinketDamageBonuses.push(obj2);
+    });
 
     //If we don't have an equipped item, display the selected item's stats all as gained
     if (!this.equippedItem && this.selectedItem){
@@ -400,7 +429,17 @@ export class MainComponent implements OnInit, AfterViewInit {
 
       this.selectedItem[varName].forEach(e => {
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory) + this.selectedPartyMember.calcTotalStatValue('e.constructor.name',  null, this.combatService.party.inventory) + e.resistance;
+        let total = 0;
+        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
+        if (constructorResistance === 0){ 
+          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
+          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
+          //skewed higher by a margin of the totalResistance
+          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
+        }
+        total += e.resistance;
+        total += constructorResistance;
+        
         obj = {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
@@ -408,6 +447,11 @@ export class MainComponent implements OnInit, AfterViewInit {
           statUp: true,
           totalStat: total
         }
+
+        // if (this.selectedItem.constructor.name === 'Trinket' && arrayTarget === 'damageTypeDisplay'){
+          obj.trinket = `+${obj.item.percent}% ${obj.name}`;
+        // }
+        
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
         if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
@@ -503,7 +547,17 @@ export class MainComponent implements OnInit, AfterViewInit {
       let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name)
       if (!found){
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory) + this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory) + e.resistance;
+        let total = 0;
+        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
+        if (constructorResistance === 0){ 
+          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
+          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
+          //skewed higher by a margin of the totalResistance
+          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
+        }
+        total += e.resistance;
+        total += constructorResistance;
+        
         // gained e.constructor.name
         obj = {
           item: e,
@@ -517,13 +571,16 @@ export class MainComponent implements OnInit, AfterViewInit {
         if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
     });
-    
   }
 
   clearItemDetailArrays(){
     this.damageTypeDisplay = [];
     this.statusResistanceDisplay = [];
     this.damageResistanceDisplay = [];
+    this.trinketDamageBonuses = [];
+    if (this.selectedPartyMember){
+      this.trinketDisplay();
+    }
   }
   
 /****************************************************************************************
@@ -539,7 +596,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.selectedPartyMember = null;
       this.equippedItem = null;
       this.selectedItem = null;
-      this.clearItemDetailArrays()
+      this.clearItemDetailArrays();
       return;
     }
     
@@ -554,6 +611,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
     this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
     this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
+    this.trinketDisplay();
   }
 
 
