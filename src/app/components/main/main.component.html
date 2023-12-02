@@ -158,34 +158,32 @@
                     <p class="indentOnly" *ngFor="let obj of trinketDamageBonuses">{{obj.display}}</p>
                 </div> -->
                 <div *ngIf="damageTypeDisplay.length">
-                    <p>Damage Type(s):</p>
+                    <p>Damage Type(s): afw aawef</p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory)" >{{'Bludgeoning Damage - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory)" >{{'Piercing Damage - '    + selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory)" >{{'Slashing Damage - '    + selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory)" >{{'Fire Damage - '        + selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory)" >{{'Ice Damage - '         + selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory)" >{{'Poison Damage - '      + selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory) + '%'}}  </p>
+                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory)" >{{'Shock Damage - '       + selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory) + '%'}}  </p>
                     <span *ngFor="let obj of damageTypeDisplay">
-                        <p class="indentOnly" *ngIf="!obj?.trinket">
+                        <p class="indentOnly">
                             <span [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
                                 <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.percent + '%'}}</span>
                                 <span *ngIf="obj?.equipped">{{obj.name + ' - ' + obj?.equipped.percent + '% / '}} <span [ngClass]="{'statUp' : obj?.statUp, 'statDown' : obj?.statDown}">{{obj.item.percent + '%'}}</span></span>
                             </span>
-                            
+                            <!-- //TODO: Try to get trinkets to always display +x% damageType -->
                             <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
                             <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
-                        </p>
-<!-- //TODO: Stats still aren't displaying correctly, don't know why, fix it -->
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory) && obj?.trinket" >{{'Bludgeoning Damage - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory) && obj?.trinket" >{{'Piercing Damage - '    + selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory) && obj?.trinket" >{{'Slashing Damage - '    + selectedPartyMember.calcTotalStatValue('SlashingDamage',    null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory) && obj?.trinket" >{{'Fire Damage - '        + selectedPartyMember.calcTotalStatValue('FireDamage',        null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory) && obj?.trinket" >{{'Ice Damage - '         + selectedPartyMember.calcTotalStatValue('IceDamage',         null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory) && obj?.trinket" >{{'Poison Damage - '      + selectedPartyMember.calcTotalStatValue('PoisonDamage',      null, combatService.party.inventory) + '%'}}  </p>
-                        <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory) && obj?.trinket" >{{'Shock Damage - '       + selectedPartyMember.calcTotalStatValue('ShockDamage',       null, combatService.party.inventory) + '%'}}  </p>
-                        
-                        <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}" *ngIf="obj?.trinket">{{obj.trinket}}
+                        </p>                        
+                        <!-- <p class="indentOnly" [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}" *ngIf="obj?.trinket">{{obj.trinket + tatwtawe}}
                             <span *ngIf="obj?.statUp" [ngClass]="{'statUp': obj?.statUp}">&#9650;</span>
                             <span *ngIf="obj?.statDown" [ngClass]="{'statDown': obj?.statDown}">&#9660;</span>
-                        </p>
+                        </p> -->
                     </span>
                 </div>
                 <div *ngIf="trinketDamageBonuses.length">
-                    <p class="indentOnly" *ngFor="let obj of trinketDamageBonuses">{{obj.display}}</p>
+                    <span *ngIf="!selectedItem || equippedItem === selectedItem"><p class="indentOnly" *ngFor="let obj of trinketDamageBonuses">{{obj.display}}</p></span>
                 </div>
             </div>
 
@@ -202,7 +200,7 @@
                     <span *ngFor="let obj of statusResistanceDisplay">
                         <p class="indentOnly">
                             <span [ngClass]="{'statRemoved': obj?.statRemoved, 'statGained' : obj?.statGained}">
-                                <!-- //TODO: Adding in the calcTotalStatValue here + the resistance only works if we don't have an item equipped --Is this done? -->
+                                <!-- //TODO: Adding in the calcTotalStatValue here + the resistance only works if we don't have an item equipped -->
                                 <!-- <span *ngIf="!obj?.equipped">{{obj.name + ' - ' + obj.item.resistance}}</span> -->
                                 <span *ngIf="!obj?.equipped && !obj?.totalStat">{{obj.name + ' - ' + obj.item.resistance}}</span>
                                 <span *ngIf="!obj?.equipped && obj?.totalStat">{{obj.name + ' - ' + obj.totalStat}}</span>

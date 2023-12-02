@@ -6,6 +6,7 @@ import { Player } from 'src/app/models/player.model';
 import { CombatService } from 'src/app/services/combat.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SelectCategoryComponent } from './select-category/select-category.component';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-main',
@@ -449,7 +450,7 @@ export class MainComponent implements OnInit, AfterViewInit {
         }
 
         // if (this.selectedItem.constructor.name === 'Trinket' && arrayTarget === 'damageTypeDisplay'){
-          obj.trinket = `+${obj.item.percent}% ${obj.name}`;
+          // obj.trinket = `+${obj.item.percent}% ${obj.name}`;
         // }
         
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
@@ -496,12 +497,23 @@ export class MainComponent implements OnInit, AfterViewInit {
       //If there's a match but the percent is higher, display up arrow for increase
       if ((found && found.percent > e.percent) || (found && found.resistance > e.resistance)){
         splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+        let total = 0;
+        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
+        if (constructorResistance === 0){ 
+          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
+          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
+          //skewed higher by a margin of the totalResistance
+          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
+        }
+        total += e.resistance;
+        total += constructorResistance;
         // Higher percentage of e.constructor.name
         obj = {
           equipped: e,
           item: found,
           name: splitName[0] + ' ' + splitName[1],
           statUp: true,
+          totalStat: total
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
@@ -511,12 +523,23 @@ export class MainComponent implements OnInit, AfterViewInit {
       //If there's a match but the percent is lower, display down arrow for decrease
       if ((found && found.percent < e.percent) || (found && found.resistance < e.resistance)){
         splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+        let total = 0;
+        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
+        if (constructorResistance === 0){ 
+          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
+          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
+          //skewed higher by a margin of the totalResistance
+          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
+        }
+        total += e.resistance;
+        total += constructorResistance;
         // Less percentage of e.constructor.name
         obj = {
           equipped: e,
           item: found,
           name: splitName[0] + ' ' + splitName[1],
-          statDown: true
+          statDown: true,
+          totalStat: total
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
@@ -527,24 +550,48 @@ export class MainComponent implements OnInit, AfterViewInit {
       if (!found){
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         // lost e.constructor.name
+
+        // console.log(e.constructor.name + ' ' + this.selectedPartyMember.calcTotalStatValue(e.constructor.name, null, this.combatService.party.inventory));
         obj = {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
           statRemoved: true,
           statDown: true
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
+        // console.log(this.selectedPartyMember.calcTotalStatValue('poisonResistance',  null, this.combatService.party.inventory));
+        //For items where a matching stat is not found, but we actually do have some of that stat from other items equipped,
+        //only display statRemoved (strikethrough) if calcTotatlStatValue for it is 0. Otherwise, we have a value from
+        //elsewhere that needs to be displayed correctly as statDown.
+        let resistance = this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
+        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name, null, this.combatService.party.inventory);
+        // console.log(e.constructor.name + ' ' + total);
+        this.equippedItem[varName].forEach(equipped => {
+          // console.log(e.constructor.name + ' ' + (total - equipped?.resistance));
+          let change = (total - equipped?.resistance);
+          let copy = _.cloneDeep(obj.item);
+          copy.resistance += resistance;
+          obj.item = copy;
+          //If we have a value leftover that isn't just the base resistance, then the stat is modified and not lost
+          if (change > 0 && change !== resistance){
+            delete obj.statRemoved;
+          }
+        });
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
         if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
         if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
       }
       
     });
-    
+    //TODO: Make it so everything in this function displays the change like the damagetypedifference function or whatever with the colored data and slashes
     //Now loop through the selectedItem's damage types
     //If we don't find a match, that means we have gained that damage type
     //and it should be displayed as a new one with an up arrow
-    this.selectedItem[varName].forEach(e => {
-      let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name)
+    this.selectedItem[varName].forEach(e => { //TODO: Not finding a match here also doesn't mean that we don't have anything, as it only looks at selectedItem vs equippedItem; Not overall stats, like fireDamageResistance added from a trinket when we're comparing weapons
+      let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name);
       if (!found){
         splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
         let total = 0;
@@ -563,7 +610,7 @@ export class MainComponent implements OnInit, AfterViewInit {
           item: e,
           name: splitName[0] + ' ' + splitName[1],
           statUp: true,
-          statGained: true,
+          statGained: true, //TODO: Same with statGained, it's only gained if we don't have a value for it at all. Statup should be used if we do
           totalStat: total
         }
         if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
