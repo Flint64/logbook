@@ -483,25 +483,6 @@ export class MainComponent implements OnInit, AfterViewInit {
       item.description === value.description && item.name === value.name
     ))
   );
-
-    //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
-    //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
-    //ignoring any changes made here
-
-    // this.selectedItem.constructor.name !== 'Trinket'
-    /*
-    //If the statName is any of these, we need to ignore trinket bonuses
-    //The numbers seem to be okay if we have an item equipped in a slot. Otherwise, the values are all higher across the board for some reason
-    //Changing the null values in the trinkets from null to 0 made the higher values be ~2x higher rather than ~3x higher. Why?
-    //It looks like somehow when making the equippedEquipment array above, two of the selected item are being added to your equipped items when you don't have one equipped. Curious.
-    BludgeoningDamage
-    PiercingDamage
-    SlashingDamage
-    FireDamage
-    IceDamage
-    PoisonDamage
-    ShockDamage
-    */
     
     let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
     
