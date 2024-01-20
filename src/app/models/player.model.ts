@@ -139,25 +139,25 @@ export class Player {
       return totalStatValue;
     }
 
-    calcTrinketValue(inventory: EquippableItem[]){
-      let equippedEquipment = [];
-      let trinketDamageBonuses = [];
+    getEquippedTrinkets(inventory: EquippableItem[]){
+      let equippedTrinkets = [];
+      // let trinketDamageBonuses = [];
       
       inventory.forEach((equipment) => {
-        if (equipment.equippedBy?.name === this.name){
-          equippedEquipment.push(equipment);
+        if (equipment.equippedBy?.name === this.name && equipment instanceof Trinket){
+          equippedTrinkets.push(equipment);
         }
       });
 
-      equippedEquipment.forEach((equippedItem) => {
-        if (equippedItem instanceof Trinket){
-          equippedItem.damageTypes.forEach((e) => {
-            trinketDamageBonuses.push(e);
-          });
-        }
-      });
+      // equippedEquipment.forEach((equippedItem) => {
+        // if (equippedItem instanceof Trinket){
+          // equippedItem.damageTypes.forEach((e) => {
+          //   trinketDamageBonuses.push(e);
+          // });
+        // }
+      // });
 
-      return trinketDamageBonuses;
+      return equippedTrinkets;
       
     }
 

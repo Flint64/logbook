@@ -23,6 +23,11 @@ export class CapitalSplitPipe implements PipeTransform {
       if (fieldName === 'percent'){ 
         display.value = display.value + '%';
       }
+
+      if (fieldName === 'trinket'){
+        display.name = split[0] + ' ' + split[1];
+        display.value = e['percent'];
+      }
       
       arr.push(display);
     });

@@ -303,6 +303,10 @@ section.display {
     visibility: hidden;
 }
 
+.underline{
+    text-decoration: underline;
+}
+
 .hidden{
     display: none;
 }
@@ -360,6 +364,10 @@ section.display {
 .statRemoved{
     color: #9f9f9f;
     text-decoration: line-through;
+}
+
+.removeSpace{
+    margin-left: -3.5px;
 }
 
 

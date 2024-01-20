@@ -55,10 +55,39 @@ export class MainComponent implements OnInit, AfterViewInit {
   itemCategoryDisplay: string = 'Trinkets';
   equippedItem = null;
 
+  trinketDamageBonuses = [];
+  
+  damageTypes = [
+    'BludgeoningDamage',
+    'PiercingDamage',
+    'SlashingDamage',
+    'FireDamage',
+    'IceDamage',
+    'PoisonDamage',
+    'ShockDamage',
+  ];
+
+  statusResistances = [
+    "BurnResistance",
+    "PoisonResistance",
+    "FreezeResistance",
+    "ShockResistance",
+  ]
+
+  damageResistances = [
+    'BludgeoningDamageResistance',
+    'PiercingDamageResistance',
+    'SlashingDamageResistance',
+    'FireDamageResistance',
+    'IceDamageResistance',
+    'PoisonDamageResistance',
+    'ShockDamageResistance',
+  ]
+
+
   damageTypeDisplay = [];
   statusResistanceDisplay = [];
   damageResistanceDisplay = [];
-  trinketDamageBonuses = [];
   
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
@@ -78,7 +107,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
 
     this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy });
-        
   }
 
 /****************************************************************************************
@@ -206,9 +234,10 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.previousElement = element;     
     }
     this.selectedItem = item;
-    this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
-    this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
-    this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
+    this.clearItemDetailArrays();
+    this.calcNestedStatDifferences('damageTypes');
+    this.calcNestedStatDifferences('statusResistances');
+    this.calcNestedStatDifferences('damageResistances');
   }
 
 /****************************************************************************************
@@ -268,9 +297,10 @@ export class MainComponent implements OnInit, AfterViewInit {
       delete this.selectedItem.equippedBy;
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
-      this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
-      this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
-      this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
+      this.clearItemDetailArrays();
+      this.calcNestedStatDifferences('damageTypes');
+      this.calcNestedStatDifferences('statusResistances');
+      this.calcNestedStatDifferences('damageResistances');
       return;
     }
 
@@ -288,18 +318,25 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.getEquippedItem();
       //Clear damageTypeDisplay to show the newly equipped item's stats as your new stats
       this.clearItemDetailArrays();
-      this.trinketDisplay();
+      // this.trinketDisplay();
 
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
+      this.previousElement.classList.remove('active');
+      this.selectedItem = null;
       return;
     }
   }
 
 /****************************************************************************************
- * Change Item Category - Opens a dialog box and allows selecting of an item category
+ * Change Item Category / Change Category - Opens a dialog box and allows selecting of
+ * an item category
  ****************************************************************************************/
   changeItemCategory(){
+    if (!this.selectedPartyMember){
+      return;
+    }
+    
     const dialogRef = this.dialog.open(SelectCategoryComponent, {
       panelClass: 'custom-dialog-container',
       width: '30rem',
@@ -316,7 +353,7 @@ export class MainComponent implements OnInit, AfterViewInit {
         this.clearItemDetailArrays();
         this.itemCategory = result['value'];
         this.itemCategoryDisplay = result['displayName'];
-        this.trinketDisplay();
+        // this.trinketDisplay();
       }
     });
   }
@@ -330,295 +367,186 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.getEquippedItem();
     
     //If we don't have the required data to display a change, do nothing
-    if (!this.selectedPartyMember || !this.selectedItem){
-      return
+    if (!this.selectedPartyMember || !this.selectedItem || !this.viewingEquipment.isActive){ //TODO: Removing this trinket thing here sorta works, but they're displaying higher numbers than they should be for some reason
+      return;
     }
 
     //Clear target so that duplicates don't happen
-    target.innerHTML = null;
-    target.className = "";
-
-    //Get the stat total from calcTotalStatValue
-    let totalStat = this.selectedPartyMember.calcTotalStatValue(statName, null, this.combatService.party.inventory);
-
-    //The change from the equipped item to the selected one is equal to the total - equipped + the selected item
-    //Only calc change if we have an equipped item
-    let change = null;
-    if (this.equippedItem){
-      change = totalStat - this.equippedItem[statName] + this.selectedItem[statName];
+    if (target){
+      target.innerHTML = null;
+      target.className = "";
     }
+
+    //Create copies of everything we need so we don't affect the actual player's data
+    let equippedItemCopy = _.cloneDeep(this.equippedItem);
+    let selectedItemCopy = _.cloneDeep(this.selectedItem);
+    let playerCopy = _.cloneDeep(this.selectedPartyMember);
     
-    if (!this.equippedItem){
-      change = totalStat + this.selectedItem[statName];
-    }
+    //Get the current totalStatValue using the equipped item
+    let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
 
-    //Generate HTML to plug in place. Two spans, the first for a white '/'
-    //and the second one for a colored up/down arrow for pos/neg stat change
+    //Get all equipped items of the selected player
+    let equippedEquipment = [];
+    this.combatService.party.inventory.forEach((equipment) => {
+      if (equipment.equippedBy?.name === playerCopy.name){
+        equippedEquipment.push(equipment);
+      }
+    });
+    
+    //Now "equip" the selected item
+    if (equippedItemCopy){
+      delete equippedItemCopy.equippedBy;
+    }
+    selectedItemCopy.equippedBy = playerCopy;
+
+    //Replace the old equipped item with the new one in the list of equipped items
+    equippedEquipment.forEach((e, index) => {
+      if (equippedItemCopy){
+        if (e.name === equippedItemCopy.name){
+          equippedEquipment.splice(index, 1);
+          equippedEquipment.push(selectedItemCopy);
+        }
+      } else {
+        equippedEquipment.push(selectedItemCopy);
+      }
+    });
+
+    //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
+    //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
+    //ignoring any changes made here
+    let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
+  
     let span1 = this.renderer.createElement('span');
     this.renderer.setProperty(span1, 'innerHTML', '/ ');
     let span2 = this.renderer.createElement('span');
     
-    if (change && change > totalStat){ // Positive change
+    if (newValue >= 0 && newValue > oldValue){ // Positive change
       this.renderer.addClass(span2, 'statUp');
-      this.renderer.setProperty(span2, 'innerHTML', `${change} &#9650;`)
+      this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9650;`)
       this.renderer.appendChild(target, span1);
       this.renderer.appendChild(target, span2);
-    } else if (change && change < totalStat){ // Negative change
+    } else if (newValue >= 0 && newValue < oldValue){ // Negative change
       this.renderer.addClass(span2, 'statDown');
-      this.renderer.setProperty(span2, 'innerHTML', `${change} &#9660;`)
+      this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9660;`)
       this.renderer.appendChild(target, span1);
       this.renderer.appendChild(target, span2);
     }
+  }
 
-    //If we don't have a stat change, don't display anything
-    if (change === null || change === undefined){
-      target.innerHTML = null;
+  calcNestedStatDifferences(varName: string) {
+    if (!this.selectedItem || !this.viewingEquipment.isActive){
+      return;
     }
+
+
+    this[varName].forEach(statName => {
+
+    //Create copies of everything we need so we don't affect the actual player's data
+    let equippedItemCopy = _.cloneDeep(this.equippedItem);
+    let selectedItemCopy = _.cloneDeep(this.selectedItem);
+    let playerCopy = _.cloneDeep(this.selectedPartyMember);
     
-  }
+    //Get the current totalStatValue using the equipped item
+    let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
 
-  trinketDisplay(){
-    this.trinketDamageBonuses = [];
-    let trinketBonuses = this.selectedPartyMember.calcTrinketValue(this.combatService.party.inventory);
-    let obj = null;
-    trinketBonuses.forEach((e) => {
-      let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-      obj = {
-        display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
+    //Get all equipped items of the selected player
+    let equippedEquipment = [];
+    this.combatService.party.inventory.forEach((equipment) => {
+      if (equipment.equippedBy?.name === playerCopy.name){
+        equippedEquipment.push(equipment);
       }
-      this.trinketDamageBonuses.push(obj);
     });
-  }
-
-/****************************************************************************************
- * Damage Type Difference - Handles displaying item damage type changes when selecting
- * an item to equip. Displays strikethrough and greyed out for lost damage types,
- * up/down arrows for the same damage type increase/decrease, and green text with up arrow
- * for gained damage types
- * 
- * //TODO: Make trinkets only display a +% for damage types, and not overwrite item stats
- ****************************************************************************************/
-  damageTypeDifference(varName: string, arrayTarget: string){
-        
-    //If we don't have the required data to display a change, do nothing
-    if (!this.selectedPartyMember || !this.selectedItem){
-      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
-      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
-      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
-      return
+    
+    //Now "equip" the selected item
+    if (equippedItemCopy){
+      delete equippedItemCopy.equippedBy;
     }
+    selectedItemCopy.equippedBy = playerCopy;
 
-    //Trinket stuff
-    this.trinketDamageBonuses = [];
-    let trinketBonuses = this.selectedPartyMember.calcTrinketValue(this.combatService.party.inventory);
-    let obj2 = null;
-    trinketBonuses.forEach((e) => {
-      let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-      obj2 = {
-        display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
+    //Replace the old equipped item with the new one in the list of equipped items
+    equippedEquipment.forEach((e, index) => {
+      if (equippedItemCopy){
+        if (e.name === equippedItemCopy.name){
+          equippedEquipment.splice(index, 1);
+          equippedEquipment.push(selectedItemCopy);
+        }
+      } else {
+        equippedEquipment.push(selectedItemCopy);
       }
-      this.trinketDamageBonuses.push(obj2);
     });
+    
+    //Remove any duplicate items from equippedEquipment because somehow they're being duplicated in the else block above and I don't know why
+    //This currently only checks to see if the name & description are the same, so make sure those are unique in the item list, or add
+    //more checks for different values here to ensure duplicates don't slip through
+    equippedEquipment = equippedEquipment.filter((value, index, self) =>
+    index === self.findIndex((item) => (
+      item.description === value.description && item.name === value.name
+    ))
+  );
 
-    //If we don't have an equipped item, display the selected item's stats all as gained
-    if (!this.equippedItem && this.selectedItem){
-      let obj = null;
-      let splitName = null;
-      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
-      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
-      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
+    //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
+    //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
+    //ignoring any changes made here
 
-      this.selectedItem[varName].forEach(e => {
-        splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = 0;
-        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
-        if (constructorResistance === 0){ 
-          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
-          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
-          //skewed higher by a margin of the totalResistance
-          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
-        }
-        total += e.resistance;
-        total += constructorResistance;
-        
-        obj = {
-          item: e,
-          name: splitName[0] + ' ' + splitName[1],
-          statGained: true,
-          statUp: true,
-          totalStat: total
-        }
+    // this.selectedItem.constructor.name !== 'Trinket'
+    /*
+    //If the statName is any of these, we need to ignore trinket bonuses
+    //The numbers seem to be okay if we have an item equipped in a slot. Otherwise, the values are all higher across the board for some reason
+    //Changing the null values in the trinkets from null to 0 made the higher values be ~2x higher rather than ~3x higher. Why?
+    //It looks like somehow when making the equippedEquipment array above, two of the selected item are being added to your equipped items when you don't have one equipped. Curious.
+    BludgeoningDamage
+    PiercingDamage
+    SlashingDamage
+    FireDamage
+    IceDamage
+    PoisonDamage
+    ShockDamage
+    */
+    
+    let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
+    
+      let splitName = statName.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+      let obj = {
+        name: splitName[0] + ' ' + splitName[1],
+        newValue: newValue,
+        oldValue: oldValue,
+        statUp: null,
+        statDown: null,
+        statSame: null,
+      };
 
-        // if (this.selectedItem.constructor.name === 'Trinket' && arrayTarget === 'damageTypeDisplay'){
-          // obj.trinket = `+${obj.item.percent}% ${obj.name}`;
-        // }
-        
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
-      });
-      return;
-    }
-
-    // Don't display stat change if the selected item is the equipped item
-    if (this.equippedItem === this.selectedItem){
-      if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
-      if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
-      if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
-      return;
-    }
-
-    //Create an object with properties to be used in the template with [ngClass]
-    //to add classes to display the result correctly without the need for
-    //manipulating the DOM with renderer2 and having to wait for a delay
-    let obj = null;
-    let splitName = null;
-    if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay = [];
-    if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay = [];
-    if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay = [];
-     
-    //Loop through the equippedItem's damage types
-    //If the selected item damage type matches the equipped, no change
-     this.equippedItem[varName].forEach(e => {
-      let found = this.selectedItem[varName].find((el) => el.constructor.name === e.constructor.name);
-
-      if ((found && found.percent === e.percent) || (found && found.resistance === e.resistance)){
-        splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        // Same exact damage type
-        obj = {
-          item: found,
-          name: splitName[0] + ' ' + splitName[1],
-        }
-        // if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj); //Don't push the damageTypeDisplay as it gets displayed in conjunction with any other like 100 / 40. If this is pushed we get a duplicate line of 40
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
+      //Add in Resistance to the end, so if it's FireDamageResistance, the resistance at the end gets added in correctly
+      if (splitName[2]){
+        obj.name = splitName[0] + ' ' + splitName[1] + ' ' + splitName[2];
       }
       
-      //If there's a match but the percent is higher, display up arrow for increase
-      if ((found && found.percent > e.percent) || (found && found.resistance > e.resistance)){
-        splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = 0;
-        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
-        if (constructorResistance === 0){ 
-          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
-          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
-          //skewed higher by a margin of the totalResistance
-          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
-        }
-        total += e.resistance;
-        total += constructorResistance;
-        // Higher percentage of e.constructor.name
-        obj = {
-          equipped: e,
-          item: found,
-          name: splitName[0] + ' ' + splitName[1],
-          statUp: true,
-          totalStat: total
-        }
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
+      if (newValue >= 0 && newValue > oldValue){ // Positive change
+        obj.statUp = true;
+      }else if (newValue >= 0 && newValue < oldValue){ // Negative change
+        obj.statDown = true;
+      } else if (newValue === oldValue && oldValue > 0){
+        obj.statSame = true;
       }
       
-      //If there's a match but the percent is lower, display down arrow for decrease
-      if ((found && found.percent < e.percent) || (found && found.resistance < e.resistance)){
-        splitName = found.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = 0;
-        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
-        if (constructorResistance === 0){ 
-          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
-          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
-          //skewed higher by a margin of the totalResistance
-          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
-        }
-        total += e.resistance;
-        total += constructorResistance;
-        // Less percentage of e.constructor.name
-        obj = {
-          equipped: e,
-          item: found,
-          name: splitName[0] + ' ' + splitName[1],
-          statDown: true,
-          totalStat: total
-        }
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
-      }
-
-      //If we don't find a match, that damage type has been lost
-      if (!found){
-        splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        // lost e.constructor.name
-
-        // console.log(e.constructor.name + ' ' + this.selectedPartyMember.calcTotalStatValue(e.constructor.name, null, this.combatService.party.inventory));
-        obj = {
-          item: e,
-          name: splitName[0] + ' ' + splitName[1],
-          statRemoved: true,
-          statDown: true
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-        // console.log(this.selectedPartyMember.calcTotalStatValue('poisonResistance',  null, this.combatService.party.inventory));
-        //For items where a matching stat is not found, but we actually do have some of that stat from other items equipped,
-        //only display statRemoved (strikethrough) if calcTotatlStatValue for it is 0. Otherwise, we have a value from
-        //elsewhere that needs to be displayed correctly as statDown.
-        let resistance = this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
-        let total = this.selectedPartyMember.calcTotalStatValue(e.constructor.name, null, this.combatService.party.inventory);
-        // console.log(e.constructor.name + ' ' + total);
-        this.equippedItem[varName].forEach(equipped => {
-          // console.log(e.constructor.name + ' ' + (total - equipped?.resistance));
-          let change = (total - equipped?.resistance);
-          let copy = _.cloneDeep(obj.item);
-          copy.resistance += resistance;
-          obj.item = copy;
-          //If we have a value leftover that isn't just the base resistance, then the stat is modified and not lost
-          if (change > 0 && change !== resistance){
-            delete obj.statRemoved;
-          }
-        });
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
-      }
-      
-    });
-    //TODO: Make it so everything in this function displays the change like the damagetypedifference function or whatever with the colored data and slashes
-    //Now loop through the selectedItem's damage types
-    //If we don't find a match, that means we have gained that damage type
-    //and it should be displayed as a new one with an up arrow
-    this.selectedItem[varName].forEach(e => { //TODO: Not finding a match here also doesn't mean that we don't have anything, as it only looks at selectedItem vs equippedItem; Not overall stats, like fireDamageResistance added from a trinket when we're comparing weapons
-      let found = this.equippedItem[varName].find((el) => el.constructor.name === e.constructor.name);
-      if (!found){
-        splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-        let total = 0;
-        let constructorResistance = this.selectedPartyMember.calcTotalStatValue(e.constructor.name,  null, this.combatService.party.inventory);
-        if (constructorResistance === 0){ 
-          //calcTotalStatValue by default adds in the total player's resistance on top of whatever stat we're checking
-          //So, as long as this value is 0, we are safe to add in the total resistance. Otherwise, the values will be
-          //skewed higher by a margin of the totalResistance
-          total += this.selectedPartyMember.calcTotalStatValue('resistance',  null, this.combatService.party.inventory);
-        }
-        total += e.resistance;
-        total += constructorResistance;
-        
-        // gained e.constructor.name
-        obj = {
-          item: e,
-          name: splitName[0] + ' ' + splitName[1],
-          statUp: true,
-          statGained: true, //TODO: Same with statGained, it's only gained if we don't have a value for it at all. Statup should be used if we do
-          totalStat: total
-        }
-        if (arrayTarget === 'damageTypeDisplay') this.damageTypeDisplay.push(obj);
-        if (arrayTarget === 'statusResistanceDisplay') this.statusResistanceDisplay.push(obj);
-        if (arrayTarget === 'damageResistanceDisplay') this.damageResistanceDisplay.push(obj);
-      }
+      if (varName === 'damageTypes') { this.damageTypeDisplay.push(obj); }
+      if (varName === 'statusResistances') { this.statusResistanceDisplay.push(obj); }
+      if (varName === 'damageResistances') { this.damageResistanceDisplay.push(obj); }
     });
   }
+
+
+  // trinketDisplay(){
+  //   this.trinketDamageBonuses = [];
+  //   let trinketBonuses = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+  //   let obj = null;
+  //   trinketBonuses.forEach((e) => {
+  //     let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+  //     obj = {
+  //       display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
+  //     }
+  //     this.trinketDamageBonuses.push(obj);
+  //   });
+  // }
 
   clearItemDetailArrays(){
     this.damageTypeDisplay = [];
@@ -626,7 +554,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.damageResistanceDisplay = [];
     this.trinketDamageBonuses = [];
     if (this.selectedPartyMember){
-      this.trinketDisplay();
+      // this.trinketDisplay();
     }
   }
   
@@ -653,12 +581,13 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.partyForm.controls.memberSelected.setValue(index);
     this.memberBoxes.toArray()[index].nativeElement.classList.add('memberSelected');
     this.previousPartyMember = this.memberBoxes.toArray()[index].nativeElement;
+    this.clearItemDetailArrays();
     this.equippedItem = null;
     this.getEquippedItem();
-    this.damageTypeDifference('damageTypes', 'damageTypeDisplay');
-    this.damageTypeDifference('statusEffectResistances', 'statusResistanceDisplay');
-    this.damageTypeDifference('damageResistances', 'damageResistanceDisplay');
-    this.trinketDisplay();
+    this.calcNestedStatDifferences('damageTypes');
+    this.calcNestedStatDifferences('statusResistanceDisplay');
+    this.calcNestedStatDifferences('damageResistanceDisplay');
+    // this.trinketDisplay();
   }
 
 
