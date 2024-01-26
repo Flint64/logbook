@@ -205,7 +205,7 @@ export const enemies = [
     },
 
     {
-      name: 'Mage',
+      name: 'Mage', //FIXME: There's a problem with abilityWasUsed when the mage uses spells for some reason
       health: 20,
       maxHealth: 20,
       strength: 2,

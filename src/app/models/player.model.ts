@@ -143,11 +143,13 @@ export class Player {
       let equippedTrinkets = [];
       // let trinketDamageBonuses = [];
       
-      inventory.forEach((equipment) => {
-        if (equipment.equippedBy?.name === this.name && equipment instanceof Trinket){
-          equippedTrinkets.push(equipment);
-        }
-      });
+      if (inventory){
+        inventory.forEach((equipment) => {
+          if (equipment.equippedBy?.name === this.name && equipment instanceof Trinket){
+            equippedTrinkets.push(equipment);
+          }
+        });
+      }
 
       // equippedEquipment.forEach((equippedItem) => {
         // if (equippedItem instanceof Trinket){

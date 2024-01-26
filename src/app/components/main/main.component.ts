@@ -54,8 +54,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   itemCategory: string = 'Trinket';
   itemCategoryDisplay: string = 'Trinkets';
   equippedItem = null;
-
-  trinketDamageBonuses = [];
+  equippedTrinkets = [];
   
   damageTypes = [
     'BludgeoningDamage',
@@ -88,6 +87,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   damageTypeDisplay = [];
   statusResistanceDisplay = [];
   damageResistanceDisplay = [];
+  trinketDamageBonuses = [];
   
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
@@ -238,6 +238,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.calcNestedStatDifferences('damageTypes');
     this.calcNestedStatDifferences('statusResistances');
     this.calcNestedStatDifferences('damageResistances');
+    this.trinketDamageDisplay();
   }
 
 /****************************************************************************************
@@ -301,6 +302,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.calcNestedStatDifferences('damageTypes');
       this.calcNestedStatDifferences('statusResistances');
       this.calcNestedStatDifferences('damageResistances');
+      this.trinketDamageDisplay();
       return;
     }
 
@@ -515,19 +517,55 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
   }
 
+  //TODO: Right now, can only equip one trinket at a time. No idea how to handle a comparison if you're allowed two at once, which is the end goal
 
-  // trinketDisplay(){
-  //   this.trinketDamageBonuses = [];
-  //   let trinketBonuses = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
-  //   let obj = null;
-  //   trinketBonuses.forEach((e) => {
-  //     let splitName = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-  //     obj = {
-  //       display: `+${e.percent}% ${splitName[0]} ${splitName[1]}`
-  //     }
-  //     this.trinketDamageBonuses.push(obj);
-  //   });
-  // }
+  trinketDamageDisplay(compareSecond: boolean = null){
+    //Clear any current trinket damage bonuses
+    this.trinketDamageBonuses = [];
+    this.equippedTrinkets = [];
+
+    //Get the currently equipped trinket(s) (if any)
+    this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+
+    if (!this.selectedItem){
+      return;
+    }
+
+    if (this.selectedItem.constructor.name === 'Trinket'){
+
+      //Create a copy of each damageType from the currently equipped trinket and apply statDown to it so it will display as lost
+      let DT_copy = null;
+      let splitName = null;
+      if (this.equippedTrinkets.length){
+        this.equippedTrinkets[0].damageTypes.forEach(DT => {
+          DT_copy = _.cloneDeep(DT);
+
+          if (this.selectedItem !== this.equippedTrinkets[0]){
+            DT_copy.statDown = true;
+          }
+
+          splitName = DT.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+          DT_copy.name = splitName[0] + ' ' + splitName[1];
+          this.trinketDamageBonuses.push(DT_copy);
+        });
+      }
+
+      //If the equipped item is the same as the equipped one, stop here after removing statDown from the display so that it gets displayed as it should
+      if (this.selectedItem === this.equippedTrinkets[0]){
+        return;
+      }
+        
+      //Now do the same thing for the selected trinket's damage types, except apply statUp to it so it will display all as gained
+      this.selectedItem.damageTypes.forEach(DT => {
+        DT_copy = _.cloneDeep(DT);
+        DT_copy.statUp = true;
+        splitName = DT.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+        DT_copy.name = splitName[0] + ' ' + splitName[1];
+        this.trinketDamageBonuses.push(DT_copy);
+      });
+    }
+
+  }
 
   clearItemDetailArrays(){
     this.damageTypeDisplay = [];
@@ -568,7 +606,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.calcNestedStatDifferences('damageTypes');
     this.calcNestedStatDifferences('statusResistanceDisplay');
     this.calcNestedStatDifferences('damageResistanceDisplay');
-    // this.trinketDisplay();
+    this.trinketDamageDisplay();
   }
 
 

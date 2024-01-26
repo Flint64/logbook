@@ -137,12 +137,22 @@
                     </p>
                 </span>
             </div>
-            <p class="indentOnly" *ngFor="let trinket of selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory)">
-                <!-- //TODO: Make trinkets display a change when selecting another one -->
-                <span *ngFor="let damageType of trinket.damageTypes | capitalSplit: 'trinket'">
-                    {{'+' + damageType.value + '% ' + damageType.name}}
-                </span>                    
-            </p>
+            <div *ngIf="selectedItem?.constructor.name !== 'Trinket'">
+                <p class="indentOnly" *ngFor="let trinket of selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory)">
+                    <span *ngFor="let damageType of trinket.damageTypes | capitalSplit: 'trinket'">
+                        {{'+' + damageType.value + '% ' + damageType.name}}
+                    </span>
+                </p>
+            </div>
+            <div *ngIf="selectedItem?.constructor.name === 'Trinket'"> <!-- //If we have a trinket selected, this appears -->
+                <p class="indentOnly" *ngFor="let DT of trinketDamageBonuses">
+                    <span [ngClass]="{'statRemoved': (DT.statDown)}">
+                        <span>+{{DT.percent}}% {{DT.name}}</span>
+                        <span *ngIf="DT.statDown" class="statDown">{{'&#9660;'}}</span>
+                        <span *ngIf="DT.statUp" class="statUp">{{'&#9650;'}}</span>
+                    </span>
+                </p>
+            </div>
                 
             <p class="goldText underline">Status Resistances: </p>
             <div *ngIf="statusResistanceDisplay.length === 0">
@@ -188,6 +198,7 @@
 
         <div class="equipmentOptions">
             <p (click)="changeItemCategory()" [ngClass]="{'actionDisabled': !selectedPartyMember}">Change Category</p>
+            <p *ngIf="itemCategory === 'Trinket' && viewingEquipment.isActive" [ngClass]="{'actionDisabled': (!selectedItem || !selectedPartyMember || equippedTrinkets.length < 2)}">Swap Comparison</p>
             <p [ngClass]="{'actionDisabled': !selectedItem}" (click)="cancelEquip()">Cancel</p>
             <p *ngIf="(selectedItem?.equippedBy?.name !== selectedPartyMember?.name)" [ngClass]="{'actionDisabled': (!selectedItem || !selectedPartyMember)}" (click)="equipItem()">Equip</p>
             <p *ngIf="(selectedItem?.equippedBy?.name === selectedPartyMember?.name)" [ngClass]="{'actionDisabled': (!selectedItem || !selectedPartyMember)}" (click)="equipItem()">Unequip</p>
