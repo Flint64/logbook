@@ -391,90 +391,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
   }
 
-/****************************************************************************************
- * Calculate Stat Differences - Generates HTML to display positive/negative change 
- * for comparing item stats
- ****************************************************************************************/
-  // calcStatDifferences(statName: string, target){
 
-  //   this.getEquippedItem();
-    
-  //   //If we don't have the required data to display a change, do nothing
-  //   if (!this.selectedPartyMember || !this.selectedItem || !this.viewingEquipment.isActive){
-  //     return;
-  //   }
-
-  //   this.equippedTrinkets = [];
-  //   this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
-
-  //   //This prevents showing stat changes when the selected item is an equipped trinket
-  //   if (this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
-  //     return;
-  //   }
-
-  //   //Clear target so that duplicates don't happen
-  //   if (target){
-  //     target.innerHTML = null;
-  //     target.className = "";
-  //   }
-
-  //   //Create copies of everything we need so we don't affect the actual player's data
-  //   let equippedItemCopy = _.cloneDeep(this.equippedItem);
-  //   let selectedItemCopy = _.cloneDeep(this.selectedItem);
-  //   let playerCopy = _.cloneDeep(this.selectedPartyMember);
-    
-  //   //Get the current totalStatValue using the equipped item
-  //   let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
-
-  //   //Get all equipped items of the selected player
-  //   let equippedEquipment = [];
-  //   this.combatService.party.inventory.forEach((equipment) => {
-  //     if (equipment.equippedBy?.name === playerCopy.name){
-  //       equippedEquipment.push(equipment);
-  //     }
-  //   });
-    
-  //   //Now "equip" the selected item
-  //   if (equippedItemCopy){
-  //     delete equippedItemCopy.equippedBy;
-  //   }
-  //   selectedItemCopy.equippedBy = playerCopy;
-
-  //   //Replace the old equipped item with the new one in the list of equipped items
-  //   equippedEquipment.forEach((e, index) => {
-  //     if (equippedItemCopy){
-  //       if (e.name === equippedItemCopy.name){
-  //         equippedEquipment.splice(index, 1);
-  //         equippedEquipment.push(selectedItemCopy);
-  //       }
-  //     } else {
-  //       equippedEquipment.push(selectedItemCopy);
-  //     }
-  //   });
-
-  //   //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
-  //   //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
-  //   //ignoring any changes made here
-  //   let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
-  
-  //   let span1 = this.renderer.createElement('span');
-  //   this.renderer.setProperty(span1, 'innerHTML', '/ ');
-  //   let span2 = this.renderer.createElement('span');
-    
-  //   if (newValue >= 0 && newValue > oldValue){ // Positive change
-  //     this.renderer.addClass(span2, 'statUp');
-  //     this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9650;`)
-  //     this.renderer.appendChild(target, span1);
-  //     this.renderer.appendChild(target, span2);
-  //   } else if (newValue >= 0 && newValue < oldValue){ // Negative change
-  //     this.renderer.addClass(span2, 'statDown');
-  //     this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9660;`)
-  //     this.renderer.appendChild(target, span1);
-  //     this.renderer.appendChild(target, span2);
-  //   }
-  // }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 calcBaseStatDifferences() {
   if (!this.selectedItem || !this.viewingEquipment.isActive){
@@ -560,8 +477,6 @@ calcBaseStatDifferences() {
   }
   
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   calcNestedStatDifferences(varName: string) {
     if (!this.selectedItem || !this.viewingEquipment.isActive){
