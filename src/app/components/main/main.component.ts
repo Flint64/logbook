@@ -21,6 +21,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   @ViewChild('equipment', {static: false}) equipment: ElementRef;
   @ViewChild('stats', {static: false}) stats: ElementRef;
   @ViewChild('settings', {static: false}) settings: ElementRef;
+  @ViewChild('intRef', {static: false}) intRef: ElementRef;
   
   partyForm: FormGroup;
   previousPartyMember = null;
@@ -55,6 +56,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   itemCategoryDisplay: string = 'Trinkets';
   equippedItem = null;
   equippedTrinkets = [];
+  trinketComparison = 0;
   
   damageTypes = [
     'BludgeoningDamage',
@@ -84,6 +86,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   ]
 
 
+  baseStatDisplay = [];
   damageTypeDisplay = [];
   statusResistanceDisplay = [];
   damageResistanceDisplay = [];
@@ -238,6 +241,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.calcNestedStatDifferences('damageTypes');
     this.calcNestedStatDifferences('statusResistances');
     this.calcNestedStatDifferences('damageResistances');
+    this.calcBaseStatDifferences();
     this.trinketDamageDisplay();
   }
 
@@ -287,13 +291,18 @@ export class MainComponent implements OnInit, AfterViewInit {
  ****************************************************************************************/
   equipItem(){
 
+    this.equippedTrinkets = [];
+
+    //Get the currently equipped trinket(s) (if any)
+    this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+
     //Do nothing if we don't have an item selected
     if (!this.selectedItem){
       return;
     }
     
     //If the selected item matches the equipped item, unequip it
-    if (this.selectedItem === this.equippedItem){
+    if (this.selectedItem === this.equippedItem || this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
       this.equippedItem = null;
       delete this.selectedItem.equippedBy;
       //Update the list of not equipped items when an inventory change is made
@@ -302,25 +311,48 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.calcNestedStatDifferences('damageTypes');
       this.calcNestedStatDifferences('statusResistances');
       this.calcNestedStatDifferences('damageResistances');
+      this.calcBaseStatDifferences();
       this.trinketDamageDisplay();
+      if (this.trinketComparison === 1){
+        this.trinketComparison = 0;
+      }
       return;
     }
 
+    //If the item we're trying to equip is already equipped by someone else, display a popup and prevent "stealing" that item from them unless allowed
+    //TODO: Next up, dialog confirm popup to equip an item equipped by someone else
     if (this.selectedItem !== this.equippedItem){
       if (this.selectedItem?.equippedBy?.name !== this.selectedPartyMember.name && this.selectedItem?.equippedBy?.name !== undefined){
-        console.log('Item equipped by ' + this.selectedItem?.equippedBy?.name); //TODO: Next up, dialog confirm popup to equip an item equipped by someone else
+        console.log('Item equipped by ' + this.selectedItem?.equippedBy?.name);
         return;
       }
 
       //Equip item
+      //Unequip the currently equipped item, if we have one - Unless we're equipping trinkets, which allows you to equip two at once
+      //This allows equipping more than one trinket by preventing the currently equipped item from being removed when equipping another
       if (this.equippedItem){
-        delete this.equippedItem.equippedBy;
+        if (this.selectedItem.constructor.name !== 'Trinket'){
+          delete this.equippedItem.equippedBy; 
+        }
       }
-      this.selectedItem.equippedBy = this.selectedPartyMember;
+
+      //If the selected item is a trinket and we have less than two equipped, allow equipping more.
+      //Otherwise, prevent it, or in the case of a non-trinket, allow equipping it
+      if (this.selectedItem.constructor.name === 'Trinket' && this.equippedTrinkets.length + 1 <= 2){
+        this.selectedItem.equippedBy = this.selectedPartyMember;
+        if (this.equippedTrinkets.length +1 === 2){ //If the equipped trinket is the second one equipped, set the current comparison to the newly equipped trinket to prevent needing to swap comparison twice before it's accurate because trinketDamageComparison() only uses this.equippedTrinkets[this.trinketComparison] and not the equippedItem
+          this.trinketComparison = 1;
+        }
+      } else if (this.selectedItem.constructor.name !== 'Trinket'){
+        this.selectedItem.equippedBy = this.selectedPartyMember;
+      }
       this.getEquippedItem();
+
+      // this.equippedTrinkets = [];
+      // this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+      
       //Clear damageTypeDisplay to show the newly equipped item's stats as your new stats
       this.clearItemDetailArrays();
-      // this.trinketDisplay();
 
       //Update the list of not equipped items when an inventory change is made
       this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
@@ -355,7 +387,6 @@ export class MainComponent implements OnInit, AfterViewInit {
         this.clearItemDetailArrays();
         this.itemCategory = result['value'];
         this.itemCategoryDisplay = result['displayName'];
-        // this.trinketDisplay();
       }
     });
   }
@@ -364,82 +395,178 @@ export class MainComponent implements OnInit, AfterViewInit {
  * Calculate Stat Differences - Generates HTML to display positive/negative change 
  * for comparing item stats
  ****************************************************************************************/
-  calcStatDifferences(statName: string, target){
+  // calcStatDifferences(statName: string, target){
 
-    this.getEquippedItem();
+  //   this.getEquippedItem();
     
-    //If we don't have the required data to display a change, do nothing
-    if (!this.selectedPartyMember || !this.selectedItem || !this.viewingEquipment.isActive){ //TODO: Removing this trinket thing here sorta works, but they're displaying higher numbers than they should be for some reason
-      return;
-    }
+  //   //If we don't have the required data to display a change, do nothing
+  //   if (!this.selectedPartyMember || !this.selectedItem || !this.viewingEquipment.isActive){
+  //     return;
+  //   }
 
-    //Clear target so that duplicates don't happen
-    if (target){
-      target.innerHTML = null;
-      target.className = "";
-    }
+  //   this.equippedTrinkets = [];
+  //   this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
 
-    //Create copies of everything we need so we don't affect the actual player's data
-    let equippedItemCopy = _.cloneDeep(this.equippedItem);
-    let selectedItemCopy = _.cloneDeep(this.selectedItem);
-    let playerCopy = _.cloneDeep(this.selectedPartyMember);
+  //   //This prevents showing stat changes when the selected item is an equipped trinket
+  //   if (this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
+  //     return;
+  //   }
+
+  //   //Clear target so that duplicates don't happen
+  //   if (target){
+  //     target.innerHTML = null;
+  //     target.className = "";
+  //   }
+
+  //   //Create copies of everything we need so we don't affect the actual player's data
+  //   let equippedItemCopy = _.cloneDeep(this.equippedItem);
+  //   let selectedItemCopy = _.cloneDeep(this.selectedItem);
+  //   let playerCopy = _.cloneDeep(this.selectedPartyMember);
     
-    //Get the current totalStatValue using the equipped item
-    let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
+  //   //Get the current totalStatValue using the equipped item
+  //   let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
 
-    //Get all equipped items of the selected player
-    let equippedEquipment = [];
-    this.combatService.party.inventory.forEach((equipment) => {
-      if (equipment.equippedBy?.name === playerCopy.name){
-        equippedEquipment.push(equipment);
-      }
-    });
+  //   //Get all equipped items of the selected player
+  //   let equippedEquipment = [];
+  //   this.combatService.party.inventory.forEach((equipment) => {
+  //     if (equipment.equippedBy?.name === playerCopy.name){
+  //       equippedEquipment.push(equipment);
+  //     }
+  //   });
     
-    //Now "equip" the selected item
-    if (equippedItemCopy){
-      delete equippedItemCopy.equippedBy;
-    }
-    selectedItemCopy.equippedBy = playerCopy;
+  //   //Now "equip" the selected item
+  //   if (equippedItemCopy){
+  //     delete equippedItemCopy.equippedBy;
+  //   }
+  //   selectedItemCopy.equippedBy = playerCopy;
 
-    //Replace the old equipped item with the new one in the list of equipped items
-    equippedEquipment.forEach((e, index) => {
-      if (equippedItemCopy){
-        if (e.name === equippedItemCopy.name){
-          equippedEquipment.splice(index, 1);
-          equippedEquipment.push(selectedItemCopy);
-        }
-      } else {
+  //   //Replace the old equipped item with the new one in the list of equipped items
+  //   equippedEquipment.forEach((e, index) => {
+  //     if (equippedItemCopy){
+  //       if (e.name === equippedItemCopy.name){
+  //         equippedEquipment.splice(index, 1);
+  //         equippedEquipment.push(selectedItemCopy);
+  //       }
+  //     } else {
+  //       equippedEquipment.push(selectedItemCopy);
+  //     }
+  //   });
+
+  //   //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
+  //   //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
+  //   //ignoring any changes made here
+  //   let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
+  
+  //   let span1 = this.renderer.createElement('span');
+  //   this.renderer.setProperty(span1, 'innerHTML', '/ ');
+  //   let span2 = this.renderer.createElement('span');
+    
+  //   if (newValue >= 0 && newValue > oldValue){ // Positive change
+  //     this.renderer.addClass(span2, 'statUp');
+  //     this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9650;`)
+  //     this.renderer.appendChild(target, span1);
+  //     this.renderer.appendChild(target, span2);
+  //   } else if (newValue >= 0 && newValue < oldValue){ // Negative change
+  //     this.renderer.addClass(span2, 'statDown');
+  //     this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9660;`)
+  //     this.renderer.appendChild(target, span1);
+  //     this.renderer.appendChild(target, span2);
+  //   }
+  // }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+calcBaseStatDifferences() {
+  if (!this.selectedItem || !this.viewingEquipment.isActive){
+    return;
+  }
+
+  let baseStats = ['strength', 'intelligence', 'defense', 'speed', 'evasion', 'accuracy', 'luck', 'resistance', 'crit', 'attack'];
+
+  this.equippedTrinkets = [];
+  this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+  
+  baseStats.forEach(statName => {
+
+  //Create copies of everything we need so we don't affect the actual player's data
+  let equippedItemCopy = _.cloneDeep(this.equippedItem);
+  let selectedItemCopy = _.cloneDeep(this.selectedItem);
+  let playerCopy = _.cloneDeep(this.selectedPartyMember);
+  
+  //Get the current totalStatValue using the equipped item
+  let oldValue = playerCopy.calcTotalStatValue(statName, null, this.combatService.party.inventory);
+
+  //Get all equipped items of the selected player
+  let equippedEquipment = [];
+  this.combatService.party.inventory.forEach((equipment) => {
+    if (equipment.equippedBy?.name === playerCopy.name){
+      equippedEquipment.push(equipment);
+    }
+  });
+  
+  //Now "equip" the selected item
+  if (equippedItemCopy){
+    delete equippedItemCopy.equippedBy;
+  }
+  selectedItemCopy.equippedBy = playerCopy;
+
+  //Replace the old equipped item with the new one in the list of equipped items
+  equippedEquipment.forEach((e, index) => {
+    if (equippedItemCopy && this.equippedTrinkets.length === 2){
+      if (e.name === equippedItemCopy.name){
+        equippedEquipment.splice(index, 1);
         equippedEquipment.push(selectedItemCopy);
       }
-    });
-
-    //Get the new totalStatValue using the new equipped item's stats. Use the new equippedEquipment
-    //as the inventory, as otherwise calcTotalStatValue will always use the actual list of equipped items,
-    //ignoring any changes made here
-    let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
+    } else {
+      equippedEquipment.push(selectedItemCopy);
+    }
+  });
   
-    let span1 = this.renderer.createElement('span');
-    this.renderer.setProperty(span1, 'innerHTML', '/ ');
-    let span2 = this.renderer.createElement('span');
+  //Remove any duplicate items from equippedEquipment because somehow they're being duplicated in the else block above and I don't know why
+  //This currently only checks to see if the name & description are the same, so make sure those are unique in the item list, or add
+  //more checks for different values here to ensure duplicates don't slip through
+  equippedEquipment = equippedEquipment.filter((value, index, self) =>
+  index === self.findIndex((item) => (
+    item.description === value.description && item.name === value.name
+  ))
+);
+  
+  let newValue = playerCopy.calcTotalStatValue(statName, null, equippedEquipment);
+  
+    let obj = {
+      name: statName.charAt(0).toUpperCase() + statName.slice(1),
+      newValue: newValue,
+      oldValue: oldValue,
+      statUp: null,
+      statDown: null,
+      statSame: null,
+    };
     
     if (newValue >= 0 && newValue > oldValue){ // Positive change
-      this.renderer.addClass(span2, 'statUp');
-      this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9650;`)
-      this.renderer.appendChild(target, span1);
-      this.renderer.appendChild(target, span2);
-    } else if (newValue >= 0 && newValue < oldValue){ // Negative change
-      this.renderer.addClass(span2, 'statDown');
-      this.renderer.setProperty(span2, 'innerHTML', `${newValue} &#9660;`)
-      this.renderer.appendChild(target, span1);
-      this.renderer.appendChild(target, span2);
+      obj.statUp = true;
+    }else if (newValue >= 0 && newValue < oldValue){ // Negative change
+      obj.statDown = true;
+    } else if (newValue === oldValue && oldValue > 0){
+      obj.statSame = true;
     }
+    
+    this.baseStatDisplay.push(obj);
+  });
+
+  //This prevents showing stat changes when the selected item is an equipped trinket
+  if (this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
+    this.clearItemDetailArrays();
+    return;
   }
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   calcNestedStatDifferences(varName: string) {
     if (!this.selectedItem || !this.viewingEquipment.isActive){
       return;
     }
-
 
     this[varName].forEach(statName => {
 
@@ -467,7 +594,7 @@ export class MainComponent implements OnInit, AfterViewInit {
 
     //Replace the old equipped item with the new one in the list of equipped items
     equippedEquipment.forEach((e, index) => {
-      if (equippedItemCopy){
+      if (equippedItemCopy && this.equippedTrinkets.length === 2){
         if (e.name === equippedItemCopy.name){
           equippedEquipment.splice(index, 1);
           equippedEquipment.push(selectedItemCopy);
@@ -515,17 +642,27 @@ export class MainComponent implements OnInit, AfterViewInit {
       if (varName === 'statusResistances') { this.statusResistanceDisplay.push(obj); }
       if (varName === 'damageResistances') { this.damageResistanceDisplay.push(obj); }
     });
+
+    this.equippedTrinkets = [];
+    this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+
+    //This prevents showing stat changes when the selected item is an equipped trinket
+    if (this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
+      this.clearItemDetailArrays();
+      return;
+    }
+    
   }
 
-  //TODO: Right now, can only equip one trinket at a time. No idea how to handle a comparison if you're allowed two at once, which is the end goal
-
-  trinketDamageDisplay(compareSecond: boolean = null){
+  trinketDamageDisplay(){
     //Clear any current trinket damage bonuses
     this.trinketDamageBonuses = [];
     this.equippedTrinkets = [];
 
     //Get the currently equipped trinket(s) (if any)
-    this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+    if (!this.viewingInventory.isActive){
+      this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+    }
 
     if (!this.selectedItem){
       return;
@@ -536,11 +673,11 @@ export class MainComponent implements OnInit, AfterViewInit {
       //Create a copy of each damageType from the currently equipped trinket and apply statDown to it so it will display as lost
       let DT_copy = null;
       let splitName = null;
-      if (this.equippedTrinkets.length){
-        this.equippedTrinkets[0].damageTypes.forEach(DT => {
+      if (this.equippedTrinkets.length && this.equippedTrinkets[this.trinketComparison] ){
+        this.equippedTrinkets[this.trinketComparison].damageTypes.forEach(DT => {
           DT_copy = _.cloneDeep(DT);
 
-          if (this.selectedItem !== this.equippedTrinkets[0]){
+          if (this.selectedItem !== this.equippedTrinkets[this.trinketComparison] && this.equippedTrinkets.length === 2){
             DT_copy.statDown = true;
           }
 
@@ -550,9 +687,26 @@ export class MainComponent implements OnInit, AfterViewInit {
         });
       }
 
-      //If the equipped item is the same as the equipped one, stop here after removing statDown from the display so that it gets displayed as it should
-      if (this.selectedItem === this.equippedTrinkets[0]){
-        return;
+      //This section here adds the second equipped (if any) trinket's damage type to the list so that when a non-equipped trinket
+      //is selected, we still correctly display all current damage bonuses
+      if (this.trinketComparison === 0){
+        if (this.equippedTrinkets[1]){
+          this.equippedTrinkets[1].damageTypes.forEach(DT => {
+            DT_copy = _.cloneDeep(DT);
+            splitName = DT.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+            DT_copy.name = splitName[0] + ' ' + splitName[1];
+            this.trinketDamageBonuses.push(DT_copy);
+          });
+        }
+      } else if (this.trinketComparison === 1){
+        if (this.equippedTrinkets[0]){
+          this.equippedTrinkets[0].damageTypes.forEach(DT => {
+            DT_copy = _.cloneDeep(DT);
+            splitName = DT.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+            DT_copy.name = splitName[0] + ' ' + splitName[1];
+            this.trinketDamageBonuses.push(DT_copy);
+          });
+        }
       }
         
       //Now do the same thing for the selected trinket's damage types, except apply statUp to it so it will display all as gained
@@ -563,18 +717,57 @@ export class MainComponent implements OnInit, AfterViewInit {
         DT_copy.name = splitName[0] + ' ' + splitName[1];
         this.trinketDamageBonuses.push(DT_copy);
       });
+
+      //This prevents showing stat changes when the selected item is an equipped trinket
+      if (this.selectedItem === this.equippedTrinkets.find(({ name }) => name === this.selectedItem.name)){
+        this.trinketDamageBonuses = [];
+      }
+      
     }
 
   }
 
+/****************************************************************************************
+ * Swap Trinket Comparison / swap trinket / trinket swap - We're allowed to equip two 
+ * trinkets at once. Because of that, comparing the currently selected item to the 
+ * equipped item won't work, as we don't know which one to compare it to. 
+ * This allows us to swap between indexes 0 and 1 to compare a trinket to another one. 
+ * After the swap is made, we re-call trinketDamageDisplay() to update the view.
+ ****************************************************************************************/
+  swapTrinketComparison(){
+    this.equippedTrinkets = [];
+    this.equippedTrinkets = this.selectedPartyMember.getEquippedTrinkets(this.combatService.party.inventory);
+    
+    if (this.equippedTrinkets.length < 2){
+      return;
+    }
+    
+    if (this.trinketComparison === 0){
+      if (this.equippedItem === this.equippedTrinkets[0]){ this.equippedItem = this.equippedTrinkets[1]; }
+      this.trinketComparison = 1;
+    } else if (this.trinketComparison === 1){
+      if (this.equippedItem === this.equippedTrinkets[1]){ this.equippedItem = this.equippedTrinkets[0]; }
+      this.trinketComparison = 0;
+    }
+
+    this.clearItemDetailArrays();
+    this.calcNestedStatDifferences('damageTypes');
+    this.calcNestedStatDifferences('statusResistances');
+    this.calcNestedStatDifferences('damageResistances');
+    this.calcBaseStatDifferences();
+    //TODO: Next up, need to figure out why the base stats are wrong when selecting a trinket and how to make the swap comparison actually change the base stats, as this line here doesn't work
+    this.trinketDamageDisplay();
+  }
+
+/****************************************************************************************
+ * Clear Item Detail Arrays - Clears out all item comparison data
+ ****************************************************************************************/
   clearItemDetailArrays(){
     this.damageTypeDisplay = [];
     this.statusResistanceDisplay = [];
     this.damageResistanceDisplay = [];
     this.trinketDamageBonuses = [];
-    if (this.selectedPartyMember){
-      // this.trinketDisplay();
-    }
+    this.baseStatDisplay = [];
   }
   
 /****************************************************************************************
@@ -606,6 +799,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.calcNestedStatDifferences('damageTypes');
     this.calcNestedStatDifferences('statusResistanceDisplay');
     this.calcNestedStatDifferences('damageResistanceDisplay');
+    this.calcBaseStatDifferences();
     this.trinketDamageDisplay();
   }
 
