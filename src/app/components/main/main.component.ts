@@ -392,7 +392,10 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
 
 
-
+/****************************************************************************************
+ * Calc Base Stat Differences - Compares selected item to all of the base stats to 
+ * display up/down arrows for stat removed/gained/lost when comparing items
+ ****************************************************************************************/
 calcBaseStatDifferences() {
   if (!this.selectedItem || !this.viewingEquipment.isActive){
     return;
@@ -478,6 +481,11 @@ calcBaseStatDifferences() {
   
 }
 
+/****************************************************************************************
+ * Calc Nested Stat Differences - Compares selected item to all nested data 
+ * (damage types, stat resistances, damage resistances) to display up/down arrows for 
+ * stat removed/gained/lost when comparing items
+ ****************************************************************************************/
   calcNestedStatDifferences(varName: string) {
     if (!this.selectedItem || !this.viewingEquipment.isActive){
       return;
@@ -569,6 +577,11 @@ calcBaseStatDifferences() {
     
   }
 
+/****************************************************************************************
+ * Trinket Damage Display - Displays +% damageType when trinkets/non-trinkets are selected
+ * Needed because trinket damage bonuses are excluded from calcTotalStatValue() so another
+ * way of displaying this info to the player is needed
+ ****************************************************************************************/
   trinketDamageDisplay(){
     //Clear any current trinket damage bonuses
     this.trinketDamageBonuses = [];
