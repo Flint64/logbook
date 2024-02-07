@@ -683,7 +683,6 @@ calcBaseStatDifferences() {
     this.calcNestedStatDifferences('statusResistances');
     this.calcNestedStatDifferences('damageResistances');
     this.calcBaseStatDifferences();
-    //TODO: Next up, need to figure out why the base stats are wrong when selecting a trinket and how to make the swap comparison actually change the base stats, as this line here doesn't work
     this.trinketDamageDisplay();
   }
 
