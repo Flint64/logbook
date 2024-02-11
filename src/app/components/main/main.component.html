@@ -232,7 +232,7 @@
             <section class="item itemCategory" *ngIf="viewEquipped">
                 <div class="indent"(click)="viewItemDetails(item, true, $event.target)" *ngFor="let item of combatService.party.inventory | equipmentFilter: itemCategory; let i = index" [ngClass]="{'greyText': item?.equippedBy}">
                     {{i+1 + '. ' + item.name}}
-                    <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span>
+                    <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" [ngClass]="{'greenFilter' : item?.name === equippedTrinkets[trinketComparison]?.name}" src="assets/images/general/equipped.svg" alt=""></span>
                 </div>
             </section>
         </div>
