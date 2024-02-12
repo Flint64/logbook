@@ -321,6 +321,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     //If the item we're trying to equip is already equipped by someone else, display a popup and prevent "stealing" that item from them unless allowed
+    //TODO: Next up, dialog confirm popup to equip an item equipped by someone else
     //TODO: Also next up, dialog popup when attempting to equip a third trinket that asks which one you'd like to replace
     if (this.selectedItem !== this.equippedItem){
       if (this.selectedItem?.equippedBy?.name !== this.selectedPartyMember.name && this.selectedItem?.equippedBy?.name !== undefined){
@@ -477,12 +478,12 @@ calcBaseStatDifferences() {
 
   //Replace the old equipped item with the new one in the list of equipped items
   equippedEquipment.forEach((e, index) => {
-    if (equippedItemCopy){ //If there's ever a problem with item comparison, it could have to do with this and the accompanying line in calcNestedStatDifferences. Having if (equippedItemCopy && equippedTrinkets.length === 2) was here and was causing problems. Removing it seems to have fixed the issue, but it mightve been there for a reason, so I'm just leaving this comment here as a first place to check if the issue arises again
+    if (equippedItemCopy){
       if (e.name === equippedItemCopy.name){
         equippedEquipment.splice(index, 1);
         equippedEquipment.push(selectedItemCopy);
       }
-    } else {
+    }else {
       equippedEquipment.push(selectedItemCopy);
     }
   });
@@ -562,7 +563,7 @@ calcBaseStatDifferences() {
 
     //Replace the old equipped item with the new one in the list of equipped items
     equippedEquipment.forEach((e, index) => {
-      if (equippedItemCopy){
+      if (equippedItemCopy){ //FIXME: && this.equippedTrinkets.length === 2    There's an issue here. Stats for trinkets / other (weapons) display differently ifi this line is added back in or not. Need to figur out correct logic to make it work in both scenarios
         if (e.name === equippedItemCopy.name){
           equippedEquipment.splice(index, 1);
           equippedEquipment.push(selectedItemCopy);
