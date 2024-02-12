@@ -1,0 +1,420 @@
+main {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 35rem;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+main > div {
+  border: 1px solid white;
+  width: 95%;
+  padding-left: 5px;
+}
+main > div:first-child {
+  margin-top: 8px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+main > div:last-child {
+  height: -moz-fit-content;
+  height: fit-content;
+  margin-bottom: 8px;
+  margin-top: -1px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.storyText {
+  font-size: 1.2em;
+  overflow-y: hidden;
+  margin: 0;
+  min-height: 12em;
+}
+.storyText span {
+  display: inline-block;
+  padding: 0 !important;
+  padding-top: 3px !important;
+  white-space: pre;
+}
+.storyText span:first-child {
+  padding-left: 5px !important;
+}
+
+.inventoryDiv, .statsDiv, .settingsDiv, .statsDivTop, .settingsDivTop {
+  margin-top: -1px;
+  min-height: 8em;
+  height: 45%;
+}
+.inventoryDiv p.header:first-of-type, .statsDiv p.header:first-of-type, .settingsDiv p.header:first-of-type, .statsDivTop p.header:first-of-type, .settingsDivTop p.header:first-of-type {
+  border-top: none;
+}
+
+.equipmentDiv, .playerOptions {
+  margin-top: -1px;
+  min-height: 8em;
+  height: 25%;
+}
+
+.equipmentDivTop, .storyText {
+  margin-top: -1px;
+  min-height: 8em;
+  height: 65%;
+}
+
+.displaySwap:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
+}
+
+.detailsPlaceholder {
+  color: white;
+  font-size: 1.2em !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inventoryDivTop, .equipmentDivTop {
+  display: grid;
+  grid-template-rows: 1fr 10fr;
+  padding-left: 2.5px !important;
+  margin-right: 2.5px;
+}
+.inventoryDivTop .headerDiv, .equipmentDivTop .headerDiv {
+  border-bottom: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 1.35em;
+}
+.inventoryDivTop .headerDiv p, .equipmentDivTop .headerDiv p {
+  margin: 5px;
+}
+.inventoryDivTop p.indent, .equipmentDivTop p.indent {
+  margin-left: 20px;
+  font-size: 1em;
+  margin-top: 2.5px;
+  margin-bottom: 6px;
+}
+.inventoryDivTop p.indent2x, .equipmentDivTop p.indent2x {
+  margin-left: 40px;
+  font-size: 1em;
+  margin-top: 2.5px;
+  margin-bottom: 4px;
+}
+
+p.header {
+  font-size: 1.35em;
+  margin-bottom: 5px;
+  margin-top: 1em;
+  text-decoration: underline;
+  border-top: 1px solid #9f9f9f;
+  padding-top: 7px;
+}
+p.header:first-of-type {
+  margin-top: 5px;
+}
+
+.noBorder {
+  border: none !important;
+}
+
+.indentOnly {
+  margin-left: 20px !important;
+}
+
+.infoDiv {
+  width: 32em;
+}
+.infoDiv p.header {
+  border-top: none;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  margin-left: 20px;
+}
+
+section.item {
+  min-height: 5em;
+  max-height: 18em; /* Chrome, Safari, Opera */
+  -moz-column-count: 3; /* Firefox */
+  column-count: 3;
+  -moz-column-fill: auto;
+       column-fill: auto;
+  -moz-column-width: auto;
+       column-width: auto;
+  -moz-column-gap: 12px;
+       column-gap: 12px;
+}
+section.item > div {
+  font-size: 1.2em;
+  margin-left: 10px;
+  width: -moz-max-content;
+  width: max-content;
+  height: -moz-max-content;
+  height: max-content;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
+}
+section.item > div:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+section.item > div:hover .equipped {
+  filter: none;
+}
+
+.itemCategory {
+  max-height: 100% !important;
+}
+
+section.display { /* Chrome, Safari, Opera */
+  -moz-column-count: 2; /* Firefox */
+  column-count: 2;
+  -moz-column-fill: auto;
+       column-fill: auto;
+  -moz-column-width: auto;
+       column-width: auto;
+  max-height: 280px;
+  font-size: 1.2em;
+}
+section.display div {
+  font-size: 1.1em;
+  margin-left: 10px;
+  font-size: 1.1em;
+  width: 200%;
+  height: -moz-max-content;
+  height: max-content;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
+  margin: 0;
+}
+
+.playerOptions p {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.playerOptions p:hover {
+  color: white;
+  background-color: black;
+  cursor: auto;
+}
+
+#playerMainOptions p {
+  width: -moz-max-content;
+  width: max-content;
+  padding-left: 5px;
+}
+#playerMainOptions p:first-of-type {
+  padding-top: 5px;
+}
+
+.gameOptions {
+  height: 25px !important;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding-left: 2.5px !important;
+  padding-right: 2.5px;
+}
+.gameOptions div {
+  width: 100%;
+}
+.gameOptions div:first-child {
+  border-right: 1px solid white;
+}
+.gameOptions div:last-child {
+  border-left: 1px solid white;
+}
+.gameOptions div:nth-child(2) {
+  border-right: 1px solid white;
+}
+.gameOptions div:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+.gameOptions div p {
+  text-align: center;
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.active {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+.active .equipped {
+  filter: none;
+}
+
+.partyForm {
+  display: flex;
+  height: 100%;
+  justify-content: space-evenly;
+  min-height: 6em;
+}
+.partyForm label {
+  border-bottom: 1px solid white;
+}
+
+.memberBox {
+  border: 1px solid white;
+  min-height: 85px;
+  max-height: 93px;
+  width: 30%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.memberBox p {
+  padding-top: 0px;
+  margin: 0;
+}
+
+.partyOfOne {
+  width: 90% !important;
+}
+
+.partyOfTwo {
+  width: 45% !important;
+}
+
+.partyOfThree {
+  width: 30% !important;
+}
+
+.innerBoxWrapper {
+  max-height: 93px;
+  display: grid;
+  grid-template-rows: 2fr 1fr 1fr;
+  text-align: center;
+  justify-items: center;
+}
+
+.memberSelected {
+  border: 5px solid white !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
+}
+
+.showOverflow {
+  overflow-y: scroll;
+}
+
+.overflowAuto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.equipmentDetails p {
+  font-size: 1.2em;
+  margin: 5px;
+}
+
+.equipmentOptions {
+  max-height: 33px;
+  border-top: 1px solid white;
+  font-size: 1.25em;
+  display: flex;
+  justify-content: space-between;
+}
+.equipmentOptions p {
+  margin: 5px;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
+}
+.equipmentOptions p:hover {
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+.equipmentOptions p.invisible {
+  width: 1px;
+}
+
+.equipped {
+  filter: invert(99%) sepia(1%) saturate(3395%) hue-rotate(270deg) brightness(113%) contrast(101%);
+  vertical-align: middle;
+  height: 22px;
+}
+
+.statUp, .statGained {
+  color: #4caf50;
+}
+
+.statDown {
+  color: rgb(193, 0, 0);
+}
+
+.statRemoved {
+  color: #9f9f9f;
+  text-decoration: line-through;
+}
+
+.removeSpace {
+  margin-left: -3.5px;
+}
+
+.actionDisabled {
+  color: #9f9f9f !important;
+}
+.actionDisabled:hover {
+  color: #9f9f9f !important;
+  background-color: black !important;
+  cursor: default !important;
+}
+
+@media (hover: hover) {
+  .playerOptions p:hover {
+    /* solves sticky problem */
+    color: black;
+    background-color: white;
+    cursor: pointer;
+  }
+}
+@media only screen and (max-width: 600px) {
+  section.item {
+    min-height: 5em;
+    max-height: 25em; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+    -moz-column-fill: auto;
+         column-fill: auto;
+    -moz-column-width: auto;
+         column-width: auto;
+    -moz-column-gap: 12px;
+         column-gap: 12px;
+  }
+  section.item div {
+    font-size: 1.2em;
+    margin-left: 10px;
+    width: -moz-max-content;
+    width: max-content;
+    height: -moz-max-content;
+    height: max-content;
+    padding-left: 2.5px;
+    padding-right: 2.5px;
+  }
+}/*# sourceMappingURL=main.component.css.map */

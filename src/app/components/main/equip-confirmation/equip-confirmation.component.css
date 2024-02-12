@@ -1,0 +1,47 @@
+body {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+body .descTop {
+  border-bottom: 1px solid white;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
+}
+body .descTop p {
+  margin: 10px;
+}
+body .infoBox {
+  height: 10rem;
+}
+body .infoBox p {
+  padding-left: 5px;
+}
+body .infoBox .underline {
+  text-decoration: underline;
+}
+body .infoBox .lg {
+  font-size: 1.2em;
+}
+body .options {
+  width: 100%;
+  border-top: 1px solid white;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.noPadding {
+  padding: 0;
+  padding-left: 10px;
+  padding-bottom: 3px;
+}
+
+button {
+  height: 35px;
+  width: 80px;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}/*# sourceMappingURL=equip-confirmation.component.css.map */

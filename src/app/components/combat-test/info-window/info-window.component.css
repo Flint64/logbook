@@ -1,0 +1,47 @@
+body {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+body .infoBox {
+  height: 100%;
+  overflow-y: scroll;
+  font-size: 18px;
+}
+body .infoBox .underline {
+  text-decoration: underline;
+}
+body .infoBox .lg {
+  font-size: larger;
+}
+body .options {
+  width: 100%;
+  border-top: 1px solid white;
+  display: flex;
+  justify-content: center;
+}
+
+p {
+  padding: 10px;
+  margin: 0;
+}
+
+.noPadding {
+  padding: 0;
+  padding-left: 10px;
+  padding-bottom: 3px;
+}
+
+ul {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+button {
+  height: 35px;
+  width: 80px;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}/*# sourceMappingURL=info-window.component.css.map */

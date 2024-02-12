@@ -478,7 +478,7 @@ calcBaseStatDifferences() {
 
   //Replace the old equipped item with the new one in the list of equipped items
   equippedEquipment.forEach((e, index) => {
-    if (equippedItemCopy){
+    if ((equippedItemCopy && this.equippedTrinkets.length === 2 && this.selectedItem.constructor.name === 'Trinket') || (equippedItemCopy && this.selectedItem.constructor.name !== 'Trinket')){
       if (e.name === equippedItemCopy.name){
         equippedEquipment.splice(index, 1);
         equippedEquipment.push(selectedItemCopy);
@@ -563,7 +563,13 @@ calcBaseStatDifferences() {
 
     //Replace the old equipped item with the new one in the list of equipped items
     equippedEquipment.forEach((e, index) => {
-      if (equippedItemCopy){ //FIXME: && this.equippedTrinkets.length === 2    There's an issue here. Stats for trinkets / other (weapons) display differently ifi this line is added back in or not. Need to figur out correct logic to make it work in both scenarios
+      /*****************
+       * If we have less than 2 trinkets equipped, this needs to display the second trinket as all adds/statUp.
+       * But it needs to accurately display any changes with any other item category with statUp/statDown
+       * when there is only one equipped, independently of the number of trinkets we have equipped, hence this
+       * giant if statement here
+       ******************/
+      if ((equippedItemCopy && this.equippedTrinkets.length === 2 && this.selectedItem.constructor.name === 'Trinket') || (equippedItemCopy && this.selectedItem.constructor.name !== 'Trinket')){
         if (e.name === equippedItemCopy.name){
           equippedEquipment.splice(index, 1);
           equippedEquipment.push(selectedItemCopy);

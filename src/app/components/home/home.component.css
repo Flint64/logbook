@@ -1,24 +1,16 @@
 p {
   font-size: 72px;
   margin-bottom: 30px;
+  color: white;
 }
 
 .split {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
-
 .split div {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
-
 .split div button {
   margin: 10px;
   font-size: 1em;
@@ -26,5 +18,4 @@ p {
 
 #back {
   margin-top: 15px;
-}
-/*# sourceMappingURL=home.component.css.map */
+}/*# sourceMappingURL=home.component.css.map */

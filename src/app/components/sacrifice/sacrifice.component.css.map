@@ -1,9 +1,1 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,WAAW,CAAA;EACP,cAAc,EAAE,MAAM;EACtB,eAAe,EAAE,aAAa;CACjC;;AAED,AAAA,YAAY,CAAA;EACR,OAAO,EAAE,IAAI;EACb,cAAc,EAAE,GAAG;CAStB;;AAXD,AAGI,YAHQ,CAGR,GAAG,CAAA;EACC,MAAM,EAAE,eAAe;EACvB,KAAK,EAAE,GAAG;EACV,MAAM,EAAE,GAAG;EACX,OAAO,EAAE,IAAI;EACb,eAAe,EAAE,MAAM;EACvB,WAAW,EAAE,MAAM;CACtB",
-    "sources": [
-        "sacrifice.component.scss"
-    ],
-    "names": [],
-    "file": "sacrifice.component.css"
-}
+{"version":3,"sources":["sacrifice.component.scss","sacrifice.component.css"],"names":[],"mappings":"AAAA;EACI,sBAAA;EACA,8BAAA;ACCJ;;ADEA;EACI,aAAA;EACA,mBAAA;ACCJ;ADAI;EACI,uBAAA;EACA,UAAA;EACA,WAAA;EACA,aAAA;EACA,uBAAA;EACA,mBAAA;ACER","file":"sacrifice.component.css"}
