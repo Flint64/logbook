@@ -321,7 +321,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     //If the item we're trying to equip is already equipped by someone else, display a popup and prevent "stealing" that item from them unless allowed
-    //TODO: Next up, dialog confirm popup to equip an item equipped by someone else
     //TODO: Also next up, dialog popup when attempting to equip a third trinket that asks which one you'd like to replace
     if (this.selectedItem !== this.equippedItem){
       if (this.selectedItem?.equippedBy?.name !== this.selectedPartyMember.name && this.selectedItem?.equippedBy?.name !== undefined){
