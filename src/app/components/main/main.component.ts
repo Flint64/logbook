@@ -477,7 +477,7 @@ calcBaseStatDifferences() {
 
   //Replace the old equipped item with the new one in the list of equipped items
   equippedEquipment.forEach((e, index) => {
-    if (equippedItemCopy){
+    if (equippedItemCopy){ //If there's ever a problem with item comparison, it could have to do with this and the accompanying line in calcNestedStatDifferences. Having if (equippedItemCopy && equippedTrinkets.length === 2) was here and was causing problems. Removing it seems to have fixed the issue, but it mightve been there for a reason, so I'm just leaving this comment here as a first place to check if the issue arises again
       if (e.name === equippedItemCopy.name){
         equippedEquipment.splice(index, 1);
         equippedEquipment.push(selectedItemCopy);
