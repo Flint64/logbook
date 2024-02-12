@@ -6,6 +6,7 @@ import { Player } from 'src/app/models/player.model';
 import { CombatService } from 'src/app/services/combat.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SelectCategoryComponent } from './select-category/select-category.component';
+import { EquipConfirmationComponent } from './equip-confirmation/equip-confirmation.component';
 import _ from 'lodash';
 
 @Component({
@@ -52,8 +53,8 @@ export class MainComponent implements OnInit, AfterViewInit {
   viewEquipped: boolean = true;
   notEquippedItems: EquippableItem[] = [];
   previousElement = null;
-  itemCategory: string = 'Trinket';
-  itemCategoryDisplay: string = 'Trinkets';
+  itemCategory: string = 'Weapon';
+  itemCategoryDisplay: string = 'Weapons';
   equippedItem = null;
   equippedTrinkets = [];
   trinketComparison = 0;
@@ -325,6 +326,12 @@ export class MainComponent implements OnInit, AfterViewInit {
     if (this.selectedItem !== this.equippedItem){
       if (this.selectedItem?.equippedBy?.name !== this.selectedPartyMember.name && this.selectedItem?.equippedBy?.name !== undefined){
         console.log('Item equipped by ' + this.selectedItem?.equippedBy?.name);
+        let obj = {
+          equippedBy: this.selectedItem?.equippedBy?.name,
+          selectedItem: this.selectedItem,
+          selectedPartyMember: this.selectedPartyMember.name
+        }
+        this.equipConfirmation(obj);
         return;
       }
 
@@ -374,8 +381,8 @@ export class MainComponent implements OnInit, AfterViewInit {
     
     const dialogRef = this.dialog.open(SelectCategoryComponent, {
       panelClass: 'custom-dialog-container',
-      width: '30rem',
-      height: '20rem',
+      width: '25rem',
+      height: '15rem',
       // data: {helpText: data},
       backdropClass: 'backdropBackground',
       disableClose: true,
@@ -388,6 +395,44 @@ export class MainComponent implements OnInit, AfterViewInit {
         this.clearItemDetailArrays();
         this.itemCategory = result['value'];
         this.itemCategoryDisplay = result['displayName'];
+      }
+    });
+  }
+
+  /****************************************************************************************
+ * Equip Confirmation - Opens a dialog box and asks for confirmation when attempting to
+ * equip an item that's equipped by someone else, or when attempting to equip a third
+ * trinket without first unequipping one
+ ****************************************************************************************/
+  equipConfirmation(data){
+    if (!this.selectedPartyMember){
+      return;
+    }
+    
+    const dialogRef = this.dialog.open(EquipConfirmationComponent, {
+      panelClass: 'custom-dialog-container',
+      width: '25rem',
+      height: '15rem',
+      data: {data},
+      backdropClass: 'backdropBackground',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      //if result === true, then the item was equipped
+      if (result){
+        if (this.equippedItem){
+          if (this.selectedItem.constructor.name !== 'Trinket'){
+            delete this.equippedItem.equippedBy; 
+          }
+        }
+        this.selectedItem.equippedBy = this.selectedPartyMember;
+        this.getEquippedItem();
+        this.clearItemDetailArrays();
+        //Update the list of not equipped items when an inventory change is made
+        this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy});
+        this.previousElement.classList.remove('active');
+        this.selectedItem = null;
       }
     });
   }
@@ -433,7 +478,7 @@ calcBaseStatDifferences() {
 
   //Replace the old equipped item with the new one in the list of equipped items
   equippedEquipment.forEach((e, index) => {
-    if (equippedItemCopy && this.equippedTrinkets.length === 2){
+    if (equippedItemCopy){
       if (e.name === equippedItemCopy.name){
         equippedEquipment.splice(index, 1);
         equippedEquipment.push(selectedItemCopy);
@@ -518,7 +563,7 @@ calcBaseStatDifferences() {
 
     //Replace the old equipped item with the new one in the list of equipped items
     equippedEquipment.forEach((e, index) => {
-      if (equippedItemCopy && this.equippedTrinkets.length === 2){
+      if (equippedItemCopy){
         if (e.name === equippedItemCopy.name){
           equippedEquipment.splice(index, 1);
           equippedEquipment.push(selectedItemCopy);

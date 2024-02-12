@@ -19,6 +19,7 @@ import { EquipmentFilterPipe } from './pipes/equipment-filter.pipe';
 import { CapitalSplitPipe } from './pipes/capital-split.pipe';
 import { ConsumableFilterPipe } from './pipes/consumable-filter.pipe';
 import { SelectCategoryComponent } from './components/main/select-category/select-category.component';
+import { EquipConfirmationComponent } from './components/main/equip-confirmation/equip-confirmation.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { SelectCategoryComponent } from './components/main/select-category/selec
     EquipmentFilterPipe,
     CapitalSplitPipe,
     ConsumableFilterPipe,
-    SelectCategoryComponent
+    SelectCategoryComponent,
+    EquipConfirmationComponent
   ],
   imports: [
     BrowserModule,

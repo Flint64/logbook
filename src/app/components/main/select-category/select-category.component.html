@@ -1,4 +1,8 @@
 <body>
+    <div class="descTop">
+        <p>Select Item Category</p>
+    </div>
+    
     <div class="infoBox">
         <p (click)="selectCategory(category)" class="lg" *ngFor="let category of equipmentCategories">{{category.displayName}}</p>
     </div>
