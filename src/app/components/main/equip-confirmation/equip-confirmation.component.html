@@ -1,10 +1,46 @@
-<body>
+<body *ngIf="data.data.wpnCheck">
+    <div class="descTop">
+        <p class="lg">Equipment Check</p>
+    </div>
+
+    <div class="infoBox">
+        <p class="lg">
+            <span *ngIf="data.data.names.length === 1">
+                <span class="playerText">{{data.data.names[0]}}</span>
+                <span> doesn't have a weapon equipped. Continue?</span>
+            </span>
+            
+            <span *ngIf="data.data.names.length === 2">
+                <span class="playerText">{{data.data.names[0]}}</span>
+                <span> and </span>
+                <span class="playerText">{{data.data.names[1]}}</span>
+                <span> don't have weapons equipped. Continue?</span>
+            </span>
+            
+            <span *ngIf="data.data.names.length === 3">
+                <span class="playerText">{{data.data.names[0]}}</span>
+                <span>, </span>
+                <span class="playerText">{{data.data.names[1]}}</span>
+                <span>, and </span>
+                <span class="playerText">{{data.data.names[2]}}</span>
+                <span> don't have weapons equipped. Continue?</span>
+            </span>
+        </p>
+        </div>
+    
+    <div class="options">
+        <button (click)="onClose(true)">Go Back</button>
+        <button (click)="onClose(false)">Continue</button>
+    </div>
+</body>
+
+<body *ngIf="!data.data.wpnCheck">
     <div class="descTop">
         <p class="lg">Equip Confirmation</p>
     </div>
     
     <div class="infoBox">
-       <p class="lg">
+        <p class="lg">
             <span class="goldText">{{data.data.selectedItem.name}}</span>
             <span>{{" is currently equipped by "}}</span>
             <span class="playerText">{{data.data.equippedBy}}</span>

@@ -171,14 +171,29 @@ export class MainComponent implements OnInit, AfterViewInit {
  * the text to 'back'. Pressing the same menu button again takes you to the main page
  ****************************************************************************************/
   switchView(name: string){
+    if (this.viewingEquipment.isActive){
+      let obj = {
+        wpnCheck: true,
+        names: []
+      }
+      this.combatService.party.members.forEach(member => {
+        let wpnCheck = this.combatService.party.inventory.filter(function(item) { return item.equippedBy?.name === member.name && item.constructor.name === 'Weapon' });
+        if (!wpnCheck.length){
+          obj.names.push(member.name);
+        }
+      });
+      if (obj.names.length > 0){
+        this.equipConfirmation(obj);
+      }
+    }
     
     //Reset the selected item so the view is empty when navigating to a screen that uses it
     this.selectedItem = null;
     this.equippedItem = null;
     this.clearItemDetailArrays();
-    if (this.memberIndex !== null){
-      this.selectPartyMember(this.memberIndex);
-    }
+    // if (this.memberIndex !== null){
+    //   this.selectPartyMember(this.memberIndex); //This clears the selected party member on view swap. Uncomment if issues arise with leaving it turned off
+    // }
 
     this.pages.forEach((page) => {
       if (page.name === name) {
@@ -402,7 +417,8 @@ export class MainComponent implements OnInit, AfterViewInit {
  * equip an item that's equipped by someone else, or when attempting to equip a third
  * trinket without first unequipping one
  ****************************************************************************************/
-  equipConfirmation(data){
+  equipConfirmation(data): boolean {
+    
     if (!this.selectedPartyMember){
       return;
     }
@@ -416,9 +432,16 @@ export class MainComponent implements OnInit, AfterViewInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {      
+      if (data.wpnCheck === true){
+        if (result){
+          this.switchView('equipment');
+        }
+        return;
+      }
+      
       //if result === true, then the item was equipped
-      if (result){
+      if (result === true && !data.wpnCheck){
         if (this.equippedItem){
           if (this.selectedItem.constructor.name !== 'Trinket'){
             delete this.equippedItem.equippedBy; 
@@ -432,7 +455,7 @@ export class MainComponent implements OnInit, AfterViewInit {
         this.previousElement.classList.remove('active');
         this.selectedItem = null;
       }
-    });
+    });    
   }
 
 
