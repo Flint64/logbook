@@ -3,17 +3,11 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Enemy } from 'src/app/models/enemy.model';
 import { ConsumableItem } from 'src/app/models/consumableItem.model';
 import { CombatService } from 'src/app/services/combat.service';
-import { Effect } from 'src/app/models/effect.model';
 import _ from 'lodash';
 import { Magic } from 'src/app/models/magic.model';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoWindowComponent } from './info-window/info-window.component';
-import { enemies } from './enemyList';
-import { potions } from './potionList';
-import { spells } from './spellList';
-import { helms, chestplates, pants, bracers, greaves, weapons, trinkets } from './equipmentList';
 import { Player } from 'src/app/models/player.model';
-import { EquippableItem, Bracer, Helm, Chestplate, Pants, Greaves, Weapon, Trinket} from 'src/app/models/equippableItem.model';
 import { LoaderService } from 'src/app/services/loader.service';
 //ng deploy --base-href=https://flint64.github.io/logbook/
 
