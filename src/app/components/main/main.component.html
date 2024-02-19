@@ -21,7 +21,7 @@
             <p *ngIf="viewingConsumables" class="displaySwap" (click)="inventoryDisplaySwap()">View Equipment</p>
         </div>
 
-        <p class="indent detailsPlaceholder" *ngIf="!selectedItem">Select an item to view it's details</p>
+        <p class="detailsPlaceholder" *ngIf="!selectedItem">Select an item to view it's details</p>
         
         <div class="overflowAuto">
             <p class="header">{{selectedItem?.name}}</p>
