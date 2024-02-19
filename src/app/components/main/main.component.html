@@ -23,7 +23,7 @@
 
         <p class="indent detailsPlaceholder" *ngIf="!selectedItem">Select an item to view it's details</p>
         
-        <div class="overflowAuto infoDiv">
+        <div class="overflowAuto">
             <p class="header">{{selectedItem?.name}}</p>
             <section *ngIf="selectedItem && !viewingConsumables" class="overflowAuto display">
                 <p class="indent" *ngIf="selectedItem?.description">Description: &nbsp;{{selectedItem?.description}}</p>
