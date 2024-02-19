@@ -336,7 +336,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     //If the item we're trying to equip is already equipped by someone else, display a popup and prevent "stealing" that item from them unless allowed
-    //TODO: Also next up, dialog popup when attempting to equip a third trinket that asks which one you'd like to replace
     if (this.selectedItem !== this.equippedItem){
       if (this.selectedItem?.equippedBy?.name !== this.selectedPartyMember.name && this.selectedItem?.equippedBy?.name !== undefined){
         let obj = {
@@ -367,6 +366,17 @@ export class MainComponent implements OnInit, AfterViewInit {
       } else if (this.selectedItem.constructor.name !== 'Trinket'){
         this.selectedItem.equippedBy = this.selectedPartyMember;
       }
+      
+      if (this.selectedItem.constructor.name === 'Trinket' && this.equippedTrinkets.length === 2){
+        let obj = {
+          trinketCheck: true,
+          equippedTrinkets: this.equippedTrinkets,
+          selectedPartyMember: this.selectedPartyMember,
+          selectedItem: this.selectedItem
+        }
+        this.equipConfirmation(obj);
+      }
+      
       this.getEquippedItem();
 
       // this.equippedTrinkets = [];
@@ -413,9 +423,10 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
 
   /****************************************************************************************
- * Equip Confirmation - Opens a dialog box and asks for confirmation when attempting to
- * equip an item that's equipped by someone else, or when attempting to equip a third
- * trinket without first unequipping one
+ * Equip Confirmation - Opens a dialog box and asks for confirmation when:
+ * -attempting to equip an item that's equipped by someone else
+ * -leaving the equipment menu when a party member doesn't have a weapon equipped
+ * -attempting to equip a third trinket without first unequipping one
  ****************************************************************************************/
   equipConfirmation(data): boolean {
     
@@ -432,16 +443,24 @@ export class MainComponent implements OnInit, AfterViewInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe(result => {      
-      if (data.wpnCheck === true){
+    dialogRef.afterClosed().subscribe(result => {
+
+      //Handle selecting which trinket is equipped based on dialog selection
+      if (data.trinketCheck){
+        //Do something based on result
+      }
+      
+      //Switch to equipment menu if user selects 'go back' in weapon check dialog
+      if (data.wpnCheck){
         if (result){
           this.switchView('equipment');
         }
         return;
       }
       
+      //Handle 'stealing' an item from another party member in the dialog
       //if result === true, then the item was equipped
-      if (result === true && !data.wpnCheck){
+      if (result === true && !data.wpnCheck && !data.trinketCheck){
         if (this.equippedItem){
           if (this.selectedItem.constructor.name !== 'Trinket'){
             delete this.equippedItem.equippedBy; 

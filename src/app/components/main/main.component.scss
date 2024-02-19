@@ -87,7 +87,7 @@ main{
     align-items: center;
 }
 
-//FIXME: InventoryDivTop on smaller phone size screen is overflownig-x  - not sure why, equipment page is fine
+//FIXME: InventoryDivTop on smaller phone size screen is overflownig-x  - not sure why, equipment page is fine - The display grid and the css column thing are screwing thiings up
 .inventoryDivTop, .equipmentDivTop{
     display: grid;
     grid-template-rows: 1fr 10fr;

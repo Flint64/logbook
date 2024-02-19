@@ -11,6 +11,7 @@ export class EquipConfirmationComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<EquipConfirmationComponent>) { }
 
   ngOnInit(): void {
+    // console.log(this.data.data)
   }
 
   onClose(itemEquipped: boolean){

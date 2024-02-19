@@ -1,3 +1,27 @@
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!-- Trinket Check - Prompts you for which trinket you'd like to replace for the selected item if we have 2 trinkets already equipped -->
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<body *ngIf="data.data.trinketCheck">
+    <div class="descTop">
+        <p class="lg">Trinket Check</p>
+    </div>
+
+    <div class="infoBox">
+        <p class="lg">
+            <span>Cannot equip </span>
+            <span class="goldText">{{data.data.selectedItem.name}}</span>
+            <span>. Max number of trinkets equipped. Please unequip a trinket first.</span>
+        </p>
+        </div>
+    
+    <div class="options">
+        <button (click)="onClose(false)">Continue</button>
+    </div>
+</body>
+
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!-- Equipment Check - Prompts you to go back if a party member doesn't have a weapon equipped -->
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
 <body *ngIf="data.data.wpnCheck">
     <div class="descTop">
         <p class="lg">Equipment Check</p>
@@ -34,7 +58,10 @@
     </div>
 </body>
 
-<body *ngIf="!data.data.wpnCheck">
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!-- Equip Confirmation - 'steal' an equipped item from another party member -->
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<body *ngIf="!data.data.wpnCheck && !data.data.trinketCheck">
     <div class="descTop">
         <p class="lg">Equip Confirmation</p>
     </div>
