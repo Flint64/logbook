@@ -444,6 +444,20 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
           chosenAbility.castSpell(this, playerTarget, appendText, inventory);
         }
       }
+      
+      //If the selected spell can only target the party, select a random party member
+      if (chosenAbility.canTargetEnemies === false && chosenAbility.canTargetParty === true){
+        while (playerTarget.health <= 0){
+          playerTarget = enemies[_.random(0, (enemies.length - 1))];
+        }
+
+        //If the selected ability heals and the target's health is still full, select a different ability
+        if (chosenAbility.effects.find(({ name }) => name === 'health') && playerTarget.health >= playerTarget.maxHealth){
+          this.selectSpecialAbility(playerTarget, appendText, inventory, enemies);
+          return;
+        }
+        chosenAbility.castSpell(this, playerTarget, appendText, inventory);
+      }
 
       result.abilityWasUsed = true;
       if (chosenAbility?.recoveryPeriod){
