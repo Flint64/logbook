@@ -1,0 +1,6 @@
+// Custom colors set by the user
+$accentColor: #ffd700;
+
+.accentColor{
+    color: var(--accentColor, $accentColor);
+}

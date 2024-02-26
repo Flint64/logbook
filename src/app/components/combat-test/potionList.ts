@@ -203,7 +203,7 @@ interface PotionData {
         modifier: 200,
         canBeResisted: false,
         self: true,
-        helpDescription: 'Increase critical chance',
+        helpDescription: 'Increases luck',
       },
     ],
   },

@@ -1,3 +1,6 @@
+@use '../../../utilities/variables';
+// variables.$byui-blue;
+
 main{
     color: white;
     display: flex;
@@ -48,13 +51,56 @@ main{
     }
 }
 
-.inventoryDiv, .statsDiv, .settingsDiv, .statsDivTop, .settingsDivTop {
+.inventoryDiv, .statsDiv, .statsDivTop {
     margin-top: -1px;
     min-height: 8em;
     height: 45%;
     p.header:first-of-type{
         border-top: none;
     }
+}
+
+.settingsDiv{
+    height: 90%;
+    .headerDiv{
+        border-bottom: 1px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1.35em;
+        p{
+            margin: 5px;
+        }
+    }
+
+    section{
+        font-size: 1.2em;
+        width: max-content;
+        height: max-content;
+        padding-left: 2.5px;
+        padding-right: 2.5px;
+        margin-bottom: 20px;
+        label{margin-left: 5px;}
+        p{
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+    }
+
+    section.colors{
+        display: flex;
+        align-items: center;
+        p{
+            margin-right: 10px;
+        }
+    }
+}
+
+.colorPicker{
+    text-decoration: none;
+    border: none;
+    height: 20px;
 }
 
 .equipmentDiv, .playerOptions{

@@ -20,6 +20,7 @@ import { CapitalSplitPipe } from './pipes/capital-split.pipe';
 import { ConsumableFilterPipe } from './pipes/consumable-filter.pipe';
 import { SelectCategoryComponent } from './components/main/select-category/select-category.component';
 import { EquipConfirmationComponent } from './components/main/equip-confirmation/equip-confirmation.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { EquipConfirmationComponent } from './components/main/equip-confirmation
     ReactiveFormsModule,
     MatProgressBarModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    ColorPickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

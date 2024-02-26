@@ -63,33 +63,33 @@
     </div>
 
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && !viewingConsumables">
-        <p class="header">Bracers:</p>
+        <p class="header accentColor">Bracers:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Bracer'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Helms:</p>
+        <p class="header accentColor">Helms:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Helm'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Chestplates:</p>
+        <p class="header accentColor">Chestplates:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Chestplate'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Pants:</p>
+        <p class="header accentColor">Pants:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Pants'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Greaves:</p>
+        <p class="header accentColor">Greaves:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Greaves'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Weapons:</p>
+        <p class="header accentColor">Weapons:</p>
         <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Weapon'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span> </div></section>
         
-        <p class="header">Trinkets:</p>
+        <p class="header accentColor">Trinkets:</p>
         <section class="item"> <div class="indent"(click)="viewItemDetails(item)" *ngFor="let item of combatService.party.inventory | equipmentFilter: 'Trinket'; let i = index">{{i+1 + '. ' + item.name}} <span *ngIf="selectedPartyMember && item?.equippedBy?.name === selectedPartyMember.name"><img class="equipped" src="assets/images/general/equipped.svg" alt=""></span></div></section>
     </div>
     
     <div class="inventoryDiv overflowAuto" *ngIf="viewingInventory.isActive && viewingConsumables">
-        <p class="header">Potions:</p>
+        <p class="header accentColor">Potions:</p>
         <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.consumables | consumableFilter: 'Potion'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
 
-        <p class="header">Scrolls:</p>
+        <p class="header accentColor">Scrolls:</p>
         <section class="item"> <div (click)="viewItemDetails(item)" *ngFor="let item of combatService.party.consumables | consumableFilter: 'Scroll'; let i = index">{{i+1 + '. ' + item.name}}</div> </section>
     </div>
     
@@ -131,7 +131,7 @@
                 </span>
             </div>
             
-            <p class="goldText underline">Damage Type(s):</p>
+            <p class="accentColor underline">Damage Type(s):</p>
             <div *ngIf="damageTypeDisplay.length === 0">
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory)">{{'Bludgeoning Damage - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamage', null, combatService.party.inventory) + '%'}} </p>
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory)">{{'Piercing Damage - '    + selectedPartyMember.calcTotalStatValue('PiercingDamage',    null, combatService.party.inventory) + '%'}} </p>
@@ -169,7 +169,7 @@
                 </p>
             </div>
                 
-            <p class="goldText underline">Status Resistances: </p>
+            <p class="accentColor underline">Status Resistances: </p>
             <div *ngIf="statusResistanceDisplay.length === 0">
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BurnResistance',   null, combatService.party.inventory)">{{'Burn Resistance - '     + selectedPartyMember.calcTotalStatValue('BurnResistance',   null, combatService.party.inventory)}} </p>
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PoisonResistance', null, combatService.party.inventory)">{{'Poison Resistance - '   + selectedPartyMember.calcTotalStatValue('PoisonResistance', null, combatService.party.inventory)}} </p>
@@ -187,7 +187,7 @@
                 </span>
             </div>
                 
-            <p class="goldText underline">Damage Resistances:</p>
+            <p class="accentColor underline">Damage Resistances:</p>
             <div *ngIf="damageResistanceDisplay.length === 0">
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('BludgeoningDamageResistance', null, combatService.party.inventory)">{{'Bludgeoning Damage Resistance - ' + selectedPartyMember.calcTotalStatValue('BludgeoningDamageResistance', null, combatService.party.inventory)}} </p>
                 <p class="indentOnly" *ngIf="selectedPartyMember.calcTotalStatValue('PiercingDamageResistance',    null, combatService.party.inventory)">{{'Piercing Damage Resistance - '    + selectedPartyMember.calcTotalStatValue('PiercingDamageResistance',    null, combatService.party.inventory)}} </p>
@@ -248,12 +248,51 @@
     </div>
 
 <!--Settings menu--------------------------------------------------------------------------------------------------------------------------------------->
-    <div class="settingsDivTop overflowAuto" *ngIf="viewingSettings.isActive">
+    <!-- <div class="settingsDivTop overflowAuto" *ngIf="viewingSettings.isActive">
         Settings
-    </div>
+    </div> -->
 
     <div class="settingsDiv overflowAuto" *ngIf="viewingSettings.isActive">
-        Settings
+        <div class="headerDiv">
+            <p>Settings</p>
+        </div>
+
+        <p style="font-size: 1.2em;">Settings are saved and automatically applied on selection</p>
+
+        <form [formGroup]="settingsForm">
+            <section class="colors">
+                <p>Highlight Color: </p>
+                <input class="colorPicker"
+                formControlName="highlightColor"
+                [style.background]="color || highlightColor || '#ffd700'"
+                [(colorPicker)]="color || highlightColor"
+                [cpOutputFormat]="hex"
+                [cpAlphaChannel]="disabled"
+                [cpFallbackColor]="'#ffd700'"
+                (colorPickerSelect)="changeAccentColor($event)"
+                />
+                <!-- [value]="color || '#ffd700'"  //Add this back in if you want the hex code to be displayed on top of the color -->
+            </section>
+
+            <section>
+                <p>Text Speed: </p>
+                <div>
+                    <input type="radio" (change)="setTextSpeed(200)" formControlName="textSpeed" name="textSpeed" value="200" id="slow">
+                    <label for="slow">Slow</label>
+                </div>
+
+                <div>
+                    <input type="radio" (change)="setTextSpeed(150)" formControlName="textSpeed" name="textSpeed" value="150" id="medium">
+                    <label for="medium">Medium</label>
+                </div>
+
+                <div>
+                    <input type="radio" (change)="setTextSpeed(100)" formControlName="textSpeed" name="textSpeed" value="100" id="fast">
+                    <label for="fast">Fast</label>
+                </div>
+
+            </section>
+        </form>
     </div>
 <!-------------------------------------------------------------------------------------------------------------------------------------------------------->
 

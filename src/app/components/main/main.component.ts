@@ -92,25 +92,40 @@ export class MainComponent implements OnInit, AfterViewInit {
   statusResistanceDisplay = [];
   damageResistanceDisplay = [];
   trinketDamageBonuses = [];
+
+  settingsForm: FormGroup;
+  highlightColor: string = null;
   
   constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
   ngOnInit(): void {
 
     this.loaderService.loadDevelopmentEnv();
+    //TODO: Next up, figure out loading user settings from localstorage, and the best way to do it in one place as needed per page
     
     //Grab text speed from localstorage, if any
     if (localStorage.getItem('textSpeed')){
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
     }
 
-    // this.startPrint("The story begins...");
+    // this.startPrint("The story begins..."); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
     
     this.partyForm = new FormGroup({
       'memberSelected': new FormControl(null)
     });
 
+    //Load the user's settings
+    if (localStorage.getItem('highlightColor')){
+      this.highlightColor = localStorage.getItem('highlightColor');
+      document.documentElement.style.setProperty("--accentColor", this.highlightColor);
+    }
+    this.settingsForm = new FormGroup({
+      'highlightColor': new FormControl(localStorage.getItem('highlightColor' || null)),
+      'textSpeed': new FormControl(localStorage.getItem('textSpeed') ||'150')
+    });
+
     this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy });
+    
   }
 
 /****************************************************************************************
@@ -822,5 +837,21 @@ calcBaseStatDifferences() {
     this.trinketDamageDisplay();
   }
 
+/****************************************************************************************
+ * Change Accent Color - Fires when the input for changing the accent color is closed,
+ * meaning the color was changed. Get the new color and apply it.
+ ****************************************************************************************/
+  changeAccentColor(color){
+    document.documentElement.style.setProperty("--accentColor", color);
+    localStorage.setItem('highlightColor', color);
+  }
 
+/****************************************************************************************
+ * Set Text Speed - Gets the text speed from the radio buttons and saves it to
+ * localstorage when a value is selected
+ ****************************************************************************************/
+  setTextSpeed(value){
+    localStorage.setItem('textSpeed', value);
+  }
+  
 }
