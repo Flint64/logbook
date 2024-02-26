@@ -101,14 +101,13 @@ export class MainComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     this.loaderService.loadDevelopmentEnv();
-    //TODO: Next up, figure out loading user settings from localstorage, and the best way to do it in one place as needed per page
     
     //Grab text speed from localstorage, if any
     if (localStorage.getItem('textSpeed')){
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
     }
 
-    // this.startPrint("The story begins..."); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
+    this.startPrint("The story begins..."); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
     
     this.partyForm = new FormGroup({
       'memberSelected': new FormControl(null)
