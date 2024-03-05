@@ -1,7 +1,8 @@
 <app-combat-test *ngIf="combatService.combatActive"></app-combat-test>
 
 <main *ngIf="!combatService.combatActive">
-    <div class="storyText" #gameBox #story *ngIf="viewingMain.isActive">
+    <div class="storyText" #gameBox *ngIf="viewingMain.isActive">
+        <p #story style="margin-top: 0; padding-top: 5px;"></p>
     </div>
 
     <div class="playerOptions" #gameBox *ngIf="viewingMain.isActive">

@@ -7,6 +7,7 @@ import { CombatService } from 'src/app/services/combat.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SelectCategoryComponent } from './select-category/select-category.component';
 import { EquipConfirmationComponent } from './equip-confirmation/equip-confirmation.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import _ from 'lodash';
 
 @Component({
@@ -30,7 +31,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   selectedPartyMember: Player = null;
   intervalID = null;
   textPosition = 0;
-  textSpeed = 150;
+  textSpeed = null;
 
   viewingMain = {name: 'main', isActive: true}
   viewingSettings = {name: 'settings', isActive: false}
@@ -95,8 +96,12 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   settingsForm: FormGroup;
   highlightColor: string = null;
+  tempText: string = "The story begins...this is a lot of text to see how/why it's GG potentially speeding up whenever it resumes itself because it really shouldn't be doing that at all and should be keeping itself at the speed specified";
+  // tempText: string = "The";
+  // displayText: any[] = [];
+  dynamicContent: any[] = [];
   
-  constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
+  constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog, private sanitizer: DomSanitizer) { }
   
   ngOnInit(): void {
 
@@ -107,7 +112,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
     }
 
-    this.startPrint("The story begins..."); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
+    this.startPrint(this.tempText); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
     
     this.partyForm = new FormGroup({
       'memberSelected': new FormControl(null)
@@ -148,7 +153,23 @@ export class MainComponent implements OnInit, AfterViewInit {
  * recursion is an issue
  ****************************************************************************************/
   startPrint(text: string){
-    this.intervalID = setInterval( () => this.printText(this.textPosition, text), this.textSpeed );
+    if (!this.intervalID){
+      this.intervalID = setInterval( () => this.printText(this.textPosition, text), this.textSpeed );
+    }
+  }
+
+  append(){
+    // let span = this.renderer.createElement('span');
+    // this.renderer.addClass(span, 'accentColor');
+    // let textNode = this.renderer.createText('TEXT');
+    // this.renderer.appendChild(span, textNode);
+    // this.renderer.appendChild(this.story.nativeElement, span);
+    // let span = this.renderer.createElement('span');
+    // span.innerText = 'TEST TEXT';
+    // setTimeout(() => {
+    //   this.story.nativeElement.appendChild(span);
+    // }, 0);
+    // console.log(span);
   }
 
 /****************************************************************************************
@@ -160,21 +181,103 @@ export class MainComponent implements OnInit, AfterViewInit {
     if (!this.intervalID){
       return;
     }
-    
-    if (textPosition !== text.length){
+
+    /*
+    //To skip the <u> and </u> for underline styles
+    if (this.tempText[textPosition+1] === '<' && this.tempText[textPosition+2] === 'u'){
+      let txt = this.tempText.substring(
+        this.tempText.indexOf("<u>") + 3, //+ the length of the string we're checking for
+        this.tempText.lastIndexOf("</u>")
+      )
+      // let regex = /<u>/i;
+      // console.log(this.tempText.replace(regex, ''));
+      // regex = /<\/u>/i;
+      // console.log(this.tempText.replace(regex, ''));
+
+      let span = this.renderer.createElement('span');
+      this.renderer.addClass(span, 'accentColor');
+      // let textNode = this.renderer.createText(txt);
+      let textNode = this.renderer.createText('TEXT');
+      this.renderer.appendChild(span, textNode);
+      // this.renderer.appendChild(this.story.nativeElement, span);
+      // this.story.nativeElement.appendChild(span);
+      this.story.nativeElement.appendChild(span);
+      console.log(span);
+      // this.displayText += `<span class="accentColor">${txt}</span>`;
       
-      //Use renderer instead of docuoment.createElement so that the view encapsulation works to apply styles correctly
+      this.textPosition += 3;
+    }
+    */
+   
+    
+  //  if (this.tempText[textPosition+1] === 'G' && this.tempText[textPosition+2] === 'G'){
+  //    this.append();
+  // }
+
+    //To skip the <u> and </u> for underline styles
+    // if (this.tempText[textPosition+1] === '<' && this.tempText[textPosition+2] === '/' && this.tempText[textPosition+3] === 'u'){
+    //   this.textPosition += 4;
+    // }
+    
+    // this.displayText += this.tempText[textPosition];
+    // this.textPosition++;
+
+    // if (textPosition === (this.tempText.length - 1)){
+    //   clearInterval(this.intervalID);
+    //   this.intervalID = null;
+    //   this.append();
+    // }
+
+    
+    //If we have stored text, add that back first before resuming the print of the paused passage
+    if (this.dynamicContent.length > 0){ //FIXME: This is being added first, which is correct - the stored text needs to be added before the rest of it. But for whatever reason it i being appended to the front, even though it appears to be added to the end first
+      // this.dynamicContent.forEach(el => {
+      //   this.story.nativeElement.appendChild(el);
+      //   this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
+      // });
+      for (let i = this.dynamicContent.length; i--;){
+          this.story.nativeElement.prepend(this.dynamicContent[i]);
+          console.log(this.dynamicContent[i])
+      }
+      this.dynamicContent = [];
+    }
+
+    if (textPosition !== (this.tempText.length)){
+
       let child = this.renderer.createElement('span');
       child.innerText = text[textPosition];
+      // this.renderer.addClass(child, 'accentColor');
       
       this.story.nativeElement.appendChild(child)
-      this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);  
+      this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
+
+      //Use renderer instead of docuoment.createElement so that the view encapsulation works to apply styles correctly
+      // let child = this.renderer.createElement('span');
+      // child.innerText = text[textPosition];
+      // this.displayText.push(child.outerHTML);
+      // this.story.nativeElement.appendChild(child);
+      // // this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
+      //  this.renderer.addClass(child, 'accentColor');
+      
+      
+      // let nextChar = this.tempText[this.textPosition];
+      // let span = this.renderer.createElement('span');
+      // this.renderer.appendChild(span, this.renderer.createText(nextChar));
+      // this.displayText.push(child);
+      // this.displayText.push(this.sanitizer.bypassSecurityTrustHtml(child));
+      // console.log(child);
+      // // this.displayText += span.outerHTML;
+      // this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayText + span.outerHTML);
+      // // this.renderer.appendChild(this.story.nativeElement, span);
       this.textPosition++;
 
     } else {
       this.intervalID = null;
       this.textPosition = 0;
     }
+    
+
+
   }
 
 /****************************************************************************************
@@ -209,7 +312,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     //   this.selectPartyMember(this.memberIndex); //This clears the selected party member on view swap. Uncomment if issues arise with leaving it turned off
     // }
 
-    this.pages.forEach((page) => {
+    this.pages.forEach((page) => {      
       if (page.name === name) {
 
         if (page.isActive){
@@ -237,6 +340,20 @@ export class MainComponent implements OnInit, AfterViewInit {
           element.element.nativeElement.classList.remove('active');
       }
     });
+
+    //Stop the printing of text to the main page if we have navigated away from it
+    if (!this.viewingMain.isActive){ //FIXME: This line throws an error because story.nativeElement.childNodes doesn't exist when navigating between pages
+      clearInterval(this.intervalID);
+      this.intervalID = null;
+      this.dynamicContent = Array.from(this.story.nativeElement.childNodes);
+
+    //Restart the print if we're on the page and if the interval isn't active
+    } else {
+      if (!this.intervalID){
+        this.startPrint(this.tempText);
+      }
+    }
+    
   }
 
 /****************************************************************************************
