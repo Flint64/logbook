@@ -218,23 +218,10 @@ export class MainComponent implements OnInit, AfterViewInit {
     // if (this.tempText[textPosition+1] === '<' && this.tempText[textPosition+2] === '/' && this.tempText[textPosition+3] === 'u'){
     //   this.textPosition += 4;
     // }
-    
-    // this.displayText += this.tempText[textPosition];
-    // this.textPosition++;
-
-    // if (textPosition === (this.tempText.length - 1)){
-    //   clearInterval(this.intervalID);
-    //   this.intervalID = null;
-    //   this.append();
-    // }
 
     
     //If we have stored text, add that back first before resuming the print of the paused passage
-    if (this.dynamicContent.length > 0){ //FIXME: This is being added first, which is correct - the stored text needs to be added before the rest of it. But for whatever reason it i being appended to the front, even though it appears to be added to the end first
-      // this.dynamicContent.forEach(el => {
-      //   this.story.nativeElement.appendChild(el);
-      //   this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
-      // });
+    if (this.dynamicContent.length > 0){
       for (let i = this.dynamicContent.length; i--;){
           this.story.nativeElement.prepend(this.dynamicContent[i]);
           console.log(this.dynamicContent[i])
@@ -250,34 +237,12 @@ export class MainComponent implements OnInit, AfterViewInit {
       
       this.story.nativeElement.appendChild(child)
       this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
-
-      //Use renderer instead of docuoment.createElement so that the view encapsulation works to apply styles correctly
-      // let child = this.renderer.createElement('span');
-      // child.innerText = text[textPosition];
-      // this.displayText.push(child.outerHTML);
-      // this.story.nativeElement.appendChild(child);
-      // // this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
-      //  this.renderer.addClass(child, 'accentColor');
-      
-      
-      // let nextChar = this.tempText[this.textPosition];
-      // let span = this.renderer.createElement('span');
-      // this.renderer.appendChild(span, this.renderer.createText(nextChar));
-      // this.displayText.push(child);
-      // this.displayText.push(this.sanitizer.bypassSecurityTrustHtml(child));
-      // console.log(child);
-      // // this.displayText += span.outerHTML;
-      // this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayText + span.outerHTML);
-      // // this.renderer.appendChild(this.story.nativeElement, span);
       this.textPosition++;
 
     } else {
       this.intervalID = null;
       this.textPosition = 0;
     }
-    
-
-
   }
 
 /****************************************************************************************
