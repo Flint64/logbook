@@ -224,7 +224,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     if (this.dynamicContent.length > 0){
       for (let i = this.dynamicContent.length; i--;){
           this.story.nativeElement.prepend(this.dynamicContent[i]);
-          console.log(this.dynamicContent[i])
       }
       this.dynamicContent = [];
     }
@@ -307,10 +306,12 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
 
     //Stop the printing of text to the main page if we have navigated away from it
-    if (!this.viewingMain.isActive){ //FIXME: This line throws an error because story.nativeElement.childNodes doesn't exist when navigating between pages
+    if (!this.viewingMain.isActive){
       clearInterval(this.intervalID);
       this.intervalID = null;
-      this.dynamicContent = Array.from(this.story.nativeElement.childNodes);
+      if (this.story?.nativeElement){
+        this.dynamicContent = Array.from(this.story?.nativeElement.childNodes);
+      }
 
     //Restart the print if we're on the page and if the interval isn't active
     } else {
