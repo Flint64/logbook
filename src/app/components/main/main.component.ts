@@ -158,20 +158,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
   }
 
-  append(){
-    // let span = this.renderer.createElement('span');
-    // this.renderer.addClass(span, 'accentColor');
-    // let textNode = this.renderer.createText('TEXT');
-    // this.renderer.appendChild(span, textNode);
-    // this.renderer.appendChild(this.story.nativeElement, span);
-    // let span = this.renderer.createElement('span');
-    // span.innerText = 'TEST TEXT';
-    // setTimeout(() => {
-    //   this.story.nativeElement.appendChild(span);
-    // }, 0);
-    // console.log(span);
-  }
-
 /****************************************************************************************
  * Print Text - Prints text in an RPG like way via setInterval. Increases the textPosition
  * each time the function is called, and stops the interval when the position has reached
@@ -221,6 +207,9 @@ export class MainComponent implements OnInit, AfterViewInit {
 
     
     //If we have stored text, add that back first before resuming the print of the paused passage
+    //Prepend in reverse (so, append) so that elements display in the correct order. No idea why
+    //this works, but it does, as appending here in the right order makes the rest of the text
+    //look like it's being prepended
     if (this.dynamicContent.length > 0){
       for (let i = this.dynamicContent.length; i--;){
           this.story.nativeElement.prepend(this.dynamicContent[i]);
