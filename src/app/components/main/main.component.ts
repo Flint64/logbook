@@ -7,7 +7,6 @@ import { CombatService } from 'src/app/services/combat.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SelectCategoryComponent } from './select-category/select-category.component';
 import { EquipConfirmationComponent } from './equip-confirmation/equip-confirmation.component';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import _ from 'lodash';
 
 @Component({
@@ -96,12 +95,12 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   settingsForm: FormGroup;
   highlightColor: string = null;
-  tempText: string = "The story begins...this is a lot of text to see how/why it's GG potentially speeding up whenever it resumes itself because it really shouldn't be doing that at all and should be keeping itself at the speed specified";
-  // tempText: string = "The";
-  // displayText: any[] = [];
+  tempText: string = "The story begins...this is a <a>lot</a> of text to see <a>how/why</a> it's GG <a>potentially</a> speeding up whenever it resumes itself because it really shouldn't be doing that at all and should be keeping itself at the speed specified";
   dynamicContent: any[] = [];
+  printFinished: boolean = false;
+  accentColorIndexes = [];
   
-  constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog, private sanitizer: DomSanitizer) { }
+  constructor(public combatService: CombatService, private loaderService: LoaderService, private renderer: Renderer2, private dialog: MatDialog) { }
   
   ngOnInit(): void {
 
@@ -112,7 +111,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.textSpeed = parseInt(localStorage.getItem('textSpeed'));
     }
 
-    this.startPrint(this.tempText); //TODO: Also make this pause and store the text somewhere so that when you go to another page while it's running it doesn't lose its place or throw errors in the console 
+    this.startPrint(this.tempText);
     
     this.partyForm = new FormGroup({
       'memberSelected': new FormControl(null)
@@ -153,11 +152,55 @@ export class MainComponent implements OnInit, AfterViewInit {
  * recursion is an issue
  ****************************************************************************************/
   startPrint(text: string){
+
+    text = this.transformText(text);
+    
+    console.log(text);
     if (!this.intervalID){
       this.intervalID = setInterval( () => this.printText(this.textPosition, text), this.textSpeed );
     }
   }
 
+/****************************************************************************************
+ * Transform Text - Grabs all start/end indexes of words in between <a> </a> tags to
+ * allow different colors on the words
+ ****************************************************************************************/
+  transformText(text: string): string{
+    this.accentColorIndexes = [];
+
+    //Get the number of opening tags from the regex exec looking for the total number of opening tags
+    let match, matches = [];
+    let regexp1 = /<a>/g;
+    while ((match = regexp1.exec(text)) != null) { matches.push(match.index); }
+    
+    //Loop through the found matches and for each one found, find the first instance.
+    //Grab the index of each instance, then remove it, until the text is cleared of
+    //tags and all of the indexes have been stored
+    for (let i = 0; i < (matches.length); i++){
+      let obj = {};
+      
+      let regex1 = /<a>/;
+      obj['start'] = text.search(regex1);
+  
+      let regex2 = /<\/a>/;
+      obj['end'] = (text.search(regex2) - 4); // -4 to account for the removal of </a> from the text. TODO: ALL tags should be a single character or else this will break
+  
+      text = text.replace(regex1, '');
+      text = text.replace(regex2, '');
+      
+      this.accentColorIndexes.push(obj);
+    }
+
+    //This gets the actual text in between the indexes. Might be useful if we want to wrap each one in its own span
+    //instead of applying the color to each individual letter. It won't print out as pretty and will plop the whole
+    //word on the screen, but it would prevent word breaks in the middle of the word when wrapping - but only on
+    //the special words, so that doesn't mean much
+    // let substr = text.substring(this.accentColorIndexes[1].start, this.accentColorIndexes[1].end + 1);
+    // console.log(substr);
+    
+    return text;
+  }
+  
 /****************************************************************************************
  * Print Text - Prints text in an RPG like way via setInterval. Increases the textPosition
  * each time the function is called, and stops the interval when the position has reached
@@ -167,61 +210,29 @@ export class MainComponent implements OnInit, AfterViewInit {
     if (!this.intervalID){
       return;
     }
-
-    /*
-    //To skip the <u> and </u> for underline styles
-    if (this.tempText[textPosition+1] === '<' && this.tempText[textPosition+2] === 'u'){
-      let txt = this.tempText.substring(
-        this.tempText.indexOf("<u>") + 3, //+ the length of the string we're checking for
-        this.tempText.lastIndexOf("</u>")
-      )
-      // let regex = /<u>/i;
-      // console.log(this.tempText.replace(regex, ''));
-      // regex = /<\/u>/i;
-      // console.log(this.tempText.replace(regex, ''));
-
-      let span = this.renderer.createElement('span');
-      this.renderer.addClass(span, 'accentColor');
-      // let textNode = this.renderer.createText(txt);
-      let textNode = this.renderer.createText('TEXT');
-      this.renderer.appendChild(span, textNode);
-      // this.renderer.appendChild(this.story.nativeElement, span);
-      // this.story.nativeElement.appendChild(span);
-      this.story.nativeElement.appendChild(span);
-      console.log(span);
-      // this.displayText += `<span class="accentColor">${txt}</span>`;
-      
-      this.textPosition += 3;
-    }
-    */
-   
-    
-  //  if (this.tempText[textPosition+1] === 'G' && this.tempText[textPosition+2] === 'G'){
-  //    this.append();
-  // }
-
-    //To skip the <u> and </u> for underline styles
-    // if (this.tempText[textPosition+1] === '<' && this.tempText[textPosition+2] === '/' && this.tempText[textPosition+3] === 'u'){
-    //   this.textPosition += 4;
-    // }
-
     
     //If we have stored text, add that back first before resuming the print of the paused passage
     //Prepend in reverse (so, append) so that elements display in the correct order. No idea why
     //this works, but it does, as appending here in the right order makes the rest of the text
     //look like it's being prepended
-    if (this.dynamicContent.length > 0){
+    if (this.dynamicContent.length > 0){      
       for (let i = this.dynamicContent.length; i--;){
           this.story.nativeElement.prepend(this.dynamicContent[i]);
       }
       this.dynamicContent = [];
     }
 
-    if (textPosition !== (this.tempText.length)){
+    if (textPosition !== (text.length) && !this.printFinished){
 
       let child = this.renderer.createElement('span');
       child.innerText = text[textPosition];
-      // this.renderer.addClass(child, 'accentColor');
+
+      //For any indexes found, make sure the accent color is applied to the words in between
+      this.accentColorIndexes.forEach(obj => {
+        if (textPosition >= obj.start && textPosition <= obj.end){
+          this.renderer.addClass(child, 'accentColor');
+        }
+      });
       
       this.story.nativeElement.appendChild(child)
       this.story.nativeElement.scrollTo(0, this.story.nativeElement.scrollHeight);
@@ -230,6 +241,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     } else {
       this.intervalID = null;
       this.textPosition = 0;
+      this.printFinished = true;
     }
   }
 
