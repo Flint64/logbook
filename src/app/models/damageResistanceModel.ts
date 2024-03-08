@@ -1,5 +1,6 @@
 /****
  * //TODO: Add specific damage weaknessess, like low/med/high
+ * base - no change from whatever the resistance value is for the damage type
  * low - 1.25 extra damage
  * med - 1.5 extra damage
  * high - status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that, ect
@@ -8,9 +9,37 @@
 /**
  * //TODO: Add specific damage resistances. Likely modify the ones we have here, but add in
  * a data point aside from just the resistance score, such as low/med/high resistance
+ * base - no change from whatever the resistance value is for the damage type
  * low - 1.25 less damage
  * med - 1.5 less damage
- * high - Immune to status effects of the matching type, and elemental damage from weapons/spells will be partially absorbed and added to hp
+ * high - Immune to status effects of the matching type
+ */
+
+ /*
+ * First idea: try adding these as part of the object in this model so we can end up with something like 
+ damageResistances: [
+        new BludgeoningDamageResistance({resistance: 10, elemental: false, weak: 'med', strong: 'base'}), //if weak
+        new BludgeoningDamageResistance({resistance: 10, elemental: false, weak: 'base', strong: 'high'}), //if strong
+        new BludgeoningDamageResistance({resistance: 10, elemental: false, weak: 'base', strong: 'base'}), //if no change
+      ],
+      
+      Or instead of two object types, the reason we have 3 levels for each strong/weak is to have more than 3. 
+      We have more granular control now with 6 levels. So what about something like:
+      
+      new BludgeoningDamageResistance({resistance: 10, elemental: false, resistanceModifier: null}), //no change, use base resistance
+      new BludgeoningDamageResistance({resistance: 10, elemental: false, resistanceModifier: 'med_strong'})
+
+      So basically:
+
+      low_weak - 1.25 extra damage
+      med_weak - 1.5 extra damage
+      high_weak - 1.5 extra damage, status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that, ect
+      null - no change, use base resistance
+      low_strong - 1.25 less damage
+      med_strong - 1.5 less damage //maybe rework these a bit but I think this is good
+      high_strong - Immune to status effects of the matching type
+
+
  */
 
 export class DamageResistance {
