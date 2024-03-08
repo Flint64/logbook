@@ -60,6 +60,12 @@ main{
     }
 }
 
+.statsPlaceholder{
+    font-size: 1.2em;
+    display: flex;
+    justify-content: center;
+}
+
 .settingsDiv{
     height: 90%;
     .headerDiv{
