@@ -128,7 +128,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     });
 
     this.notEquippedItems = this.combatService.party.inventory.filter(function(e) { return !e.equippedBy });
-    
   }
 
 /****************************************************************************************
@@ -155,7 +154,6 @@ export class MainComponent implements OnInit, AfterViewInit {
 
     text = this.transformText(text);
     
-    console.log(text);
     if (!this.intervalID){
       this.intervalID = setInterval( () => this.printText(this.textPosition, text), this.textSpeed );
     }

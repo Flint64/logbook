@@ -3,4 +3,16 @@ $accentColor: #ffd700;
 
 .accentColor{
     color: var(--accentColor, $accentColor);
+    display: inline-block;
+    animation: move 2s ease-in-out infinite;
+}
+
+@keyframes move {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(3px);
+    }
 }

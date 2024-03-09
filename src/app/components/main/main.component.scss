@@ -51,6 +51,15 @@ main{
     }
 }
 
+.story{
+    span:nth-child(even) {
+        animation-delay: 0s;
+    }
+    span:nth-child(odd) {
+        animation-delay: .3s;
+    }
+}
+
 .inventoryDiv, .statsDiv, .statsDivTop {
     margin-top: -1px;
     min-height: 8em;
