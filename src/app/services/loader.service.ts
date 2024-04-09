@@ -30,7 +30,7 @@ export class LoaderService {
     for (let i = 0; i < 3; i++){
       //Push the random enemies chosen to the combatService
       // let enemy: Enemy = convertedEnemyList[_.random(0, (enemies.length - 1))];
-      let enemy: Enemy = convertedEnemyList[6];
+      let enemy: Enemy = convertedEnemyList[7];
       let clone = _.cloneDeep(new Enemy(enemy));
       this.combatService.enemyList.push(clone);
     }

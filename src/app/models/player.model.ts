@@ -233,6 +233,15 @@ export class Player {
         }
       });
       
+      let enemyDamageResistances = [];
+
+      enemyTarget.damageResistances.forEach((e) => {
+        let obj = {};
+        obj = e;
+        obj['damageTypeName'] = e.constructor.name;
+        enemyDamageResistances.push(obj);
+      });
+      
       let enemyPhysDR = null;
       let enemyElemDR = null;
       playerDamageTypes.forEach((e) => {
@@ -241,17 +250,98 @@ export class Player {
           let reductionPercent = (((enemyElemDR)/2)/150);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2; //Round to 2 decmial places, preserving number type
           elementalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+
+      //After we have calculated damage reduction based on the total resistance value, factor in
+      //any resistanceModifier (weak, strong, etc) and modify the resulting damage accordingly
+          enemyDamageResistances.forEach((t) => {
+            if (t.constructor.name === e.constructor.name + 'Resistance'){
+              //If a match is found && it's not null
+              //If the resistanceModifier isn't null, handle adding/reducing the damage further
+              if (t.resistanceModifier !== null){
+                switch(t.resistanceModifier){
+                  case 'low_weak':
+                    elementalDamageAfterReduction *= 1.25;
+                  break;
+
+                  case 'med_weak':
+                    elementalDamageAfterReduction *= 1.5;
+                  break;
+
+                  //status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that //TODO: Make sure use of spells/items takes this in to account when applying statuses
+                  case 'high_weak':
+                    elementalDamageAfterReduction *= 1.5;
+                    //TODO: Figure out how to roll 50% to add a matching effect based on the damage type (fire/burn, poison/poison, ice/freeze, etc) here
+                  break;
+
+                  case 'low_strong':
+                    elementalDamageAfterReduction *= 0.75;
+                  break;
+
+                  case 'med_strong':
+                    elementalDamageAfterReduction *= 0.5;
+                  break;
+
+                  //Immune to status effects of the matching type //TODO: Make sure use of spells/items takes this in to account when applying statuses
+                  case 'high_strong':
+                    elementalDamageAfterReduction *= 0.5;
+                  break;
+                }
+              }
+            }
+          });
+
+          console.log(elementalDamageAfterReduction);
+          
           if (elementalDamageAfterReduction <= 0){ elementalDamageAfterReduction = 1; }
         } else {
           enemyPhysDR = enemyTarget.calcTotalStatValue(e.constructor.name + 'Resistance', e.elemental);
           let reductionPercent = enemyPhysDR / (enemyPhysDR + e.damage * 3);
           reductionPercent = Math.round( reductionPercent * 1e2 ) / 1e2;
           physicalDamageAfterReduction += Math.round((e.damage - (e.damage * reductionPercent)));
+          
+      //After we have calculated damage reduction based on the total resistance value, factor in
+      //any resistanceModifier (weak, strong, etc) and modify the resulting damage accordingly
+          enemyDamageResistances.forEach((t) => {
+            if (t.constructor.name === e.constructor.name + 'Resistance'){
+              //If a match is found && it's not null
+              //If the resistanceModifier isn't null, handle adding/reducing the damage further
+              if (t.resistanceModifier !== null){
+                switch(t.resistanceModifier){
+                  case 'low_weak':
+                    physicalDamageAfterReduction *= 1.25;
+                  break;
+
+                  case 'med_weak':
+                    physicalDamageAfterReduction *= 1.5;
+                  break;
+
+                  case 'high_weak':
+                    physicalDamageAfterReduction *= 1.5;
+                  break;
+
+                  case 'low_strong':
+                    physicalDamageAfterReduction *= 0.75;
+                  break;
+
+                  case 'med_strong':
+                    physicalDamageAfterReduction *= 0.5;
+                  break;
+
+                  case 'high_strong':
+                    physicalDamageAfterReduction *= 0.5;
+                  break;
+                }
+              }
+            }
+          });
+          
           if (physicalDamageAfterReduction <= 0){ physicalDamageAfterReduction = 1; }
         }
       });
       
       let damageAfterReduction = physicalDamageAfterReduction + elementalDamageAfterReduction;
+
+      damageAfterReduction = Math.round(damageAfterReduction);
 
       //Prevent attacks from doing 0 damage, limiting it to at least 1
       if (damageAfterReduction <= 0){damageAfterReduction = 1;}

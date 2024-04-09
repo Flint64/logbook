@@ -48,6 +48,7 @@ export class DamageResistance {
       }
     resistance: number;
     elemental: boolean;
+    resistanceModifier: string;
 }
 
 export class BludgeoningDamageResistance extends DamageResistance {

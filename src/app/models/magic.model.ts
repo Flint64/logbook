@@ -141,6 +141,7 @@ export class Magic {
         
         let spellDamage = this.calcSpellDamage(this, caster, inventory, isScroll);
 
+        //FIXME: Game is allowing players to cast spells with not enough mana, allowing it to go in to the negatives and still casting the spell
 
         //Only allow casting of spells on dead targets if there is a resurrect effect in place
         if (spellTarget.health < 0){

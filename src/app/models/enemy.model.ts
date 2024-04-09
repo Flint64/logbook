@@ -494,7 +494,7 @@ calcTotalStatValue(statName: string, isElemental: boolean, inventory?: Equippabl
     //Determine if we're using a special ability or base attack
     if (this.isSpecialAbility()){
       let abilityUsed = this.selectSpecialAbility(playerTarget, appendText, inventory, enemies);
-      if (abilityUsed.abilityWasUsed === true){
+      if (abilityUsed?.abilityWasUsed === true){ //FIXME: Question mark is here because sometimes abilityUsed returns undefined in the case that the enemy simply attacks normally. Rework this if there are ever unknown issues related to ability use in the future
         result.recoveryPeriod = abilityUsed.recoveryPeriod;
         return result;
       }

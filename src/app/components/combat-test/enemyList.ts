@@ -108,7 +108,7 @@ export const enemies = [
         new PiercingDamage({percent: 20, elemental: false})
       ],
       damageResistances: [
-        new SlashingDamageResistance({resistance: 2, elemental: false})
+        new SlashingDamageResistance({resistance: 2, elemental: false, resistanceModifier: null})
       ],
       effects: [],
       turnCount: 0,
@@ -136,7 +136,7 @@ export const enemies = [
         new BludgeoningDamage({percent: 100, elemental: false})
       ],
       damageResistances: [
-        new BludgeoningDamageResistance({resistance: 10, elemental: false}),
+        new BludgeoningDamageResistance({resistance: 10, elemental: false, resistanceModifier: null}),
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),
@@ -155,8 +155,8 @@ export const enemies = [
             targets: 2,
             canTargetParty: true,
             canTargetEnemies: false,
-            textColor: 'slateText',
             recoveryPeriod: -50,
+            textColor: 'slateText',
             useChance: 100,
             damageTypes: [
               new BludgeoningDamage({percent: 100, elemental: false})
@@ -174,7 +174,7 @@ export const enemies = [
       health: 25,
       maxHealth: 25,
       strength: 4,
-      attack: 3,
+      attack: 4,
       variance: 5,
       defense: 4,
       speed: 80,
@@ -191,9 +191,10 @@ export const enemies = [
         new FireDamage({percent: 60, elemental: true})
       ],
       damageResistances: [
-        new FireDamageResistance({resistance: 50, elemental: true}),
-        new BludgeoningDamageResistance({resistance: 6, elemental: false}),
-        new PoisonDamageResistance({resistance: 50, elemental: true})
+        new FireDamageResistance({resistance: 50, elemental: true, resistanceModifier: 'high_strong'}),
+        new BludgeoningDamageResistance({resistance: 6, elemental: false, resistanceModifier: null}),
+        new PoisonDamageResistance({resistance: 50, elemental: true, resistanceModifier: null}),
+        new IceDamageResistance({resistance: 0, elemental: true, resistanceModifier: 'low_weak'})
       ],
       statusEffectResistances: [
         new BurnResistance({resistance: 50}),
@@ -324,4 +325,38 @@ export const enemies = [
       turnCount: 0,
       ATB: 0
     },
+
+    {
+      name: 'Troll',
+      health: 32,
+      maxHealth: 32,
+      strength: 5,
+      attack: 6,
+      variance: 6,
+      defense: 10,
+      speed: 75,
+      numAttacks: 1,
+      mana: 0,
+      maxMana: 0,
+      accuracy: 65,
+      evasion: 20,
+      luck: 4,
+      resistance: 30,
+      intelligence: 6,
+      damageTypes: [
+        new BludgeoningDamage({percent: 80, elemental: false}),
+        new PoisonDamage({percent: 20, elemental: true})
+      ],
+      damageResistances: [
+        new FireDamageResistance({resistance: 0, elemental: true, resistanceModifier: 'high_weak'}),
+        new IceDamageResistance({resistance: 20, elemental: true, resistanceModifier: 'high_strong'})
+      ],
+      statusEffectResistances: [
+        new PoisonResistance({resistance: 300})
+      ],
+      effects: [],
+      turnCount: 0,
+      ATB: 0
+    },
+    
   ];

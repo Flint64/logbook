@@ -220,7 +220,7 @@ export const weapons: Weapon[] = [
             new BludgeoningDamage({percent: 40, elemental: false})
         ],
         damageResistances: [
-            new FireDamageResistance({resistance: 30, elemental: true}), //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
+            new FireDamageResistance({resistance: 30, elemental: true, resistanceModifier: null}), //Just for reference when working on enemyModel, these class names work with the player model calcTotalStatValue if passed in the same as the instance class name
         ]
     }
 ];
@@ -243,7 +243,7 @@ export const trinkets: Trinket[] = [
         evasion: 5,
         statusEffectResistances: [new BurnResistance({resistance: 30})],
         damageTypes: [new FireDamage({percent: 10, elemental: true})],
-        damageResistances: [new FireDamageResistance({resistance: 30, elemental: true})]
+        damageResistances: [new FireDamageResistance({resistance: 30, elemental: true, resistanceModifier: null})]
     },
     {
         name: 'Ice Gem',
@@ -259,7 +259,7 @@ export const trinkets: Trinket[] = [
         evasion: 5,
         statusEffectResistances: [new FreezeResistance({resistance: 30}), new PoisonResistance({resistance: 5})],
         damageTypes: [new IceDamage({percent: 10, elemental: true})],
-        damageResistances: [new IceDamageResistance({resistance: 30, elemental: true})]
+        damageResistances: [new IceDamageResistance({resistance: 30, elemental: true, resistanceModifier: null})]
     },
     {
         name: 'Poison Gem',
@@ -275,7 +275,7 @@ export const trinkets: Trinket[] = [
         evasion: 5,
         statusEffectResistances: [new PoisonResistance({resistance: 30}),],
         damageTypes: [new PoisonDamage({percent: 10, elemental: true})],
-        damageResistances: [new PoisonDamageResistance({resistance: 30, elemental: true})]
+        damageResistances: [new PoisonDamageResistance({resistance: 30, elemental: true, resistanceModifier: null})]
     },
     {
         name: 'Sharp Gem',
@@ -291,6 +291,6 @@ export const trinkets: Trinket[] = [
         evasion: 2,
         statusEffectResistances: [],
         damageTypes: [new SlashingDamage({percent: 10, elemental: false})],
-        damageResistances: [new SlashingDamageResistance({resistance: 30, elemental: false})]
+        damageResistances: [new SlashingDamageResistance({resistance: 30, elemental: false, resistanceModifier: null})]
     }
 ];
