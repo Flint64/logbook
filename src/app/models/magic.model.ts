@@ -209,18 +209,21 @@ export class Magic {
         });
 
         //Check here after items have been added to effectStatus to modify any effects that can't be resisted so they are overridden by any strengthes/weaknesses        
+        
         effectStatus.forEach((e) => {
-            e.effect.damageType.forEach(effectDamageType => {
-                (spellTarget as Enemy).damageResistances.forEach((enemyDR) => {
-                    if (enemyDR.constructor.name.includes(effectDamageType.constructor.name)){
-                        if (enemyDR.resistanceModifier === 'high_weak'){
-                            e.wasResisted = false; //Can't be resisted
-                        } else if (enemyDR.resistanceModifier === 'high_strong'){
-                            e.wasResisted = true; //Can't be applied
+            if (spellTarget instanceof Enemy){
+                e.effect.damageType.forEach(effectDamageType => {
+                    (spellTarget as Enemy).damageResistances.forEach((enemyDR) => {
+                        if (enemyDR.constructor.name.includes(effectDamageType.constructor.name)){
+                            if (enemyDR.resistanceModifier === 'high_weak'){
+                                e.wasResisted = false; //Can't be resisted
+                            } else if (enemyDR.resistanceModifier === 'high_strong'){
+                                e.wasResisted = true; //Can't be applied
+                            }
                         }
-                    }
+                    });
                 });
-            });
+            }
             
             if (!e.wasResisted){
                 e.effect.self ? this.addSpellEffect(caster, e.effect) : this.addSpellEffect(spellTarget, e.effect);

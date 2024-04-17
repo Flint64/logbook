@@ -441,7 +441,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
    ****************************************************************************************/
   async useConsumable(numSelected){
 
-    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) && (this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
+    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) || (this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
       return;
     }
 
@@ -517,7 +517,7 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
  ****************************************************************************************/
   async useSpell(numSelected){
     
-    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) && (this.combatService.party.consumables[numSelected - 1].amount - 1) < 0){
+    if ((this.combatService.party.members[this.memberIndex].ATB < 100 || this.intervalID === null) || (this.combatService.party.members[this.memberIndex].mana - this.combatService.party.members[this.memberIndex].magic[numSelected - 1].manaCost < 0)){
       return;
     }
 
@@ -542,14 +542,8 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     let playerTarget = this.combatService.party.members[this.memberIndex];
-    if (playerTarget.mana - playerTarget.magic[numSelected - 1].manaCost >= 0){
-      playerTarget.magic[numSelected - 1].castSpell(playerTarget, this.selectedSpellOrConsumableTarget, this.appendText.bind(this), this.combatService.party.inventory);
-      this.combatService.endTurn(this.selectedPartyMember);
-    } else {
-      this.appendText('Not enough mana to cast ', true);
-      this.appendText(playerTarget.magic[numSelected - 1].name, false, playerTarget.magic[numSelected - 1].textColor);
-      this.appendText('!', false, 'removeSpace');
-    }
+    playerTarget.magic[numSelected - 1].castSpell(playerTarget, this.selectedSpellOrConsumableTarget, this.appendText.bind(this), this.combatService.party.inventory);
+    this.combatService.endTurn(this.selectedPartyMember);
     this.selectedSpellOrConsumableTarget = null;
     this.selectedConsumableItem = null;
   }
