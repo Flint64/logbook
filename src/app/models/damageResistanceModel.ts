@@ -1,5 +1,5 @@
 /****
- * //TODO: Add specific damage weaknessess, like low/med/high
+ * Specific damage weaknessess, like low/med/high
  * base - no change from whatever the resistance value is for the damage type
  * low - 1.25 extra damage
  * med - 1.5 extra damage
@@ -7,7 +7,7 @@
 */
 
 /**
- * //TODO: Add specific damage resistances. Likely modify the ones we have here, but add in
+ * Specific damage resistances. Likely modify the ones we have here, but add in
  * a data point aside from just the resistance score, such as low/med/high resistance
  * base - no change from whatever the resistance value is for the damage type
  * low - 1.25 less damage
