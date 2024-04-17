@@ -154,3 +154,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .redFilter{ filter: invert(16%) sepia(67%) saturate(7163%) hue-rotate(357deg) brightness(101%) contrast(115%) !important; } //Red
 .yellowFilter { filter: invert(82%) sepia(73%) saturate(1004%) hue-rotate(9deg) brightness(105%) contrast(104%) !important; } //Yellow
 .lightBlueFilter { filter: invert(74%) sepia(42%) saturate(361%) hue-rotate(155deg) brightness(99%) contrast(86%) !important; } //SkyBlue
+
+.removeSpace{ margin-left: -4px;}

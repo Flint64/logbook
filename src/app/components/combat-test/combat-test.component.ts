@@ -542,8 +542,14 @@ export class CombatTestComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     let playerTarget = this.combatService.party.members[this.memberIndex];
-    playerTarget.magic[numSelected - 1].castSpell(playerTarget, this.selectedSpellOrConsumableTarget, this.appendText.bind(this), this.combatService.party.inventory);
-    this.combatService.endTurn(this.selectedPartyMember);
+    if (playerTarget.mana - playerTarget.magic[numSelected - 1].manaCost >= 0){
+      playerTarget.magic[numSelected - 1].castSpell(playerTarget, this.selectedSpellOrConsumableTarget, this.appendText.bind(this), this.combatService.party.inventory);
+      this.combatService.endTurn(this.selectedPartyMember);
+    } else {
+      this.appendText('Not enough mana to cast ', true);
+      this.appendText(playerTarget.magic[numSelected - 1].name, false, playerTarget.magic[numSelected - 1].textColor);
+      this.appendText('!', false, 'removeSpace');
+    }
     this.selectedSpellOrConsumableTarget = null;
     this.selectedConsumableItem = null;
   }
