@@ -169,9 +169,6 @@ export class Magic {
 
         //Now that we've dealt any spell base damage, handle adding any effects
         let effectStatus = [];
-
-        //TODO: Next up, handle spell effects for damage types that can/can't be resisted due to high_weak or high_strong resistance
-        //Consumables & standard attacks should be finished and working right now
         
         //For each spell effect, determine if it is resisted or not, and add the result to the effectStatus array
         this.effects.forEach((effect) => {
