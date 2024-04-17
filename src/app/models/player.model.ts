@@ -269,7 +269,7 @@ export class Player {
                   break;
 
                   //status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that
-                  case 'high_weak': //TODO: Make sure use of spells/items takes this in to account when applying statuses
+                  case 'high_weak':
                     elementalDamageAfterReduction *= 1.5;
                     // console.log("fired");
 
@@ -293,7 +293,7 @@ export class Player {
                     elementalDamageAfterReduction *= 0.5;
                   break;
 
-                  //Immune to status effects of the matching type //TODO: Make sure use of spells/items takes this in to account when applying statuses
+                  //Immune to status effects of the matching type
                   case 'high_strong':
                     elementalDamageAfterReduction *= 0.5;
                   break;
