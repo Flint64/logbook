@@ -3,6 +3,7 @@ import { Magic } from "./magic.model";
 import { Effect } from "./effect.model";
 import _ from 'lodash';
 import { Enemy } from "./enemy.model";
+import { FireDamage, PoisonDamage } from './damageTypes.model';
 
 export class Player {
     constructor(){}
@@ -267,10 +268,21 @@ export class Player {
                     elementalDamageAfterReduction *= 1.5;
                   break;
 
-                  //status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that //TODO: Make sure use of spells/items takes this in to account when applying statuses
-                  case 'high_weak':
+                  //status effects - higher chance of applying, and if an enemy is hit with a fire weapon, it has a chance to apply the burn effect even if the weapon doesn't normally do that
+                  case 'high_weak': //TODO: Make sure use of spells/items takes this in to account when applying statuses
                     elementalDamageAfterReduction *= 1.5;
-                    //TODO: Figure out how to roll 50% to add a matching effect based on the damage type (fire/burn, poison/poison, ice/freeze, etc) here
+                    // console.log("fired");
+
+                    //Split the damage name (ex FireDamage) and use the first word (ex Fire) to determine the correct effect to apply
+                    let split = e.constructor.name.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+
+                    //50% chance for the effect to apply
+                    let chance = _.random(1,2);
+                    if (chance === 1){
+                    } else {
+                      this.addDamageEffects(split[0], enemyTarget);
+                    }
+
                   break;
 
                   case 'low_strong':
@@ -285,12 +297,12 @@ export class Player {
                   case 'high_strong':
                     elementalDamageAfterReduction *= 0.5;
                   break;
-                }
+                } //End of parent switch
               }
             }
           });
 
-          console.log(elementalDamageAfterReduction);
+          // console.log(elementalDamageAfterReduction);
           
           if (elementalDamageAfterReduction <= 0){ elementalDamageAfterReduction = 1; }
         } else {
@@ -347,6 +359,76 @@ export class Player {
       if (damageAfterReduction <= 0){damageAfterReduction = 1;}
 
       return damageAfterReduction;
+    }
+
+   /****************************************************************************************
+   * Add Damage Effects - When taking damage from a damage type the enemy is highly weak
+   * against, applies effects for 2 turns based on the damage type.
+   * Fire - burn
+   * Ice - freeze
+   * Poison - poison
+   * etc.
+   * //TODO: Make this handle effects for things other than fire/burn/poison
+   ****************************************************************************************/
+    private addDamageEffects(damageName: string, enemyTarget: Enemy){
+      switch(damageName){
+        case 'Fire':
+          //Create a dummy spell to have access to the addSpellEffect function so we can add an effect here
+          let brn = new Magic({name: null, manaCost: null, healthCost: null, power: null, accuracy: null, variance: null, targets: null, canTargetParty: null, canTargetEnemies: null, textColor: null, recoveryPeriod: null, useChance: null, damageTypes: [],
+            effects: [
+              {
+                name: 'burn',
+                duration: 2,
+                modifier: 5,
+                canBeResisted: false,
+                applicationChance: 100,
+                self: false,
+                helpDescription: 'Take fire damage over time',
+                damageTypeName: 'fire',
+                damageType: [
+                  new FireDamage({percent: 100, elemental: true})
+                ]
+              }
+            ]
+          });
+
+          //If the target already has the effect we would apply, don't add it again
+          if (enemyTarget.effects.find(({ name }) => name === "burn")){
+          } else {
+            brn.addSpellEffect(enemyTarget, brn.effects[0]);
+          }
+        break;
+
+        case 'Poison':
+          let psn = new Magic({name: null, manaCost: null, healthCost: null, power: null, accuracy: null, variance: null, targets: null, canTargetParty: null, canTargetEnemies: null, textColor: null, recoveryPeriod: null, useChance: null, damageTypes: [],
+            effects: [
+              {
+                name: 'poison',
+                duration: 2,
+                modifier: 5,
+                canBeResisted: false,
+                applicationChance: 100,
+                self: false,
+                helpDescription: 'Take poison damage over time',
+                damageTypeName: 'poison',
+                damageType: [
+                  new PoisonDamage({percent: 100, elemental: true})
+                ]
+              }
+            ]
+          });
+
+          //If the target already has the effect we would apply, don't add it again
+          if (enemyTarget.effects.find(({ name }) => name === "poison")){
+          } else {
+            psn.addSpellEffect(enemyTarget, psn.effects[0]);
+          }
+        break;
+        
+        //Other cases go here
+
+      }
+
     }
 
    /****************************************************************************************

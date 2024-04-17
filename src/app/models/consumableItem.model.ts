@@ -108,9 +108,28 @@ export class ConsumableItem {
      * poisonResist, burnResist, etc. which are the names on equipment so that we can caluclate the 
      * correct resistance values.
      ******************************************************************************************************/
-    calcResistedEffect(target: Player | Enemy, inventory, appendText){
+    calcResistedEffect(target: Player | Enemy, inventory, appendText, willBeResisted: boolean = null){
         this.effects.forEach((effect) => {
             let isPlayer: boolean = (target instanceof Player);
+
+            //If the effect can't be resisted, add the effect and move on
+            //This has the same affect as the below block, except for enemies
+            //with high_weak resistance. This should override the effect's
+            //effect.canBeResisted, which is why we check for this first
+            if (willBeResisted === false){
+                this.addConsumableEffect(target, effect);
+                return;
+            }
+
+            //If we have high_strong resistance, the effect should always be resisted, and should be checked and handled before
+            //the effect's effect.canBeResisted, and override it
+            if (willBeResisted === true){
+                appendText(`${target.name}`, true, `${ isPlayer ? 'underline' : 'crimsonText'}`, `${ isPlayer ? 'playerText' : null}`);
+                appendText('resisted the', false);
+                appendText(`${effect.name}`, false, this.textColor);
+                appendText('effect!', false);
+                return;
+            }
             
             //If the effect can't be resisted, add the effect and move on
             if (!effect.canBeResisted){
@@ -184,7 +203,40 @@ export class ConsumableItem {
         }
         
         //Check if the effect(s) are resisted or not, and display the correct text accordingly
-        this.calcResistedEffect(target, inventory, appendText);
+        //If the enemy target has high_weak and can't resist effects, or high_strong and always
+        //resists certain effects, handle those here
+        let isPlayer: boolean = (target instanceof Player);
+
+        //If it's an enemy
+        if (!isPlayer){
+            let willBeResisted = null;
+            
+            let damageTypeName = null;
+            this.effects.forEach((effect) => {
+                if (effect?.damageType?.length){
+                    effect.damageType.forEach(DT => {
+                        damageTypeName = DT.constructor.name;
+                    });
+                }
+            });
+            
+            //If we have a damage type match of a resistance to the damage type being applied,
+            //check if there is any weakness/strength
+            (target as Enemy).damageResistances.forEach((DR) => {
+                if (DR.constructor.name.includes(damageTypeName)){
+                    if (DR.resistanceModifier === 'high_weak'){ //high_weak can't be resisted
+                        willBeResisted = false;
+                        this.calcResistedEffect(target, inventory, appendText, willBeResisted);
+                        console.log(damageTypeName);
+                    } else if (DR.resistanceModifier === 'high_strong'){ //high_strong is always resisted
+                        willBeResisted = true;
+                        this.calcResistedEffect(target, inventory, appendText, willBeResisted);
+                    }
+                }
+            });
+        } else {
+            this.calcResistedEffect(target, inventory, appendText);
+        }
         
         //For using healing/mana potions that have an instant affect
         this.effects.forEach((effect, index) => {

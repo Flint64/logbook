@@ -179,7 +179,7 @@ export const weapons: Weapon[] = [
     },
 
     {
-        name: 'Simple Mace',
+        name: 'Poison Dipped Mace',
         equippedBy: null,
         description: null,
         strength: 0,
@@ -194,7 +194,8 @@ export const weapons: Weapon[] = [
             new PoisonResistance({resistance: 5})
         ],
         damageTypes: [
-            new BludgeoningDamage({percent: 100, elemental: false})
+            new BludgeoningDamage({percent: 90, elemental: false}),
+            new PoisonDamage({percent: 10, elemental: true})
         ],
         damageResistances: []
     },

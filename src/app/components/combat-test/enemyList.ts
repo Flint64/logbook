@@ -349,6 +349,7 @@ export const enemies = [
       ],
       damageResistances: [
         new FireDamageResistance({resistance: 0, elemental: true, resistanceModifier: 'high_weak'}),
+        new PoisonDamageResistance({resistance: 0, elemental: true, resistanceModifier: 'high_weak'}),
         new IceDamageResistance({resistance: 20, elemental: true, resistanceModifier: 'high_strong'})
       ],
       statusEffectResistances: [

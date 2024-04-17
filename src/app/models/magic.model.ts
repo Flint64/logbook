@@ -61,7 +61,7 @@ export class Magic {
     /******************************************************************************************************
      * Add Spell Effect - Add the spell effect
      ******************************************************************************************************/
-    private addSpellEffect(target: Player | Enemy, effect: Effect){
+    public addSpellEffect(target: Player | Enemy, effect: Effect){
         //If we have more than one effect in the players list with the same name,
         //increase duration instead of having a duplicate effect
         if (target.effects.length > 0){
@@ -156,19 +156,6 @@ export class Magic {
             appendText("Can't resurrect the living!", true);
             return;
         }
-        
-        //If we have damage types on the spell, reduce the spell damage by the correct damage resistance
-        if (this.damageTypes.length > 0){
-            if (targetIsPlayer){
-                let enemy = new Enemy(null);
-                damageAfterReduction = enemy.calcDamageReduction(spellDamage, (spellTarget as Player), inventory, this.damageTypes)
-            }
-
-            if (!targetIsPlayer){
-                let player: Player = new Player();
-                damageAfterReduction = player.calcDamageReduction(spellDamage, (spellTarget as Enemy), inventory, this.damageTypes);
-            }
-        }
 
         //Regardless of hit/miss, the spell costs mana
         caster.mana -= this.manaCost;
@@ -180,11 +167,11 @@ export class Magic {
             return;
         }
 
-        //If the spell has a damage value, apply it before the effect(s)
-        spellTarget.health -= Math.round(damageAfterReduction);
-
         //Now that we've dealt any spell base damage, handle adding any effects
         let effectStatus = [];
+
+        //TODO: Next up, handle spell effects for damage types that can/can't be resisted due to high_weak or high_strong resistance
+        //Consumables & standard attacks should be finished and working right now
         
         //For each spell effect, determine if it is resisted or not, and add the result to the effectStatus array
         this.effects.forEach((effect) => {
@@ -225,8 +212,21 @@ export class Magic {
             
             effectStatus.push(obj);
         });
-        
+
+        //Check here after items have been added to effectStatus to modify any effects that can't be resisted so they are overridden by any strengthes/weaknesses        
         effectStatus.forEach((e) => {
+            e.effect.damageType.forEach(effectDamageType => {
+                (spellTarget as Enemy).damageResistances.forEach((enemyDR) => {
+                    if (enemyDR.constructor.name.includes(effectDamageType.constructor.name)){
+                        if (enemyDR.resistanceModifier === 'high_weak'){
+                            e.wasResisted = false; //Can't be resisted
+                        } else if (enemyDR.resistanceModifier === 'high_strong'){
+                            e.wasResisted = true; //Can't be applied
+                        }
+                    }
+                });
+            });
+            
             if (!e.wasResisted){
                 e.effect.self ? this.addSpellEffect(caster, e.effect) : this.addSpellEffect(spellTarget, e.effect);
             }
@@ -251,8 +251,27 @@ export class Magic {
         this.removeDuplicateEffects(caster);
         this.removeDuplicateEffects(spellTarget);
         
-        //Now that all effects have been added and instant effects taken care of, display the result of the spell
+        //If we have damage types on the spell, reduce the spell damage by the correct damage resistance
+        //CalcDamageReduction & applying damage have been moved here below addingn effects as any spell
+        //effects should take precedence over high_weak effects from damage types. 
+        //eg. fireball spell, if this were above the effects like before, the enemy would get a 2 turn burn
+        //from the fire damage type rather than the longer burn time from the effect of the fireball spell
+        if (this.damageTypes.length > 0){
+            if (targetIsPlayer){
+                let enemy = new Enemy(null);
+                damageAfterReduction = enemy.calcDamageReduction(spellDamage, (spellTarget as Player), inventory, this.damageTypes)
+            }
 
+            if (!targetIsPlayer){
+                let player: Player = new Player();
+                damageAfterReduction = player.calcDamageReduction(spellDamage, (spellTarget as Enemy), inventory, this.damageTypes);
+            }
+        }
+
+        //If the spell has a damage value, apply it
+        spellTarget.health -= Math.round(damageAfterReduction);
+        
+        //Now that all effects have been added and instant effects taken care of, display the result of the spell
         //If the spell hits, display that we cast x on spellTarget.name
         appendText('*', true, `${ casterIsPlayer ? 'playerText' : 'redText'}`);
         appendText(caster.name, false, `${ casterIsPlayer ? 'underline' : 'crimsonText'}`, `${ casterIsPlayer ? 'playerText' : null}`);
