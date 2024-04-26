@@ -185,7 +185,7 @@ export class MainComponent implements OnInit, AfterViewInit {
             //If none is provided, the default is accentColor
             switch(tagMatch){
               case'<a>':
-                className = 'accentColor';
+                className = 'accentColorAnimate';
               break;
 
               case '<green>':

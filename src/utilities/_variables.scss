@@ -4,6 +4,10 @@ $accentColor: #ffd700;
 .accentColor{
     color: var(--accentColor, $accentColor);
     display: inline-block;
+}
+
+.accentColorAnimate {
+    color: var(--accentColor, $accentColor);
     animation: move 2s ease-in-out infinite;
 }
 
