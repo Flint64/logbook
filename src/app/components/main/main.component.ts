@@ -95,7 +95,7 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   settingsForm: FormGroup;
   highlightColor: string = null;
-  tempText: string = "The story begins...this is a <a>lot</a> of text to see <a>how/why</a> it's GG <a>potentially</a> speeding up whenever it resumes itself because it really shouldn't be doing that at all and should be keeping itself at the speed specified";
+  tempText: string = "The story begins...this is a <a>lot</a> of text to see <a>how/why</a> it's <green>GG</green> <a>potentially</a> speeding up whenever it resumes itself because it really shouldn't be doing that at all and should be keeping itself at the speed specified";
   dynamicContent: any[] = [];
   printFinished: boolean = false;
   accentColorIndexes = [];
@@ -162,40 +162,70 @@ export class MainComponent implements OnInit, AfterViewInit {
 /****************************************************************************************
  * Transform Text - Grabs all start/end indexes of words in between <a> </a> tags to
  * allow different colors on the words
+ * //TODO: ALL added tags need to be added here in the tags array for them to work
  ****************************************************************************************/
   transformText(text: string): string{
     this.accentColorIndexes = [];
 
-    //Get the number of opening tags from the regex exec looking for the total number of opening tags
-    let match, matches = [];
-    let regexp1 = /<a>/g;
-    while ((match = regexp1.exec(text)) != null) { matches.push(match.index); }
-    
-    //Loop through the found matches and for each one found, find the first instance.
-    //Grab the index of each instance, then remove it, until the text is cleared of
-    //tags and all of the indexes have been stored
-    for (let i = 0; i < (matches.length); i++){
-      let obj = {};
-      
-      let regex1 = /<a>/;
-      obj['start'] = text.search(regex1);
-  
-      let regex2 = /<\/a>/;
-      obj['end'] = (text.search(regex2) - 4); // -4 to account for the removal of </a> from the text. TODO: ALL tags should be a single character or else this will break
-  
-      text = text.replace(regex1, '');
-      text = text.replace(regex2, '');
-      
-      this.accentColorIndexes.push(obj);
-    }
+    //Declare all tags used & needed variables
+    let tags = ['<a>', '<green>'];
+      let start, end, tempCount, tagMatch, className;
 
-    //This gets the actual text in between the indexes. Might be useful if we want to wrap each one in its own span
-    //instead of applying the color to each individual letter. It won't print out as pretty and will plop the whole
-    //word on the screen, but it would prevent word breaks in the middle of the word when wrapping - but only on
-    //the special words, so that doesn't mean much
-    // let substr = text.substring(this.accentColorIndexes[1].start, this.accentColorIndexes[1].end + 1);
-    // console.log(substr);
-    
+      //Loop through the given text one character at a time. 
+      //If the current index is the opening bracket '<', and the
+      //next character is not the closing tag's '/', find out
+      //which tag from the list we've found
+      for (let i = 0; i < text.length; i++){
+        if (text[i] === '<' && text[i+1] !== '/'){
+          tags.forEach((tag) => {
+          if (text.substring(i, (i + tag.length)) === tag){
+            tagMatch = tag;
+
+            //Allow for different colors/styles per-tag by setting the class name here.
+            //If none is provided, the default is accentColor
+            switch(tagMatch){
+              case'<a>':
+                className = 'accentColor';
+              break;
+
+              case '<green>':
+                className = 'greenText';
+              break;
+
+              default:
+                className = 'accentColor';
+              break;
+            }
+          }
+        });
+        
+        //The start index of the string is the current text position.
+        //Start a temp count to look ahead in the text until the next
+        //open '<' which denotes the start of the ending tag.
+        //The end index is the tempCount minus the length of the tag
+        //(as it will be removed after, meaning we need a shorter index)
+        start = (i);
+        tempCount = i;
+        while (text[tempCount+1] !== '<'){
+          tempCount++
+          end = ((tempCount)-tagMatch.length);
+        }
+
+        //After we've gotten our start/end indexes, remove all the found tag
+        //and it's paired endingi tag - not globally, but as we go to preserve
+        //indexes
+        let regex = new RegExp(tagMatch);
+        text = text.replace(regex, '');
+        var endTag = [tagMatch.slice(0, 1), '/', tagMatch.slice(1)].join(''); //transform tag into ending tag. ex. <a> becomes </a>
+        regex = new RegExp(endTag);
+        text = text.replace(regex, '');
+        
+        //If we have both indexes, add them to the list to be used within printText
+        if (start && end){
+        this.accentColorIndexes.push({start: start, end: end, className: className});
+        }
+      }
+    }
     return text;
   }
   
@@ -228,7 +258,7 @@ export class MainComponent implements OnInit, AfterViewInit {
       //For any indexes found, make sure the accent color is applied to the words in between
       this.accentColorIndexes.forEach(obj => {
         if (textPosition >= obj.start && textPosition <= obj.end){
-          this.renderer.addClass(child, 'accentColor');
+          this.renderer.addClass(child, obj.className);
         }
       });
       
